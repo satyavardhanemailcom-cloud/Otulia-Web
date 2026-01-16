@@ -1,2 +1,5 @@
 # env files (can opt-in for committing if needed)
 .env*
+
+# Modules from frontend
+client/node_modules
