@@ -1,9 +1,9 @@
-
+import Home from "./pages/Home"
 function App() {
   
   return (
     <>
-      <div>Otulia</div>
+      <Home />  
     </>
   )
 }
