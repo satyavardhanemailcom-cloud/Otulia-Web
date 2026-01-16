@@ -13,7 +13,7 @@ const Navbar = () => {
             <Search />
         </li>
         <li>
-            <div className='flex gap-2 items-center justify-center'>
+            <div className='flex gap-5 items-center justify-center'>
             <Notification />
             <Profile_dropdown />
             </div>

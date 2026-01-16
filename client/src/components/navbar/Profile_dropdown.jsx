@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
+import UserUrl from '../../assets/user.png'
 
 const Profile_dropdown = () => {
 
@@ -9,14 +10,14 @@ const Profile_dropdown = () => {
     <>
 <button onClick={()=>{setdropflag(!dropflag)}} onBlur={()=>{setdropflag(false)}} id="dropdownUserAvatarButton" data-dropdown-toggle="dropdownAvatar" className="flex text-sm bg-dark rounded-full" type="button">
   <span className="sr-only">Open user menu</span>
-  <img className="w-8 h-8 rounded-full" src="../" alt="user photo" />
+  <img className="w-8 h-8 rounded-full" src={UserUrl} alt="user photo" />
 </button>
 
 {/* <!-- Dropdown menu --> */}
 <div onMouseDown={(e) => e.preventDefault()} id="dropdownAvatar" className={`z-10 ${dropflag?'':'hidden'} bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-72 absolute top-[100px]`}>
     <div className="p-2">
       <div className="flex items-center px-2.5 p-2 space-x-1.5 text-sm bg-neutral-secondary-strong rounded">
-        <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-5.jpg" alt="Rounded avatar" />
+        <img className="w-8 h-8 rounded-full" src={UserUrl} alt="Rounded avatar" />
         <div className="text-sm">
           <div className="font-medium text-heading">Joseph McFall</div>
           <div className="truncate text-body">name@flowbite.com</div>
