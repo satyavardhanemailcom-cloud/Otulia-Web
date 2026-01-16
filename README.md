@@ -5,9 +5,8 @@ Find the most exquisite collection of luxury items at Otulia. We strive to provi
 
 ### Tech stack  
 - React
-- Next.js
 - MongoDB
-- PostgreSQL
+- Express
 - TailwindCSS
 
 ### Setup
@@ -25,5 +24,11 @@ Find the most exquisite collection of luxury items at Otulia. We strive to provi
 ### Contribution rules
 
 ### Folder Structure
-
+```css
+otulia-web/
+├── client/           # React application (Vite/CRA)
+├── server/           # Node.js & Express API
+├── .gitignore        # Git ignore rules (ensure node_modules & .env are ignored)     
+└── README.md         # Documentation
+```
 ### Roadmap
