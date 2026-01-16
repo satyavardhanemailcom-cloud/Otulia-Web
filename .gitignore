@@ -3,3 +3,13 @@
 
 # Modules from frontend
 /client/node_modules/
+/server/node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
