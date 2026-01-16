@@ -2,4 +2,4 @@
 .env*
 
 # Modules from frontend
-client/node_modules
+/client/node_modules/

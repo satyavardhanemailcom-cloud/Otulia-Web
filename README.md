@@ -11,15 +11,15 @@ Find the most exquisite collection of luxury items at Otulia. We strive to provi
 
 ### Setup
 - Clone the repository
-- Open terminal and install the node modules
+- Open terminal and install the node modules on both client side and server side
   ```
   npm install
   ```
-- Run the web app
+- Run the client app
   ```
   npm run dev
   ```
-- Open the website at `localhost:3000`
+- Open the client at `localhost:5173`
 
 ### Contribution rules
 
