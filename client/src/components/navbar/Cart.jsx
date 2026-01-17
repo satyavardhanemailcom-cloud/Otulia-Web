@@ -4,19 +4,19 @@ const Cart = () => {
   return (
     <>
     
-<button 
+      <button 
   type="button" 
-  className="relative p-2 text-[#2C2C2C] transition-colors duration-300 hover:text-[#B8860B] focus:outline-none"
+  className="relative flex items-center justify-center text-black transition-colors duration-300 focus:outline-none cursor-pointer"
   aria-label="View Shopping Bag"
 >
-  {/* Shopping Bag Icon (SVG) */}
+  {/* Shopping Bag Icon */}
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     fill="none" 
     viewBox="0 0 24 24" 
-    strokeWidth="1.5" 
+    strokeWidth="1.0" 
     stroke="currentColor" 
-    className="w-6 h-6"
+    className="w-10 h-10" // Increased size slightly to make room for the number
   >
     <path 
       strokeLinecap="round" 
@@ -25,8 +25,9 @@ const Cart = () => {
     />
   </svg>
 
-  {/* Notification Badge */}
-  <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-[#B8860B] rounded-full translate-x-1/4 -translate-y-1/4">
+  {/* Number Badge (Centered Inside) */}
+  {/* Position adjusted to sit in the "body" of the bag, below the handles */}
+  <span className="absolute mt-2 text-[15px] font-bold text-black">
     2
   </span>
 </button>
