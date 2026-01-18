@@ -17,7 +17,7 @@ const SearchBar = () => {
 
       <input
         type="text"
-        className="block w-full p-3 pl-10 pr-10 text-sm text-gray-900 border border-gray-300 rounded-lg focus:bg-gray-50"
+        className="block w-[95%] p-3 pl-10 pr-10 text-sm text-gray-900 border-b border-b-gray-300 focus:bg-gray-50"
         placeholder="Search for items..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
