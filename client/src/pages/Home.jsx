@@ -11,7 +11,7 @@ import Footer from '../components/Footer'
 
 const Home = () => {
   return (
-    <div className='relative w-full overflow-x-hidden'>
+    <div className='relative w-full overflow-x-hidden pt-24'>
       <Hero />
 
       {/* Main Sections Flow */}

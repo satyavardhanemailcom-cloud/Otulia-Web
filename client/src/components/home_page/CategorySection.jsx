@@ -36,13 +36,13 @@ const CategorySection = () => {
     ]
 
     return (
-        <section className='w-full px-16 pt-16 pb-6 bg-white'>
+        <section className='w-full px-3 md:px-16 md:pt-16 pb-6 bg-white'>
             {/* Header */}
-            <div className='flex items-center justify-between mb-12'>
-                <h2 className='text-5xl playfair-display font-normal text-black'>
+            <div className='flex flex-col md:flex-row items-center gap-4 md:justify-between mb-12'>
+                <h2 className='text-4xl md:text-5xl playfair-display font-normal text-black'>
                     Browse by Category
                 </h2>
-                <button className='px-8 py-2.5 border montserrat border-black rounded-full text-black hover:bg-black hover:text-white transition-colors duration-300 font-sans text-lg'>
+                <button className='px-4 md:px-8 py-2.5 border montserrat border-black rounded-full text-black hover:bg-black hover:text-white transition-colors duration-300 md:text-lg'>
                     Discover
                 </button>
             </div>

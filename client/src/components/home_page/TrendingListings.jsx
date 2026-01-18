@@ -37,7 +37,7 @@ const TrendingListings = () => {
     ]
 
     return (
-        <section className="w-full px-16 py-6 bg-white">
+        <section className="w-full px-3 md:px-16 py-6 bg-white">
             <h2 className="text-4xl playfair-display font-normal text-black mb-12">Trending Listings</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {listings.map((item, idx) => (

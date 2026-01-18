@@ -5,7 +5,7 @@ const Footer = () => {
         <footer className="w-full bg-[#F8F8F8] pt-20">
 
             {/* Top Section */}
-            <div className="px-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+            <div className="px-3 md:px-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
                 {/* Logo Column */}
                 <div className="flex flex-col">
                     <img className='w-[200px] h-[60px]' alt="logo" src="logos/logo_inverted.png" title='Otulia' />
@@ -53,22 +53,22 @@ const Footer = () => {
             </div>
 
             {/* Divider */}
-            <div className="px-16"><div className="w-full h-px bg-gray-300"></div></div>
+            <div className="px-3 md:px-16"><div className="w-full h-px bg-gray-300"></div></div>
 
             {/* Legal Links Section */}
-            <div className="px-16 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            <div className="px-3 md:px-16 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
                 {['Terms & Conditions', 'Privacy Policy', 'Shipping Information', 'Returns & Refunds', 'Cookie Policy'].map(item => (
                     <a key={item} href="#" className="text-sm text-gray-500 hover:text-black text-center lg:text-left">{item}</a>
                 ))}
             </div>
 
             {/* Divider */}
-            <div className="px-16"><div className="w-full h-px bg-gray-300"></div></div>
+            <div className="px-3 md:px-16"><div className="w-full h-px bg-gray-300"></div></div>
 
             {/* Payment Options Section */}
-            <div className="px-16 py-12 flex flex-col items-center gap-6">
+            <div className="px-3 md:px-16 py-12 flex flex-col items-center gap-6">
                 <h4 className="text-sm font-bold text-black uppercase tracking-widest">Payment Options</h4>
-                <div className="flex items-center gap-8 grayscale opacity-70">
+                <div className="flex items-center gap-8 justify-center grayscale opacity-70 flex-wrap">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="mastercard" className="h-6" />
                     <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/UnionPay_logo.svg" alt="unionpay" className="h-6" />
                     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Diners_Club_Logo3.svg" alt="diners" className="h-6" />

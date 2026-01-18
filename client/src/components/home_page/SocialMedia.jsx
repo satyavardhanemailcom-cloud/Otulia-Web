@@ -29,7 +29,7 @@ const SocialMedia = () => {
     ]
 
     return (
-        <section className="w-full px-16 py-6 bg-white overflow-hidden">
+        <section className="w-full px-3 md:px-16 py-6 bg-white overflow-hidden">
             <div className="flex flex-col items-center mb-16">
                 <h2 className="text-4xl playfair-display text-black mb-10">Follow Us On Social Media</h2>
                 <div className="flex items-center gap-12">
@@ -40,7 +40,7 @@ const SocialMedia = () => {
             </div>
 
             <div className="relative">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pr-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:pr-12">
                     {posts.map((post) => (
                         <div key={post.id} className="relative group overflow-hidden aspect-[4/5] cursor-pointer shadow-lg rounded-sm bg-gray-100">
                             <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -75,7 +75,7 @@ const SocialMedia = () => {
                 </div>
 
                 {/* Vertical Next Button */}
-                <button className="absolute -right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-20">
+                <button className="hidden absolute -right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-black text-white rounded-full md:flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-20">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>

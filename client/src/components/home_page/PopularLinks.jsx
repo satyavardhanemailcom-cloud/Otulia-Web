@@ -29,7 +29,7 @@ const PopularLinks = () => {
     ]
 
     return (
-        <section className="w-full px-16 py-6 bg-white border-t border-gray-100">
+        <section className="w-full px-3 md:px-16 py-6 bg-white border-t border-gray-100">
             <h2 className="text-3xl playfair-display text-black mb-12">Popular Links</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
                 {linkGroups.map((group, idx) => (

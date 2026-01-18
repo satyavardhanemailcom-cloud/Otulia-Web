@@ -37,7 +37,7 @@ const MostPopularAssets = () => {
     ]
 
     return (
-       <section className="w-full px-16 py-6 bg-white">
+       <section className="w-full px-3 md:px-16 py-6 bg-white">
                    <h2 className="text-4xl playfair-display font-normal text-black mb-12">Most Popular Assets</h2>
                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                        {assets.map((item, idx) => (

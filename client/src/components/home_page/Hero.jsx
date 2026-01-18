@@ -4,7 +4,7 @@ import heroUrl from '../../assets/hero_banner.mp4'
 const Hero = () => {
   return (
     <>
-    <div className='flex flex-col hero-banner h-[calc(100vh-110px)] w-screen'>
+    <div className='flex flex-col hero-banner h-[calc(100vh-110px)] w-full'>
         <video className='absolute top-0 -z-11 h-[83vh] md:h-screen w-screen object-cover' src={heroUrl} muted autoPlay />
         <div className='absolute top-0 -z-10 h-[83vh] md:h-screen w-screen bg-black opacity-60'></div>
         <div className="w-[92%] md:w-[96%] h-px bg-white border-0 self-center"></div>

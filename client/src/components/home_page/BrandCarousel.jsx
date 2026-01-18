@@ -10,7 +10,7 @@ const BrandCarousel = () => {
     ]
 
     return (
-        <section className="w-full px-16 py-6 bg-white">
+        <section className="w-full px-3 md:px-16 py-6 bg-white">
             <h2 className="text-3xl playfair-display text-black mb-12">Trusted Brands We Carry</h2>
             <div className="grid grid-cols-1 md:grid-cols-5 border border-gray-100">
                 {brands.map((brand, idx) => (
