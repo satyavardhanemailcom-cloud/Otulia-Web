@@ -1,15 +1,9 @@
 import React from 'react'
+import numberWithCommas from '../../modules/numberwithcomma'
 
 const CategorySection = () => {
 
-    function numberWithCommas(x) {
-    // Convert the number to a string
-    let parts = x.toString().split(".");
-    // Use regex to add commas to the integer part
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    // Join the integer and decimal parts back together
-    return parts.join(".");
-}
+    
     const categories = [
         {
             id: 1,
@@ -42,7 +36,7 @@ const CategorySection = () => {
     ]
 
     return (
-        <section className='w-full px-16 py-16 bg-white'>
+        <section className='w-full px-16 pt-16 pb-6 bg-white'>
             {/* Header */}
             <div className='flex items-center justify-between mb-12'>
                 <h2 className='text-5xl playfair-display font-normal text-black'>

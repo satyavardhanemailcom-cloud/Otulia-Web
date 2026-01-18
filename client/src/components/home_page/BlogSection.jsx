@@ -13,13 +13,13 @@ const BlogSection = () => {
             title: "Vorarlberg's Alpine Retreat: Exclusive Property Opportunities in Austria's Premier Ski Region",
             date: '14 Jan 2026',
             snippet: 'In the heart of the Arlberg ski region and the tranquil valleys of Brandnertal and Wald am Arlberg...',
-            image: 'https://images.unsplash.com/photo-1549111351-befbe8af806b?auto=format&fit=crop&w=400'
+            image: 'https://images.unsplash.com/photo-1575143031874-6621ee230c10?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGZyZWUlMjBpbWFnZXMlMjBvZiUyMGhvdXNlJTIwaW4lMjBncmVlbmxhbmR8ZW58MHx8MHx8fDA%3D'
         },
         {
             title: "The Prestige Effect: 7 Most-Viewed Celebrity Estates on JamesEdition in 2025",
             date: '08 Jan 2026',
             snippet: 'Celebrity-owned consistently leads readership and drives listing engagement. At the intersection...',
-            image: 'https://images.unsplash.com/photo-1613977257363-b9016c144d0c?auto=format&fit=crop&w=400'
+            image: 'https://images.unsplash.com/photo-1623194419771-c6cbe2e869a4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZyZWUlMjBpbWFnZXMlMjBvZiUyMHZpbGFzfGVufDB8fDB8fHww'
         },
         {
             title: "From Hidden Gem to Global Hotspot: Inside Bermuda's Luxury Real Estate Renaissance",
@@ -30,9 +30,9 @@ const BlogSection = () => {
     ]
 
     return (
-        <section className="w-full px-16 py-16 bg-white">
+        <section className="w-full px-16 py-6 bg-white">
             <div className="flex items-center justify-between mb-12">
-                <h2 className="text-4xl font-bodoni font-normal text-black">Our Blog</h2>
+                <h2 className="text-4xl playfair-display text-black">Our Blog</h2>
                 <button className="px-10 py-3 bg-black text-white rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors">
                     Read More...
                 </button>
