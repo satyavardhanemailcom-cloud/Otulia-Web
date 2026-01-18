@@ -20,8 +20,7 @@ const Hero = () => {
         <p className='text-white montserrat text-lg'>Find Your Dream Car, Bike, Yacht, House and More.</p>
         </div>
     </div>
-    </>
-      
+</>
   )
 }
 
