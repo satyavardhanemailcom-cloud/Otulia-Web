@@ -12,7 +12,6 @@ import Footer from '../components/Footer'
 const Home = () => {
   return (
     <div className='relative w-full overflow-x-hidden'>
-      <Navbar />
       <Hero />
 
       {/* Main Sections Flow */}
@@ -23,7 +22,6 @@ const Home = () => {
       <BrandCarousel />
       <SocialMedia />
       <PopularLinks />
-      <Footer />
     </div>
   )
 }
