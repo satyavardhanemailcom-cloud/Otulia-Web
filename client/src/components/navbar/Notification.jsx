@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import notification from '../../assets/icons/notification.svg'
+import UserUrl from '../../assets/user.png'
 const Notification = () => {
 
     const [dropflag, setdropflag] = useState(false)
@@ -20,7 +21,7 @@ const Notification = () => {
   <div className="divide-y divide-default">
     <a href="#" className="flex px-4 py-3 hover:bg-neutral-secondary-medium">
       <div className="shrink-0">
-        <img className="rounded-full w-11 h-11" src="/docs/images/people/profile-picture-1.jpg" alt="Jese image" />
+        <img className="rounded-full w-11 h-11" src={UserUrl} alt="Jese image" />
         <div className="absolute flex items-center justify-center w-5 h-5 ms-6 -mt-5 bg-brand border border-buffer-medium rounded-full">
           <svg className="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M5.024 3.783A1 1 0 0 1 6 3h12a1 1 0 0 1 .976.783L20.802 12h-4.244a1.99 1.99 0 0 0-1.824 1.205 2.978 2.978 0 0 1-5.468 0A1.991 1.991 0 0 0 7.442 12H3.198l1.826-8.217ZM3 14v5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5h-4.43a4.978 4.978 0 0 1-9.14 0H3Zm5-7a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H9a1 1 0 0 1-1-1Zm0 2a1 1 0 0 0 0 2h8a1 1 0 1 0 0-2H8Z" clipRule="evenodd"/></svg>
         </div>
@@ -32,7 +33,7 @@ const Notification = () => {
     </a>
     <a href="#" className="flex px-4 py-3 hover:bg-neutral-secondary-medium">
       <div className="shrink-0">
-        <img className="rounded-full w-11 h-11" src="/docs/images/people/profile-picture-2.jpg" alt="Joseph image" />
+        <img className="rounded-full w-11 h-11" src={UserUrl} alt="Joseph image" />
         <div className="absolute flex items-center justify-center w-5 h-5 ms-6 -mt-5 bg-dark border border-buffer-medium rounded-full">
           <svg className="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M9 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4H7Zm8-1a1 1 0 0 1 1-1h1v-1a1 1 0 1 1 2 0v1h1a1 1 0 1 1 0 2h-1v1a1 1 0 1 1-2 0v-1h-1a1 1 0 0 1-1-1Z" clipRule="evenodd"/></svg>
         </div>
@@ -44,7 +45,7 @@ const Notification = () => {
     </a>
     <a href="#" className="flex px-4 py-3 hover:bg-neutral-secondary-medium">
       <div className="shrink-0">
-        <img className="rounded-full w-11 h-11" src="/docs/images/people/profile-picture-3.jpg" alt="Bonnie image" />
+        <img className="rounded-full w-11 h-11" src={UserUrl} alt="Bonnie image" />
         <div className="absolute flex items-center justify-center w-5 h-5 ms-6 -mt-5 bg-danger border border-buffer-medium rounded-full">
           <svg className="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/></svg>
         </div>
@@ -56,7 +57,7 @@ const Notification = () => {
     </a>
     <a href="#" className="flex px-4 py-3 hover:bg-neutral-secondary-medium">
       <div className="shrink-0">
-        <img className="rounded-full w-11 h-11" src="/docs/images/people/profile-picture-4.jpg" alt="Leslie image" />
+        <img className="rounded-full w-11 h-11" src={UserUrl} alt="Leslie image" />
         <div className="absolute flex items-center justify-center w-5 h-5 ms-6 -mt-5 bg-success border border-buffer-medium rounded-full">
           <svg className="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-6.616l-2.88 2.592C8.537 20.461 7 19.776 7 18.477V17H5a2 2 0 0 1-2-2V6Zm4 2a1 1 0 0 0 0 2h5a1 1 0 1 0 0-2H7Zm8 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2Zm-8 3a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H7Zm5 0a1 1 0 1 0 0 2h5a1 1 0 1 0 0-2h-5Z" clipRule="evenodd"/></svg>
         </div>
@@ -68,7 +69,7 @@ const Notification = () => {
     </a>
     <a href="#" className="flex px-4 py-3 hover:bg-neutral-secondary-medium">
       <div className="shrink-0">
-        <img className="rounded-full w-11 h-11" src="/docs/images/people/profile-picture-5.jpg" alt="Robert image" />
+        <img className="rounded-full w-11 h-11" src={UserUrl} alt="Robert image" />
         <div className="absolute flex items-center justify-center w-5 h-5 ms-6 -mt-5 bg-purple border border-buffer-medium rounded-full">
           <svg className="w-3 h-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M14 7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7Zm2 9.387 4.684 1.562A1 1 0 0 0 22 17V7a1 1 0 0 0-1.316-.949L16 7.613v8.774Z" clipRule="evenodd"/></svg>
         </div>

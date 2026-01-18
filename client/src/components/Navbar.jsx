@@ -6,7 +6,7 @@ import Search from './navbar/Search'
 
 const Navbar = () => {
   return (
-    <nav className='flex items-center justify-between p-6'>
+    <nav className='flex items-center justify-between p-6 h-[110px]'>
       <img className='w-[200px] h-[60px]' alt="logo" src="logos/logo_inverted.png" title='Otulia' />
       <ul className='flex items-center justify-center gap-8'>
         <li>
