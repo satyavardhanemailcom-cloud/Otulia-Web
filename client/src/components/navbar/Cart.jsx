@@ -6,7 +6,7 @@ const Cart = () => {
 
       <button
         type="button"
-        className="relative flex items-center justify-center text-black transition-colors duration-300 focus:outline-none cursor-pointer"
+        className="relative flex items-center justify-center text-white transition-colors duration-300 focus:outline-none cursor-pointer"
         aria-label="View Shopping Bag"
       >
         {/* Shopping Bag Icon */}
@@ -27,7 +27,7 @@ const Cart = () => {
 
         {/* Number Badge (Centered Inside) */}
         {/* Position adjusted to sit in the "body" of the bag, below the handles */}
-        <span className="absolute mt-2 text-[15px] font-bold text-black">
+        <span className="absolute mt-2 text-[15px] font-bold text-white pt-1.5">
           2
         </span>
       </button>
