@@ -8,13 +8,13 @@ const Profile_dropdown = () => {
 
   return (
     <>
-<button onClick={()=>{setdropflag(!dropflag)}} onBlur={()=>{setdropflag(false)}} id="dropdownUserAvatarButton" data-dropdown-toggle="dropdownAvatar" className="flex text-sm bg-dark rounded-full" type="button">
+<button onClick={()=>{setdropflag(!dropflag)}} onBlur={()=>{setdropflag(false)}} id="dropdownUserAvatarButton" data-dropdown-toggle="dropdownAvatar" className="flex text-sm bg-dark rounded-full cursor-pointer" type="button">
   <span className="sr-only">Open user menu</span>
   <img className="w-8 h-8 rounded-full" src={UserUrl} alt="user photo" />
 </button>
 
 {/* <!-- Dropdown menu --> */}
-<div onMouseDown={(e) => e.preventDefault()} id="dropdownAvatar" className={`z-10 ${dropflag?'':'hidden'} bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-72 absolute top-[100px]`}>
+<div onMouseDown={(e) => e.preventDefault()} id="dropdownAvatar" className={`z-10 ${dropflag?'':'hidden'} bg-white right-2 border border-default-medium rounded-lg shadow-lg w-72 absolute top-[100px]`}>
     <div className="p-2">
       <div className="flex items-center px-2.5 p-2 space-x-1.5 text-sm bg-neutral-secondary-strong rounded">
         <img className="w-8 h-8 rounded-full" src={UserUrl} alt="Rounded avatar" />
