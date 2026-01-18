@@ -8,8 +8,8 @@ const Hero = () => {
         <video className='absolute top-0 -z-11 h-screen w-screen object-cover' src={heroUrl} muted autoPlay />
         <div className='absolute top-0 -z-10 h-screen w-screen bg-black opacity-40'></div>
         <div className="w-[96%] h-px bg-white border-0 self-center"></div>
-        <div className='absolute top-[9%] left-[5%] flex flex-col gap-4'>
-          <h1 className='text-white text-5xl playfair-display'>Discovery Luxury at Otulia</h1>
+        <div className='absolute top-[8%] left-[5%] flex flex-col gap-4'>
+          <h1 className='text-white text-6xl playfair-display'>Discovery Luxury at Otulia</h1>
           <p className='text-white montserrat text-lg'>Find Your Dream Car, Bike, Yacht, House and More.</p>
         </div>
         <ul className='flex gap-7 p-7 items-center justify-end montserrat text-white'>

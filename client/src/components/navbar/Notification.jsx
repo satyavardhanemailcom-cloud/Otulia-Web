@@ -7,7 +7,7 @@ const Notification = () => {
     const [dropflag, setdropflag] = useState(false)
   return (
    <>
-<button onClick={()=>{setdropflag(!dropflag)}} onBlur={()=>{setdropflag(false)}} id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="relative inline-flex items-center text-sm font-medium text-center text-body cursor-pointer hover:text-heading focus:outline-none" type="button">
+<button onClick={()=>{setdropflag(!dropflag)}} onBlur={()=>{setdropflag(false)}} id="dropdownNotificationButton" data-dropdown-toggle="dropdownNotification" className="relative inline-flex items-center text-sm text-white font-medium text-center text-body cursor-pointer hover:text-heading focus:outline-none" type="button">
   <img className='w-[35px] h-[35px]' src={notification} alt='notifications' title='Notification'/>
 
 <div className="absolute block w-3 h-3 bg-red-500 border-2 border-red-500 rounded-full top-0 left-[70%] start-3"></div>

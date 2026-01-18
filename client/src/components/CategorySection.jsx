@@ -1,26 +1,43 @@
 import React from 'react'
 
 const CategorySection = () => {
+
+    function numberWithCommas(x) {
+    // Convert the number to a string
+    let parts = x.toString().split(".");
+    // Use regex to add commas to the integer part
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // Join the integer and decimal parts back together
+    return parts.join(".");
+}
     const categories = [
         {
             id: 1,
             image: '/images/category_car.jpg',
             alt: 'Luxury Car',
+            name: 'Cars',
+            listing: numberWithCommas(70000)
         },
         {
             id: 2,
             image: '/images/category_house.jpg',
             alt: 'Luxury House',
+            name: 'Real Estate',
+            listing: numberWithCommas(33)
         },
         {
             id: 3,
             image: '/images/category_yacht.jpg',
             alt: 'Luxury Yacht',
+            name: 'Yachts',
+            listing: numberWithCommas(1000)
         },
         {
             id: 4,
             image: '/images/category_bike.jpg',
             alt: 'Superbike',
+            name: 'Bikes',
+            listing: numberWithCommas(300000)
         },
     ]
 
@@ -28,10 +45,10 @@ const CategorySection = () => {
         <section className='w-full px-16 py-16 bg-white'>
             {/* Header */}
             <div className='flex items-center justify-between mb-12'>
-                <h2 className='text-5xl font-bodoni font-normal text-black'>
+                <h2 className='text-5xl playfair-display font-normal text-black'>
                     Browse by Category
                 </h2>
-                <button className='px-8 py-2.5 border border-black rounded-full text-black hover:bg-black hover:text-white transition-colors duration-300 font-sans text-lg'>
+                <button className='px-8 py-2.5 border montserrat border-black rounded-full text-black hover:bg-black hover:text-white transition-colors duration-300 font-sans text-lg'>
                     Discover
                 </button>
             </div>
@@ -45,6 +62,10 @@ const CategorySection = () => {
                             alt={cat.alt}
                             className='w-full h-full object-cover transition-transform duration-700 group-hover:scale-105'
                         />
+                        <div className='absolute top-[80%] left-[7%] '>
+                        <h1 className='text-white playfair-display text-3xl '>{cat.name}</h1>
+                        <p className='text-gray-200 text-[11px]'>{cat.listing} LISTINGS </p>
+                        </div>
                     </div>
                 ))}
             </div>
