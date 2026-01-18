@@ -3,7 +3,7 @@ import SearchBar from '../components/navbar_sidepanel/SearchBar'
 
 const NavbarMobile = () => {
   return (
-    <div>
+    <div className='p-2'>
       <SearchBar />
     </div>
   )

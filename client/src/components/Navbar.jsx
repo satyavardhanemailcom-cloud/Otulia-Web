@@ -13,9 +13,9 @@ const Navbar = () => {
   return (
     <nav className='relative flex items-center justify-between p-6'>
       <img className='w-[140px] md:w-[200px] h-[40px] md:h-[60px]' alt="logo" src="logos/logo.png" title='Otulia' />
-      <img onClick={()=>{setpanelFlag(true)}} src={HamburgerMenu} alt="hamburgermenu" />
+      <img className='block md:hidden' onClick={()=>{setpanelFlag(true)}} src={HamburgerMenu} alt="hamburgermenu" />
 
-      <div className={`${panelFlag?'left-33':'left-100'} absolute w-[65vw] h-screen bg-white md:hidden flex`}>
+      <div className={`${panelFlag?'left-33':'left-100'} top-0 z-51 fixed w-[65vw] h-screen bg-white md:hidden flex`}>
         <NavbarMobile />
       </div>
 
