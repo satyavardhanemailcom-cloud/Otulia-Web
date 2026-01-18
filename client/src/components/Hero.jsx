@@ -8,16 +8,16 @@ const Hero = () => {
         <video className='absolute top-0 -z-11 h-screen w-screen object-cover' src={heroUrl} muted autoPlay />
         <div className='absolute top-0 -z-10 h-screen w-screen bg-black opacity-40'></div>
         <div className="w-[96%] h-px bg-black border-0 self-center"></div>
-        <ul className='flex gap-4 p-7 items-center justify-end montserrat text-white'>
+        <ul className='flex gap-7 p-7 items-center justify-end montserrat'>
           <li>Shop All</li>
           <li>Rent</li>
           <li>Community</li>
           <li>Sell With Us</li>
           <li>Plan & Price</li>
         </ul>
-        <div className='absolute top-[70%] left-[5%]'>
+        <div className='absolute top-[70%] left-[5%] flex flex-col gap-4'>
         <h1 className='text-white text-5xl playfair-display'>Discovery Luxury at Otulia</h1>
-        <p className='text-white montserrat'>Find Your Dream Car, Bike, Yacht, House and More.</p>
+        <p className='text-white montserrat text-lg'>Find Your Dream Car, Bike, Yacht, House and More.</p>
         </div>
     </div>
     </>
