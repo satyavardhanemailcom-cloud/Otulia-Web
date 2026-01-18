@@ -20,6 +20,7 @@ Find the most exquisite collection of luxury items at Otulia. We strive to provi
   npm run dev
   ```
 - Open the client at `localhost:5173`
+- For move type the IP address shown after running the Run command
 
 ### Contribution rules
 
