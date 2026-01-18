@@ -1,12 +1,12 @@
 import React from 'react'
-import heroUrl from '../assets/hero_banner.mp4'
+import heroUrl from '../../assets/hero_banner.mp4'
 
 const Hero = () => {
   return (
     <>
     <div className='flex flex-col hero-banner h-[calc(100vh-110px)] w-screen'>
         <video className='absolute top-0 -z-11 h-screen w-screen object-cover' src={heroUrl} muted autoPlay />
-        <div className='absolute top-0 -z-10 h-screen w-screen bg-black opacity-40'></div>
+        <div className='absolute top-0 -z-10 h-screen w-screen bg-black opacity-60'></div>
         <div className="w-[96%] h-px bg-white border-0 self-center"></div>
         <div className='absolute top-[8%] left-[5%] flex flex-col gap-4'>
           <h1 className='text-white text-6xl playfair-display'>Discovery Luxury at Otulia</h1>
