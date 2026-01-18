@@ -17,7 +17,7 @@ const SocialMedia = () => {
         {
             id: 3,
             title: 'This remote ski-out villa in Japan can be yours for just $8 million',
-            image: 'https://images.unsplash.com/photo-1518005020951-ecc837016200?auto=format&fit=crop&w=600&q=80',
+            image: 'https://images.unsplash.com/photo-1516352267226-f5f3e4c53781?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8c2tpfGVufDB8fDB8fHww',
             label: 'X'
         },
         {
@@ -29,12 +29,12 @@ const SocialMedia = () => {
     ]
 
     return (
-        <section className="w-full px-16 py-16 bg-white overflow-hidden">
+        <section className="w-full px-16 py-6 bg-white overflow-hidden">
             <div className="flex flex-col items-center mb-16">
-                <h2 className="text-4xl font-bodoni font-normal text-black mb-10">Follow Us On Social Media</h2>
+                <h2 className="text-4xl playfair-display text-black mb-10">Follow Us On Social Media</h2>
                 <div className="flex items-center gap-12">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="instagram" className="h-8 w-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="youtube" className="h-8 object-contain cursor-pointer hover:scale-110 transition-transform" />
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" alt="youtube" className="h-8 w-10 object-contain cursor-pointer hover:scale-110 transition-transform" />
                     <svg className="h-8 w-8 cursor-pointer hover:scale-110 transition-transform" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path></svg>
                 </div>
             </div>
@@ -75,7 +75,7 @@ const SocialMedia = () => {
                 </div>
 
                 {/* Vertical Next Button */}
-                <button className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-20">
+                <button className="absolute -right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-20">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                     </svg>
