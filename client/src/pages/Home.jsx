@@ -1,15 +1,30 @@
-import React from 'react'
 import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
+import CategorySection from '../components/CategorySection'
+import TrendingListings from '../components/TrendingListings'
+import MostPopularAssets from '../components/MostPopularAssets'
+import BlogSection from '../components/BlogSection'
+import BrandCarousel from '../components/BrandCarousel'
+import SocialMedia from '../components/SocialMedia'
+import PopularLinks from '../components/PopularLinks'
+import Footer from '../components/Footer'
 
 const Home = () => {
   return (
-    <>
-    <div className='relative'>
+    <div className='relative w-full overflow-x-hidden'>
       <Navbar />
       <Hero />
+
+      {/* Main Sections Flow */}
+      <CategorySection />
+      <TrendingListings />
+      <MostPopularAssets />
+      <BlogSection />
+      <BrandCarousel />
+      <SocialMedia />
+      <PopularLinks />
+      <Footer />
     </div>
-    </>
   )
 }
 
