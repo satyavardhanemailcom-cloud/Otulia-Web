@@ -1,8 +1,7 @@
+import React from 'react'
 import AssetCard from '../AssetCard'
-import { useNavigate } from 'react-router-dom';
-const TrendingListings = () => {
-    const navigate = useNavigate()
 
+const Trending_Section = ({type}) => {
     const listings = [
         {
             id: 1,
@@ -38,13 +37,12 @@ const TrendingListings = () => {
         }
     ]
 
-    return (
-        <section className="w-full px-3 md:px-16 py-6 bg-white">
+  return (
+    <div>
+      <section className="w-full px-3 md:px-16 py-6 bg-white">
            <div className="flex items-center justify-between mb-12">
-                <h2 className="text-3xl md:text-4xl playfair-display text-black">Trending Listings</h2>
-                <button onClick={()=>{navigate('/trending')}} className="px-3 md:px-10 py-3 bg-black text-white rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors">
-                    See More
-                </button>
+                <h2 className="text-3xl md:text-4xl playfair-display text-black">{type}</h2>
+                
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {listings.map((item, idx) => (
@@ -54,7 +52,8 @@ const TrendingListings = () => {
                 ))}
             </div>
         </section>
-    )
+    </div>
+  )
 }
 
-export default TrendingListings
+export default Trending_Section

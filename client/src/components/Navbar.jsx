@@ -37,7 +37,7 @@ const Navbar = () => {
       <img
         className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
         alt="logo"
-        src="logos/logo.png"
+        src="/logos/logo.png"
         title="Otulia"
       />
 
