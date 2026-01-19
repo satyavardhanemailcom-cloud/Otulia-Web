@@ -57,11 +57,11 @@ const AssetCard = ({item, idx}) => {
           <p className="text-md font-bold text-black mb-1 font-sans">
             {item.price}
           </p>
-          <p className="text-[10px] text-gray-400 mb-6 font-normal uppercase tracking-widest">
+          <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest">
             {item.location}
           </p>
 
-          <div className="w-full h-px bg-gray-100 mb-4"></div>
+          <div className="w-full h-px bg-gray-100 mb-2"></div>
 
           {/* Footer details */}
           <div className="flex items-center justify-between">

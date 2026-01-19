@@ -6,7 +6,7 @@ import MostPopularAssets from '../components/home_page/MostPopularAssets'
 import BlogSection from '../components/home_page/BlogSection'
 import BrandCarousel from '../components/home_page/BrandCarousel'
 import SocialMedia from '../components/home_page/SocialMedia'
-import PopularLinks from '../components/home_page/PopularLinks'
+import PopularLinks from '../components/PopularLinks'
 import Footer from '../components/Footer'
 
 const Home = () => {
