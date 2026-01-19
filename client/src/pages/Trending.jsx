@@ -5,7 +5,7 @@ import Trending_Section from '../components/trending_page/Trending_Section';
 
 const Trending = () => {
   return (
-    <div className='relative w-full overflow-x-hidden pt-24'>
+    <div className='relative w-full overflow-x-hidden'>
       <Trending_Navbar />
       <Routes>
         {/* Default redirect: If user goes to just "/trending", send them to cars */}
