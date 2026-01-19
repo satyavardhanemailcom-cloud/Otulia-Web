@@ -1,7 +1,7 @@
 import Home from "./pages/Home"
 import Trending from "./pages/Trending";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Navbar from "./components/Navbar"
+import Navbar from "./components/home_page/Navbar"
 import PopularLinks from "./components/PopularLinks"
 import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollTop";

@@ -1,4 +1,4 @@
-import Navbar from '../components/Navbar'
+import Navbar from '../components/home_page/Navbar'
 import Hero from '../components/home_page/Hero'
 import CategorySection from '../components/home_page/CategorySection'
 import TrendingListings from '../components/home_page/TrendingListings'

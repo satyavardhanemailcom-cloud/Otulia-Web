@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Cart from "./navbar/Cart";
-import Search from "./navbar/Search";
-import LoginButton from "./navbar/LoginButton";
-import NavbarMobile from "./Navbar_mobile";
+import Cart from "../navbar/Cart";
+import Search from "../navbar/Search";
+import LoginButton from "../navbar/LoginButton";
+import NavbarMobile from "../Navbar_mobile";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -25,9 +25,9 @@ const Navbar = () => {
   // Dynamic Navbar Classes
   const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${
     !isHeroPage
-      ? "bg-[#2C2C2C] text-white"
+      ? "bg-[#F8F8F8] text-white"
       : isScrolled
-      ? "bg-[#2C2C2C] shadow-md text-white"
+      ? "bg-[#F8F8F8] shadow-md text-white"
       : "bg-transparent text-white"
   }`;
 
@@ -37,14 +37,14 @@ const Navbar = () => {
       <img
         className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
         alt="logo"
-        src="/logos/logo.png"
+        src="/logos/logo_inverted.png"
         title="Otulia"
       />
 
       {/* 2. THE HAMBURGER FIX (Inline SVG) */}
       {/* We use <button> instead of <img> for better accessibility and reliable coloring */}
       <button
-        className="block md:hidden focus:outline-none z-50"
+        className="block md:hidden focus:outline-none z-50 text-black"
         onClick={() => setpanelFlag(true)}
       >
         {/* This SVG inherits the text color (white) automatically via 'currentColor' */}
