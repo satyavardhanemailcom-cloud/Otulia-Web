@@ -59,7 +59,9 @@ const Trending_Navbar = () => {
 
         <div className='hidden lg:flex items-center justify-center gap-3 mr-3'>
           <Profile_dropdown />
+          <div className='text-white'>
           <Cart />
+          </div>
         </div>
 
         <div className='lg:hidden flex items-center'>

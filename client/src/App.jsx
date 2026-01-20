@@ -5,6 +5,7 @@ import Rent from "./pages/Rent";
 import Community from "./pages/Community";
 import Seller from "./pages/Seller";
 import Pricing from "./pages/Pricing";
+import Categorty from "./pages/Categorty";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import PopularLinks from "./components/PopularLinks"
@@ -18,6 +19,7 @@ function App() {
       
       <ScrollToTop />
       <Routes>
+
         <Route path="/" element={<Home />} />
          <Route path="/trending/*" element={<Trending />} />
          <Route path="/shop" element={<Shop />} />
@@ -25,6 +27,8 @@ function App() {
          <Route path="/rent" element={<Rent />} />
          <Route path="/seller" element={<Seller />} />
          <Route path="/pricing" element={<Pricing />} />
+         <Route path="/category/*" element={<Categorty />} />
+         
       </Routes>
       <PopularLinks />
       <Footer />

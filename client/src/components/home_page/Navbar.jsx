@@ -107,7 +107,7 @@ const Navbar = () => {
       <ul className="hidden md:flex items-center justify-center gap-8">
         <li><Search /></li>
         <li><LoginButton /></li>
-        <li><Cart /></li>
+        <li className="text-black"><Cart /></li>
       </ul>
     </nav>
   );

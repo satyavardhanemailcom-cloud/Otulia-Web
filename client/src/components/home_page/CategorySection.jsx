@@ -1,8 +1,9 @@
 import React from 'react'
 import numberWithCommas from '../../modules/numberwithcomma'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const CategorySection = () => {
-
+    const navigate = useNavigate();
     
     const categories = [
         {
@@ -10,6 +11,7 @@ const CategorySection = () => {
             image: '/images/category_car.jpg',
             alt: 'Luxury Car',
             name: 'Cars',
+            navigate: 'cars',
             listing: numberWithCommas(70000)
         },
         {
@@ -17,6 +19,7 @@ const CategorySection = () => {
             image: '/images/category_house.jpg',
             alt: 'Luxury House',
             name: 'Real Estate',
+            navigate: 'estates',
             listing: numberWithCommas(33)
         },
         {
@@ -24,6 +27,7 @@ const CategorySection = () => {
             image: '/images/category_yacht.jpg',
             alt: 'Luxury Yacht',
             name: 'Yachts',
+            navigate: 'yachts',
             listing: numberWithCommas(1000)
         },
         {
@@ -31,6 +35,7 @@ const CategorySection = () => {
             image: '/images/category_bike.jpg',
             alt: 'Superbike',
             name: 'Bikes',
+            navigate: 'bikes',
             listing: numberWithCommas(300000)
         },
     ]
@@ -42,7 +47,7 @@ const CategorySection = () => {
                 <h2 className='text-4xl md:text-5xl playfair-display font-normal text-black'>
                     Browse by Category
                 </h2>
-                <button className='px-4 md:px-8 py-2.5 border montserrat border-black rounded-full text-black hover:bg-black hover:text-white transition-colors duration-300 md:text-lg'>
+                <button onClick={()=>{navigate('/category/cars')}} className='px-4 md:px-8 py-2.5 border montserrat border-black rounded-full text-black hover:bg-black hover:text-white transition-colors duration-300 md:text-lg cursor-pointer'>
                     Discover
                 </button>
             </div>
@@ -50,7 +55,7 @@ const CategorySection = () => {
             {/* Grid */}
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
                 {categories.map((cat) => (
-                    <div key={cat.id} className='relative group overflow-hidden aspect-[3/4] cursor-pointer'>
+                    <div onClick={()=>{navigate(`/category/${cat.navigate}`)}} key={cat.id} className='relative group overflow-hidden aspect-[3/4] cursor-pointer'>
                         <img
                             src={cat.image}
                             alt={cat.alt}
