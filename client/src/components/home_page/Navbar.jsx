@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, NavLink} from "react-router-dom";
 import Cart from "../navbar/Cart";
 import Search from "../navbar/Search";
 import LoginButton from "../navbar/LoginButton";
@@ -34,13 +34,16 @@ const Navbar = () => {
   return (
     <nav className={navClasses}>
       {/* 1. Logo */}
-      <img
+      <NavLink to={'/'}>
+        <img
         className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
         alt="logo"
         src="/logos/logo_inverted.png"
         title="Otulia"
       />
 
+      </NavLink>
+      
       {/* 2. THE HAMBURGER FIX (Inline SVG) */}
       {/* We use <button> instead of <img> for better accessibility and reliable coloring */}
       <button
