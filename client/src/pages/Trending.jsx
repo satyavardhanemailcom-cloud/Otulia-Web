@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Trending_Navbar from '../components/trending_page/Trending_Navbar'
 import Trending_Section from '../components/trending_page/Trending_Section';
-import Trending_Hero from '../components/trending_page/Trending_Hero';
+
 
 const Trending = () => {
   return (

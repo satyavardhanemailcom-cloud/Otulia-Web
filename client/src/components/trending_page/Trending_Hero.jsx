@@ -5,7 +5,7 @@ import Trending_Search from './Trending_Search'
 const Trending_Hero = ({type}) => {
   return (
     <div>
-        <div className='flex flex-col hero-banner h-[calc(100vh-110px)] w-full'>
+        <div className='flex flex-col hero-banner h-120 md:h-150 w-full pt-24'>
                 <img className='absolute top-0 -z-11 h-[83vh] md:h-screen w-screen object-cover' src={heroUrl} alt='hero_trending' />
                 <div className='flex flex-col items-center justify-center h-[90%] p-3 gap-3'>
                   <h1 className='text-white playfair-display text-3xl md:text-5xl text-center'>Discover Your Dream {type}s With Us</h1>
