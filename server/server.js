@@ -6,6 +6,7 @@ const connectDB = require("./db");
 const homeRoutes = require("./routes/home.routes");
 const listingRoutes = require("./routes/listing.routes");
 const assetsRoutes = require("./routes/assets.routes");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -14,6 +15,7 @@ connectDB();
 app.use(express.json());
 
 // routes register
+app.use("/api/auth", authRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/listings", listingRoutes);
 app.use("/api/assets", assetsRoutes);
