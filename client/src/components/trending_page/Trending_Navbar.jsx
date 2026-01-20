@@ -30,18 +30,21 @@ const Trending_Navbar = () => {
   ];
 
   const navClasses = `fixed left-0 z-50 transition-all duration-200 flex items-center justify-between p-4 ${
-    isScrolled ? "bg-[#F8F8F8] shadow-md text-black w-screen" : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-full"
+    isScrolled ? "bg-[#2C2C2C] shadow-md text-black w-screen" : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-full"
   }`;
 
   return (
     <div>
       <nav className={navClasses}>
-        <img
+        <NavLink to={'/'}>
+          <img
           className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
           alt="logo"
           src="/logos/logo.png"
           title="Otulia"
         />
+        </NavLink>
+        
         <div className='hidden lg:flex items-center justify-center gap-5 md:gap-17'>
           {navLinks.map(link => (
             <NavLink 
@@ -60,7 +63,7 @@ const Trending_Navbar = () => {
         </div>
 
         <div className='lg:hidden flex items-center'>
-          <button onClick={toggleMenu} className='text-2xl'>
+          <button onClick={toggleMenu} className='text-2xl text-white'>
             <IoMdMenu />
           </button>
         </div>
