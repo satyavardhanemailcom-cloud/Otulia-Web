@@ -59,7 +59,7 @@ const SortDropdown = () => {
             onClick={() => setIsOpen(false)}
           ></div>
 
-          <div className="absolute -right-1 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden">
+          <div className="absolute left mt-2 w-30 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden">
             {options.map((option) => (
               <div
                 key={option}
@@ -70,7 +70,7 @@ const SortDropdown = () => {
                   // e.g., onSortChange(option);
                 }}
                 className={`
-                  px-4 py-3 text-sm cursor-pointer transition-colors
+                  px-4 py-3 text-sm montserrat cursor-pointer transition-colors
                   ${selectedSort === option ? 'bg-gray-100 font-bold text-black' : 'text-gray-700 hover:bg-gray-50'}
                 `}
               >

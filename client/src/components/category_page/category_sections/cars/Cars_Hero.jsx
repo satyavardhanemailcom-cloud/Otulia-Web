@@ -9,7 +9,7 @@ const Cars_Hero = () => {
                 <img className='absolute top-0 -z-11 h-[83vh] md:h-screen w-screen object-cover' src={heroUrl} alt='hero_car' />
                 <div className='flex flex-col items-center justify-center h-[90%] p-3 gap-3'>
                   <h1 className='text-white playfair-display text-3xl md:text-5xl text-center'>Discover Your Dream Cars With Us</h1>
-                  <p className='text-white montserrat italic text-md md:text-2xl text-center'>The world’s finest cars, yachts & estates—curated.</p>
+                  <p className='text-white/80 montserrat italic text-md md:text-2xl text-center'>The world’s finest cars, yachts & estates—curated.</p>
                   <Cars_Search />
                 </div>
             </div>
