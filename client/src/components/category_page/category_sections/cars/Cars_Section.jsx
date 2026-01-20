@@ -63,6 +63,9 @@ const Cars_Section = () => {
          <section className="w-full px-3 md:px-16 py-12 bg-white">
          <FilterBar />
          </section>
+
+        
+
         </div>
         
 

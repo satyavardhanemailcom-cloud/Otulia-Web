@@ -28,7 +28,7 @@ const FilterBar = () => {
       {/* Mobile: Rounded rectangle with padding. Desktop: Long pill shape. */}
       <form className="
         w-full max-w-[1200px]
-        bg-white border border-gray-400 
+        bg-white border border-gray-300 
         rounded-2xl md:rounded-full 
         p-4 md:p-2 md:pl-8
         flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2
@@ -37,8 +37,8 @@ const FilterBar = () => {
         
         {/* LABEL: "Filter By :" */}
         <div className="w-full md:w-auto text-center md:text-left">
-          <span className="font-serif text-xl md:text-2xl text-black whitespace-nowrap">
-            Filter By :
+          <span className="montserrat text-lg md:text-xl text-black whitespace-nowrap">
+            Filter By &nbsp;
           </span>
         </div>
 
@@ -52,7 +52,7 @@ const FilterBar = () => {
               name="category" 
               value={filters.category}
               onChange={handleChange}
-              className="w-full md:w-auto appearance-none border border-gray-400 rounded-full py-2 pl-4 pr-10 bg-white text-black font-serif text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
+              className="w-full md:w-auto appearance-none border border-gray-200 rounded-full py-2 pl-4 pr-10 bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
             >
               <option>Supercars</option>
               <option>Luxury Sedans</option>
@@ -64,13 +64,13 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden md:block h-8 w-px bg-gray-300 mx-3"></div>
+          <div className="hidden md:block h-8 w-px bg-white mx-3"></div>
 
           {/* 2. Brand */}
           <div className="relative group w-full md:w-auto">
             <select 
               name="brand" 
-              className="w-full md:w-auto appearance-none border border-gray-400 rounded-full py-2 pl-4 pr-10 bg-white text-black font-serif text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
+              className="w-full md:w-auto appearance-none border border-gray-200 rounded-full py-2 pl-4 pr-10 bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
             >
               <option value="" disabled selected>Brand</option>
               <option>Ferrari</option>
@@ -83,13 +83,13 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden md:block h-8 w-px bg-gray-300 mx-3"></div>
+          <div className="hidden md:block h-8 w-px bg-white mx-3"></div>
 
           {/* 3. Model */}
           <div className="relative group w-full md:w-auto">
             <select 
               name="model" 
-              className="w-full md:w-auto appearance-none border border-gray-400 rounded-full py-2 pl-4 pr-10 bg-white text-black font-serif text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
+              className="w-full md:w-auto appearance-none border border-gray-200 rounded-full py-2 pl-4 pr-10 bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
             >
               <option value="" disabled selected>Model</option>
               <option>Aventador</option>
@@ -102,13 +102,13 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden md:block h-8 w-px bg-gray-300 mx-3"></div>
+          <div className="hidden md:block h-8 w-px bg-white mx-3"></div>
 
           {/* 4. Country */}
           <div className="relative group w-full md:w-auto">
             <select 
               name="country" 
-              className="w-full md:w-auto appearance-none border border-gray-400 rounded-full py-2 pl-4 pr-10 bg-white text-black font-serif text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
+              className="w-full md:w-auto appearance-none border border-gray-200 rounded-full py-2 pl-4 pr-10 bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
             >
               <option value="" disabled selected>Country</option>
               <option>Italy</option>
@@ -121,13 +121,13 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden md:block h-8 w-px bg-gray-300 mx-3"></div>
+          <div className="hidden md:block h-8 w-px bg-white mx-3"></div>
 
           {/* 5. Price (Spans 2 columns on mobile to fill gap) */}
           <div className="relative group w-full md:w-auto col-span-2 md:col-span-1">
             <select 
               name="price" 
-              className="w-full md:w-auto appearance-none border border-gray-400 rounded-full py-2 pl-4 pr-10 bg-white text-black font-serif text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
+              className="w-full md:w-auto appearance-none border border-gray-200 rounded-full py-2 pl-4 pr-10 bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] cursor-pointer hover:border-gray-600 transition-colors"
             >
               <option value="" disabled selected>Price</option>
               <option>Low to High</option>
@@ -146,7 +146,7 @@ const FilterBar = () => {
           className="
             w-full md:w-auto 
             bg-[#9C824A] hover:bg-[#856d3a] 
-            text-white font-serif text-lg 
+            text-white montserrat text-lg 
             px-8 py-2 md:py-2.5 
             rounded-full 
             transition-all duration-300 
