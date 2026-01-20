@@ -8,7 +8,7 @@ const Trending = () => {
   return (
     <div className='relative w-full overflow-x-hidden'>
       <Trending_Navbar />
-      <Trending_Hero />
+      
       <Routes>
         {/* Default redirect: If user goes to just "/trending", send them to cars */}
         <Route path="/" element={<Navigate to="cars" replace />} />

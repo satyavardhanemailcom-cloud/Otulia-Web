@@ -45,12 +45,12 @@ html {
 
 .playfair-display {
   font-family: "Playfair", serif;
-  font-style: normal;
+  
 }
 
 .montserrat {
   font-family: "Montserrat", sans-serif;
-  font-style: normal;
+  
   -ms-overflow-style: none;
   /* IE and Edge */
   scrollbar-width: none;

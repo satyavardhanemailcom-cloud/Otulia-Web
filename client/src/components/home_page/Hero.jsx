@@ -1,5 +1,5 @@
 import React from 'react'
-import heroUrl from '../../assets/hero_banner.mp4'
+import heroUrl from '../../assets/hero_banners/hero_banner.mp4'
 
 const Hero = () => {
   return (
