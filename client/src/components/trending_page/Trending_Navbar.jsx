@@ -29,8 +29,8 @@ const Trending_Navbar = () => {
     { to: "/trending/bikes", text: "Bikes" }
   ];
 
-  const navClasses = `fixed top-0 left-0 w-[100%] z-50 transition-all duration-200 flex items-center justify-between p-6 ${
-    isScrolled ? "bg-[#F8F8F8] shadow-md text-black" : "bg-white/40 m-6 text-white"
+  const navClasses = `fixed left-0 z-50 transition-all duration-200 flex items-center justify-between p-4 ${
+    isScrolled ? "bg-[#F8F8F8] shadow-md text-black w-screen" : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-full"
   }`;
 
   return (

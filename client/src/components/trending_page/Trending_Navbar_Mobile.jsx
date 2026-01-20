@@ -14,14 +14,15 @@ const Trending_Navbar_Mobile = ({ navLinks }) => {
             <NavLink 
               key={link.to}
               to={link.to} 
-              className='py-2 px-3 montserrat'
+              className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat w-fit' : 'py-2 px-3 montserrat'}
             >
               {link.text}
             </NavLink>
           ))}
         </div>
-        <div className='flex items-center justify-between p-2'>
-            <Cart />
+        <div className='flex items-center justify-between p-2 montserrat text-lg'>
+            <span>Cart</span>
+            <span>2</span>
         </div>
         <LoginButton />
       </div>
