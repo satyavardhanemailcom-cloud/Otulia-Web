@@ -53,6 +53,8 @@ const estateAssetSchema = new mongoose.Schema(
 
     popularity: { type: Number, min: 1, max: 10 },
 
+    views: { type: Number, default: 0 },
+
     likes: { type: Number, default: 0 },
   },
   { timestamps: true }
