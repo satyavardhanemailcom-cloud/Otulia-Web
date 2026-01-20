@@ -7,11 +7,13 @@ import Seller from "./pages/Seller";
 import Pricing from "./pages/Pricing";
 import Categorty from "./pages/Categorty";
 import Asset from "./pages/Asset";
+import Blogs from "./pages/Blogs";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import PopularLinks from "./components/PopularLinks"
 import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollTop";
+
 function App() {
   
   return (
@@ -30,6 +32,7 @@ function App() {
          <Route path="/pricing" element={<Pricing />} />
          <Route path="/category/*" element={<Categorty />} />
          <Route path="/asset/*" element={<Asset />} />
+         <Route path="/blogs" element={<Blogs />} />
          
          
       </Routes>

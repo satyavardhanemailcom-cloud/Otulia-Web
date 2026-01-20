@@ -1,7 +1,11 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const BlogSection = () => {
-    const mainPost = {
+
+        const navigate = useNavigate()
+
+        const mainPost = {
         title: 'European Pied-à-Terres: How Streamlined Co-Ownership Is Reshaping Luxury Urban Living Abroad',
         date: '14 Jan 2026',
         snippet: 'The appeal of a European pied-à-terre has long captivated high-net-worth individuals seeking a home away from home...',
@@ -33,7 +37,7 @@ const BlogSection = () => {
         <section className="w-full px-3 md:px-16 py-6 bg-white">
             <div className="flex items-center justify-between mb-12">
                 <h2 className="text-4xl playfair-display text-black">Our Blog</h2>
-                <button className="px-10 py-3 bg-black text-white rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors">
+                <button onClick={()=>{navigate('/blogs')}} className="px-10 py-3 cursor-pointer bg-black text-white rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors">
                     Read More...
                 </button>
             </div>
