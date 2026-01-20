@@ -74,6 +74,10 @@ router.get("/:type/:id", async (req, res) => {
       return res.status(404).json({ message: "Asset not found" });
     }
 
+    // 👀 increment views
+    asset.views += 1;
+    await asset.save();
+
     res.json(asset);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch asset detail" });
