@@ -1,6 +1,7 @@
 import React from 'react'
 import Cars_Hero from './cars_hero'
 import FilterBar from './FilterBar'
+import SortDropdown from './SortDropdown'
 
 const Cars_Section = () => {
 
@@ -64,6 +65,17 @@ const Cars_Section = () => {
          <FilterBar />
          </section>
 
+        <section className="w-full px-3 md:px-16 py-12 bg-white">
+         <h2 className="text-3xl md:text-4xl playfair-display text-black mb-12 text-center flex justify-between">
+                    <span>Featured List</span>
+                    <span>
+                        <SortDropdown />
+                    </span>
+                </h2>
+
+            <div className="w-[92%] md:w-[95%] h-px bg-gray-300 border-0 justify-self-center"></div>
+
+         </section>            
         
 
         </div>

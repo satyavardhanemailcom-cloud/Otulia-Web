@@ -30,7 +30,7 @@ const Category_Navbar = () => {
         { to: "/category/bikes", text: "Bikes" }
       ];
     
-      const navClasses = `fixed left-0 z-50 transition-all duration-200 flex items-center justify-between p-4 ${
+      const navClasses = `fixed left-0 z-50 h-15 transition-all duration-200 flex items-center justify-between p-4 ${
         isScrolled ? "bg-[#2C2C2C] shadow-md text-black w-screen" : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-full"
       }`;
   return (
@@ -38,7 +38,7 @@ const Category_Navbar = () => {
       <nav className={navClasses}>
         <NavLink to={'/'}>
           <img
-          className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
+          className="w-[135px] md:w-[180px] h-[35px] md:h-[45px] object-contain"
           alt="logo"
           src="/logos/logo.png"
           title="Otulia"
