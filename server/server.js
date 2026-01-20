@@ -5,6 +5,7 @@ const connectDB = require("./db");
 // route import
 const homeRoutes = require("./routes/home.routes");
 const listingRoutes = require("./routes/listing.routes");
+const assetsRoutes = require("./routes/assets.routes");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 // routes register
 app.use("/api/home", homeRoutes);
 app.use("/api/listings", listingRoutes);
+app.use("/api/assets", assetsRoutes);
 
 
 app.get("/health", (req, res) => {
