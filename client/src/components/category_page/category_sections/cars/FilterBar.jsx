@@ -58,7 +58,7 @@ const FilterBar = () => {
               name="category" 
               value={filters.category}
               onChange={handleChange}
-              className="w-full xl:w-auto appearance-none border border-gray-200 xl:border-transparent rounded-lg xl:rounded-full py-2.5 px-4 bg-gray-50 xl:bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
+              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
             >
               <option>Supercars</option>
               <option>Luxury Sedans</option>
@@ -70,13 +70,13 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden xl:block h-8 w-px bg-gray-300 mx-2"></div>
+          <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
           {/* 2. Brand */}
           <div className="relative group w-full xl:w-auto">
             <select 
               name="brand" 
-              className="w-full xl:w-auto appearance-none border border-gray-200 xl:border-transparent rounded-lg xl:rounded-full py-2.5 px-4 bg-gray-50 xl:bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
+              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
             >
               <option value="" disabled selected>Brand</option>
               <option>Ferrari</option>
@@ -89,13 +89,13 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden xl:block h-8 w-px bg-gray-300 mx-2"></div>
+          <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
           {/* 3. Model */}
           <div className="relative group w-full xl:w-auto">
             <select 
               name="model" 
-              className="w-full xl:w-auto appearance-none border border-gray-200 xl:border-transparent rounded-lg xl:rounded-full py-2.5 px-4 bg-gray-50 xl:bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
+              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
             >
               <option value="" disabled selected>Model</option>
               <option>Aventador</option>
@@ -108,13 +108,13 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden xl:block h-8 w-px bg-gray-300 mx-2"></div>
+          <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
           {/* 4. Country */}
           <div className="relative group w-full xl:w-auto">
             <select 
               name="country" 
-              className="w-full xl:w-auto appearance-none border border-gray-200 xl:border-transparent rounded-lg xl:rounded-full py-2.5 px-4 bg-gray-50 xl:bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
+              className="w-full xl:w-40 appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
             >
               <option value="" disabled selected>Country</option>
               <option>Italy</option>
@@ -127,14 +127,14 @@ const FilterBar = () => {
           </div>
 
           {/* DIVIDER (Desktop Only) */}
-          <div className="hidden xl:block h-8 w-px bg-gray-300 mx-2"></div>
+          <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
           {/* 5. Price */}
           {/* Spans 2 cols on mobile, 1 on tablet/desktop */}
           <div className="relative group w-full xl:w-auto col-span-2 md:col-span-1">
             <select 
               name="price" 
-              className="w-full xl:w-auto appearance-none border border-gray-200 xl:border-transparent rounded-lg xl:rounded-full py-2.5 px-4 bg-gray-50 xl:bg-white text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
+              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
             >
               <option value="" disabled selected>Price</option>
               <option>Low to High</option>

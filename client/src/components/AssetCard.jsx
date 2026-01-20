@@ -1,8 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const AssetCard = ({item, idx}) => {
   const navigate = useNavigate()
+  // Add state to manage the toggle behavior
+  const [isLiked, setIsLiked] = useState(false);
+
+  // Handler for the heart button click
+  const handleHeartClick = (e) => {
+    e.stopPropagation(); // Prevent the main card's onClick from firing
+    setIsLiked(!isLiked); // Toggle state
+  };
+
   return (
     <>
       <div
@@ -28,20 +37,19 @@ const AssetCard = ({item, idx}) => {
             ))}
           </div>
 
-          {/* Heart Button with specific colors */}
-          <button className="absolute top-2 right-3 z-10">
+          {/* Heart Button with toggling functionality */}
+          <button
+              className="absolute top-2 right-3 z-10 focus:outline-none"
+              onClick={handleHeartClick}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              fill={
-                idx === 0 || idx === 2
-                  ? "#ef4444"
-                  : idx === 1
-                    ? "#3b82f6"
-                    : "rgba(255,255,255,0.5)"
-              }
-              stroke={idx === 3 ? "white" : "none"}
-              className="w-8 h-8"
+              // If liked: fill red, no stroke. If not liked: no fill, white stroke.
+              fill={isLiked ? "#ef4444" : "none"}
+              stroke={isLiked ? "none" : "white"}
+              strokeWidth="2" // Ensure outline is visible
+              className="w-8 h-8 transition-colors duration-300" // Added transition for smooth toggle
             >
               <path
                 strokeLinecap="round"
