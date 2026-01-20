@@ -50,7 +50,7 @@ const listingSchema = new mongoose.Schema(
             default: 0
         },
     },
-    {timestamps: true}
+    { timestamps: true }
 );
 
 module.exports = mongoose.model("Listing", listingSchema);

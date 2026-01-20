@@ -1,7 +1,7 @@
 const express = require("express");
 const Listing = require("../models/Listing.model");
 
-const  router = express.Router();
+const router = express.Router();
 
 
 /**
@@ -16,12 +16,12 @@ router.get("/:id", async (req, res) => {
     try {
         const listing = await Listing.findById(req.params.id);
 
-        if(!listing) {
+        if (!listing) {
             return res.status(404).json({ message: "Listing not found" });
         }
 
         // 🔥 increase views for trending logic
-        listing.views +=1;
+        listing.views += 1;
         await listing.save();
 
         res.json(listing);
