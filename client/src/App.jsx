@@ -6,6 +6,7 @@ import Community from "./pages/Community";
 import Seller from "./pages/Seller";
 import Pricing from "./pages/Pricing";
 import Categorty from "./pages/Categorty";
+import Asset from "./pages/Asset";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import PopularLinks from "./components/PopularLinks"
@@ -28,6 +29,8 @@ function App() {
          <Route path="/seller" element={<Seller />} />
          <Route path="/pricing" element={<Pricing />} />
          <Route path="/category/*" element={<Categorty />} />
+         <Route path="/asset/*" element={<Asset />} />
+         
          
       </Routes>
       <PopularLinks />

@@ -1,11 +1,14 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const AssetCard = ({item, idx}) => {
+  const navigate = useNavigate()
   return (
     <>
       <div
         key={item.id}
-        className="group border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 bg-white"
+        onClick={()=>{navigate(`/asset/${item.id}`)}}
+        className="group border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 bg-white cursor-pointer"
       >
         {/* Image Section */}
         <div className="relative aspect-[4/3] overflow-hidden">
