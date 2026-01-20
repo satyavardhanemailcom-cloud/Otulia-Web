@@ -50,7 +50,7 @@ const Trending_Navbar = () => {
             <NavLink 
               key={link.to}
               to={link.to} 
-              className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat' : 'py-2 px-3 montserrat'}
+              className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat' : 'py-2 px-3 montserrat text-white'}
             >
               {link.text}
             </NavLink>
