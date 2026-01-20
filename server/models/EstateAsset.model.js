@@ -11,7 +11,12 @@ const estateAssetSchema = new mongoose.Schema(
     images: [{ type: String }],
 
     keySpecifications: {
-      type: String, // Land area | bathrooms | bedrooms | floors | garage_capacity
+      landArea: String,
+      bathrooms: String,
+      bedrooms: String,
+      floors: String,
+      garage_capacity: String,
+      builtUpArea: String // Land area | bathrooms | bedrooms | floors | garage_capacity
     },
 
     specification: {

@@ -13,7 +13,9 @@ const vehicleAssetSchema = new mongoose.Schema(
     brand: { type: String },
 
     keySpecifications: {
-      type: String, // Power | Mileage | Cylinder_capacity
+      power: String,
+      mileage: String,
+      cylinderCapacity: String // Power | Mileage | Cylinder_capacity
     },
 
     specification: {
