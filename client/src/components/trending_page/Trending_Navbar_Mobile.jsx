@@ -1,0 +1,32 @@
+import React from 'react';
+import SearchBar from '../navbar_sidepanel/SearchBar';
+import { NavLink } from 'react-router-dom';
+import LoginButton from '../navbar/LoginButton';
+import Cart from '../navbar/Cart';
+
+const Trending_Navbar_Mobile = ({ navLinks }) => {
+  return (
+    <div className='px-5 py-2'>
+      <div className='flex flex-col gap-3 text-[#2C2C2C]'>
+        <SearchBar />
+        <div className='flex flex-col gap-3 mt-5'>
+          {navLinks.map(link => (
+            <NavLink 
+              key={link.to}
+              to={link.to} 
+              className='py-2 px-3 montserrat'
+            >
+              {link.text}
+            </NavLink>
+          ))}
+        </div>
+        <div className='flex items-center justify-between p-2'>
+            <Cart />
+        </div>
+        <LoginButton />
+      </div>
+    </div>
+  );
+}
+
+export default Trending_Navbar_Mobile;

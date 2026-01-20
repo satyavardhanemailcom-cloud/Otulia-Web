@@ -1,56 +1,88 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import  Profile_dropdown from '../navbar/Profile_dropdown'
-import Cart from '../navbar/Cart'
+import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+import Profile_dropdown from '../navbar/Profile_dropdown';
+import Cart from '../navbar/Cart';
+import Trending_Navbar_Mobile from './Trending_Navbar_Mobile';
+import { IoMdMenu } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
 
 const Trending_Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navLinks = [
+    { to: "/trending/cars", text: "Cars" },
+    { to: "/trending/estates", text: "Estates" },
+    { to: "/trending/yachts", text: "Yachts" },
+    { to: "/trending/bikes", text: "Bikes" }
+  ];
+
+  const navClasses = `fixed top-0 left-0 w-[100%] z-50 transition-all duration-200 flex items-center justify-between p-6 ${
+    isScrolled ? "bg-[#F8F8F8] shadow-md text-black" : "bg-white/40 m-6 text-white"
+  }`;
+
   return (
     <div>
-      <nav className='flex items-center justify-between p-4 bg-white/40 m-7 rounded-full'>
+      <nav className={navClasses}>
         <img
-        className="w-[110px] md:w-[170px] h-[25px] md:h-[45px] object-contain"
-        alt="logo"
-        src="/logos/logo.png"
-        title="Otulia"
-      />
-        <div className='flex items-center justify-center gap-5 md:gap-17'>
-        {/* Correct Usage: className takes a function with { isActive } */}
-        <NavLink 
-          to="/trending/cars" 
-          className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat' : 'text-[#F8F8F8] py-2 px-3 montserrat'}
-        >
-          Cars
-        </NavLink>
-
-        <NavLink 
-          to="/trending/estates"
-          className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat' : 'text-[#F8F8F8] py-2 px-3 montserrat'}
-        >
-          Estates
-        </NavLink>
-
-        <NavLink 
-          to="/trending/yachts"
-          className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat' : 'text-[#F8F8F8] py-2 px-3 montserrat'}
-        >
-          Yachts
-        </NavLink>
-        <NavLink 
-          to="/trending/bikes"
-          className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat' : 'text-[#F8F8F8] py-2 px-3 montserrat'}
-        >
-          Bikes
-        </NavLink>
+          className="w-[140px] md:w-[200px] h-[40px] md:h-[60px] object-contain"
+          alt="logo"
+          src="/logos/logo.png"
+          title="Otulia"
+        />
+        <div className='hidden lg:flex items-center justify-center gap-5 md:gap-17'>
+          {navLinks.map(link => (
+            <NavLink 
+              key={link.to}
+              to={link.to} 
+              className={({ isActive }) => isActive ? 'bg-[#B8860B] text-white rounded-2xl py-2 px-3 montserrat' : 'py-2 px-3 montserrat'}
+            >
+              {link.text}
+            </NavLink>
+          ))}
         </div>
 
-        <div className='flex items-center justify-center gap-3 mr-3'>
+        <div className='hidden lg:flex items-center justify-center gap-3 mr-3'>
           <Profile_dropdown />
           <Cart />
         </div>
-        
+
+        <div className='lg:hidden flex items-center'>
+          <button onClick={toggleMenu} className='text-2xl'>
+            <IoMdMenu />
+          </button>
+        </div>
       </nav>
+
+      <div
+        className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-51 transform transition-transform duration-300 ease-in-out ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <button
+          onClick={toggleMenu}
+          className="absolute top-6 right-6 text-[#2C2C2C] focus:outline-none"
+        >
+          <IoClose className="w-8 h-8" />
+        </button>
+        <div className="pt-20">
+          <Trending_Navbar_Mobile navLinks={navLinks} />
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Trending_Navbar
+export default Trending_Navbar;

@@ -1,6 +1,20 @@
+import React, { useRef } from 'react'
 import AssetCard from '../AssetCard'
 
 const MostPopularAssets = () => {
+    // 1. Create a Ref to access the scrollable container
+    const scrollRef = useRef(null);
+
+    // 2. Scroll Handler Function
+    const scroll = (direction) => {
+        const { current } = scrollRef;
+        if (current) {
+            // Scroll by 350px (approx one card width)
+            const scrollAmount = direction === 'left' ? -350 : 350;
+            current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
+
     const assets = [
         {
             id: 1,
@@ -33,20 +47,67 @@ const MostPopularAssets = () => {
             location: 'Aspen, Colorado, USA',
             details: '15 Beds | 8 Baths | 13,400 sqft',
             image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80',
+        },
+        {
+            id: 5, // Added extra item to demonstrate scrolling
+            title: 'The Sky Penthouse',
+            price: '₹ 22,500,000,000',
+            location: 'Manhattan, NY, USA',
+            details: '4 Beds | 5 Baths | 6,500 sqft',
+            image: 'https://images.unsplash.com/photo-1584957292742-10a90a507d91?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8c2t5JTIwcGVudGhvdXNlfGVufDB8fDB8fHww',
         }
     ]
 
     return (
-       <section className="w-full px-3 md:px-16 py-6 bg-white">
-                   <h2 className="text-4xl playfair-display font-normal text-black mb-12">Most Popular Assets</h2>
-                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                       {assets.map((item, idx) => (
-                           <div key={item.id}>
-                               <AssetCard item={item} idx={idx}/>
-                           </div>
-                       ))}
-                   </div>
-               </section>
+        <section className="relative w-full px-3 md:px-16 py-6 bg-white group">
+            <h2 className="text-4xl playfair-display font-normal text-black mb-12">Most Popular Assets</h2>
+
+            {/* Container for Buttons + List */}
+            <div className="relative">
+
+                {/* LEFT BUTTON */}
+                <button 
+                    onClick={() => scroll('left')}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -ml-4 md:-ml-8 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
+
+                {/* SCROLLABLE CONTAINER */}
+                {/* flex + overflow-x-auto creates the slider */}
+                {/* scrollbar-hide (requires plugin) or inline style helps aesthetics */}
+                <div 
+                    ref={scrollRef}
+                    className="flex gap-8 overflow-x-auto scroll-smooth pb-4 px-1"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Hide scrollbar for Firefox/IE
+                >
+                    {/* Hide scrollbar for Chrome/Safari */}
+                    <style>{`
+                        .scroll-smooth::-webkit-scrollbar { display: none; }
+                    `}</style>
+
+                    {assets.map((item, idx) => (
+                        // min-w ensures cards don't shrink. Adjust width as needed.
+                        <div key={item.id} className="min-w-[300px] md:min-w-[350px]">
+                            <AssetCard item={item} idx={idx}/>
+                        </div>
+                    ))}
+                </div>
+
+                {/* RIGHT BUTTON */}
+                <button 
+                    onClick={() => scroll('right')}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 -mr-4 md:-mr-8 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+
+            </div>
+        </section>
     )
 }
 
