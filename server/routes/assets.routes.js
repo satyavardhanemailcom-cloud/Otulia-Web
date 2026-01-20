@@ -1,3 +1,5 @@
+const authMiddleware = require("../middleware/auth.middleware");
+
 const express = require("express");
 const VehicleAsset = require("../models/VehicleAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
@@ -88,7 +90,7 @@ router.get("/:type/:id", async (req, res) => {
  * LIKE ASSET
  * /api/assets/:type/:id/like
  */
-router.post("/:type/:id/like", async (req, res) => {
+router.post("/:type/:id/like", authMiddleware,  async (req, res) => {
   try {
     const { type, id } = req.params;
 
