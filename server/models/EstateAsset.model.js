@@ -61,6 +61,9 @@ const estateAssetSchema = new mongoose.Schema(
     views: { type: Number, default: 0 },
 
     likes: { type: Number, default: 0 },
+
+    keywords: [{ type: String }],
+
   },
   { timestamps: true }
 );
