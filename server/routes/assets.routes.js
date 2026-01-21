@@ -128,4 +128,40 @@ router.post("/:type/:id/like", authMiddleware,  async (req, res) => {
   }
 });
 
+/**
+ * COMBINED ASSETS
+ * /api/assets/combined
+ * Supports: ?search=&page=&limit=
+ */
+router.get("/combined", async (req, res) => {
+  try {
+    const { search = "", page = 1, limit = 12 } = req.query;
+
+    const query = search
+      ? { title: { $regex: search, $options: "i" } }
+      : {};
+
+    const [vehicleAssets, estateAssets] = await Promise.all([
+      VehicleAsset.find(query)
+        .skip((page - 1) * limit)
+        .limit(Number(limit))
+        .sort({ createdAt: -1 }),
+      EstateAsset.find(query)
+        .skip((page - 1) * limit)
+        .limit(Number(limit))
+        .sort({ createdAt: -1 }),
+    ]);
+
+    const combinedAssets = [...vehicleAssets, ...estateAssets];
+
+    // Optionally, sort the combined assets by createdAt if needed
+    combinedAssets.sort((a, b) => b.createdAt - a.createdAt);
+
+
+    res.json(combinedAssets);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch combined assets" });
+  }
+});
+
 module.exports = router;

@@ -24,24 +24,6 @@ router.get("/featured", async(req, res) => {
 
 
 /**
- * TRENDING LISTINGS
- * Logic: highest views
- */
-
-router.get("/trending", async(req, res)=> {
-    try {
-        const listings = await Listing.find()
-        .sort({ views: -1 })
-        .limit(6)
-        .select("title immages price category location views");
-
-        res.json(listings);
-    } catch (error) {
-        res.status(500).json({ message: "Failed to fetch trending listings"});
-    }
-})
-
-/**
  * POPULAR LISTINGS
  * Logic: highest bookings
  */

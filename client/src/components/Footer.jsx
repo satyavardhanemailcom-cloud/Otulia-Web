@@ -39,22 +39,27 @@ const Footer = () => {
 
         const social = [
             {
+                id: 1,
                 name: "Facebook",
-                navigate: ""
+                navigate: "#"
             },
             {
+                id: 2,
                 name: "Instagram",
                 navigate: "https://www.instagram.com/otulia.in?igsh=enZpemNoNzh0ZmZx"
             },
             {
+                id: 3,
                 name: "YouTube",
                 navigate: "https://youtube.com/@otulia.com13?si=1klspMO6eVg1ZgQT"
             },
             {
+                id: 4,
                 name: "Twitter",
                 navigate: "https://x.com/OtuliaGlobal?s=20"
             },
             {
+                id: 5,
                 name: "LinkedIn",
                 navigate: "https://www.linkedin.com/company/otulia/"
             }
@@ -105,7 +110,7 @@ const Footer = () => {
                     <h3 className="text-sm font-bold text-black uppercase tracking-widest">Connect With Us</h3>
                     <ul className="flex flex-col gap-3">
                         {social.map(item => (
-                            <li key={item}><a href={item.navigate} target='_blank' className="text-sm text-gray-500 hover:text-black">{item.name}</a></li>
+                            <li key={item.id}><a href={item.navigate} target='_blank' className="text-sm text-gray-500 hover:text-black">{item.name}</a></li>
                         ))}
                     </ul>
                 </div>

@@ -6,6 +6,35 @@ const AssetCard = ({item, idx}) => {
   // Add state to manage the toggle behavior
   const [isLiked, setIsLiked] = useState(false);
 
+  const displayImage = item.images?.length 
+      ? item.images[0] 
+      : Array.isArray(item.image) 
+          ? item.image[0] 
+          : item.image;
+
+  let displayDetails = item.details; // Priority 1: Use existing string if available
+
+  // Priority 2: Construct string from Database Schema (keySpecifications)
+  if (!displayDetails && item.keySpecifications) {
+    const specs = item.keySpecifications;
+    
+    // Check if it's a Vehicle (has power/mileage)
+    if (specs.power || specs.mileage) {
+      displayDetails = [specs.power, specs.mileage, specs.cylinderCapacity]
+        .filter(Boolean) // Removes undefined/null values
+        .join(' | ');    // Joins with separator
+    } 
+    // Otherwise, assume it's Real Estate (has beds/baths)
+    else {
+      // Helper to append text if value exists
+      const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
+      const baths = specs.bathrooms ? `${specs.bathrooms} Baths` : null;
+      const area = specs.builtUpArea || specs.landArea;
+
+      displayDetails = [beds, baths, area].filter(Boolean).join(' | ');
+    }
+  }
+
   // Handler for the heart button click
   const handleHeartClick = (e) => {
     e.stopPropagation(); // Prevent the main card's onClick from firing
@@ -22,7 +51,7 @@ const AssetCard = ({item, idx}) => {
         {/* Image Section */}
         <div className="relative aspect-[4/3] overflow-hidden">
           <img
-            src={item.image}
+            src={displayImage}
             alt={item.title}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -77,7 +106,7 @@ const AssetCard = ({item, idx}) => {
           {/* Footer details */}
           <div className="flex items-center justify-between">
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-              {item.details}
+              {displayDetails}
             </p>
           </div>
         </div>
