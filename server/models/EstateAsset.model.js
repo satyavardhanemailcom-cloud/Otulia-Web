@@ -48,6 +48,7 @@ const estateAssetSchema = new mongoose.Schema(
 
     agent: {
       name: String,
+      photo: String,
       phone: String,
       email: String,
       company: String,
