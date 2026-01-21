@@ -23,7 +23,7 @@ const TrendingListings = () => {
 
   // Fetch data
   const datafetch = async ()=> {
-    const url = "http://localhost:8000/api/trending";
+    const url = "http://localhost:8000/api/home/trending";
     try {
       const response = await fetch(url);
       if (!response.ok) {

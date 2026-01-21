@@ -11,6 +11,7 @@ const listingRoutes = require("./routes/listing.routes");
 const assetsRoutes = require("./routes/assets.routes");
 const authRoutes = require("./routes/auth.routes");
 const trendingRoutes = require("./routes/trending.routes");
+const popularRoutes = require("./routes/popular.routes");
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use("/api/home", homeRoutes);
 app.use("/api/listings", listingRoutes);
 app.use("/api/assets", assetsRoutes);
 app.use("/api/trending", trendingRoutes);
+app.use("/api/popular", popularRoutes);
 
 
 app.get("/health", (req, res) => {

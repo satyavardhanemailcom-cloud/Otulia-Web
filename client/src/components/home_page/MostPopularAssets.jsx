@@ -1,7 +1,11 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import AssetCard from '../AssetCard'
+import randomShuffle from "../../modules/randomShuffle";
 
 const MostPopularAssets = () => {
+
+     const [list, setlist] = useState([]);
+
     // 1. Create a Ref to access the scrollable container
     const scrollRef = useRef(null);
 
@@ -14,6 +18,24 @@ const MostPopularAssets = () => {
             current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         }
     };
+
+    const datafetch = async ()=> {
+        const url = "http://localhost:8000/api/home/trending";
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+          }
+          const result = await response.json();
+          const n = Math.floor(result.length / 2);
+          setlist(randomShuffle(result))
+        } catch (error) {
+          console.error(error.message);
+        }
+      }
+      useEffect(() => {
+        datafetch()
+      }, []);
 
     const assets = [
         {
@@ -88,7 +110,7 @@ const MostPopularAssets = () => {
                         .scroll-smooth::-webkit-scrollbar { display: none; }
                     `}</style>
 
-                    {assets.map((item, idx) => (
+                    {list.map((item, idx) => (
                         // min-w ensures cards don't shrink. Adjust width as needed.
                         <div key={item.id} className="min-w-[300px] md:min-w-[350px]">
                             <AssetCard item={item} idx={idx}/>
