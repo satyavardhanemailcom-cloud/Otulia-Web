@@ -8,7 +8,6 @@ const Category_Navbar_Mobile = ({navLinks}) => {
   return (
     <div className='px-5 py-2'>
       <div className='flex flex-col gap-3 text-[#2C2C2C]'>
-        <SearchBar />
         <div className='flex flex-col gap-3 mt-5'>
           {navLinks.map(link => (
             <NavLink 
