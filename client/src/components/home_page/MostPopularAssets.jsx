@@ -37,49 +37,6 @@ const MostPopularAssets = () => {
         datafetch()
       }, []);
 
-    const assets = [
-        {
-            id: 1,
-            title: 'Palm Crest Villa',
-            price: '₹ 18,750,000,000',
-            location: 'Beverly Hills, Los Angeles, USA',
-            details: '6 Beds | 8 Baths | 12,400 sqft',
-            image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 2,
-            title: 'Azure Ridge Estate',
-            price: '₹ 14,980,000,000',
-            location: 'Bel Air, Los Angeles, USA',
-            details: '10 Beds | 8 Baths | 10,100 sqft',
-            image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 3,
-            title: 'Monte Verde Retreat',
-            price: '₹ 9,450,000,000',
-            location: 'Lake Como, Lombardy, Italy',
-            details: '5 Beds | 8 Baths | 7,400 sqft',
-            image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 4,
-            title: 'Timberlake Grand',
-            price: '₹ 11,200,000,000',
-            location: 'Aspen, Colorado, USA',
-            details: '15 Beds | 8 Baths | 13,400 sqft',
-            image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80',
-        },
-        {
-            id: 5, // Added extra item to demonstrate scrolling
-            title: 'The Sky Penthouse',
-            price: '₹ 22,500,000,000',
-            location: 'Manhattan, NY, USA',
-            details: '4 Beds | 5 Baths | 6,500 sqft',
-            image: 'https://images.unsplash.com/photo-1584957292742-10a90a507d91?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8c2t5JTIwcGVudGhvdXNlfGVufDB8fDB8fHww',
-        }
-    ]
-
     return (
         <section className="relative md:w-[95%] md:justify-self-center px-3 md:px-16 py-6 bg-white group">
             <h2 className="text-4xl playfair-display font-normal text-black mb-12">Most Popular Assets</h2>
@@ -112,7 +69,7 @@ const MostPopularAssets = () => {
 
                     {list.map((item, idx) => (
                         // min-w ensures cards don't shrink. Adjust width as needed.
-                        <div key={item.id} className="min-w-[300px] md:min-w-[350px]">
+                        <div key={item._id} className="min-w-[300px] md:min-w-[350px]">
                             <AssetCard item={item} idx={idx}/>
                         </div>
                     ))}

@@ -30,7 +30,6 @@ const TrendingListings = () => {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      const n = Math.floor(result.length / 2);
       setlist(randomShuffle(result))
     } catch (error) {
       console.error(error.message);
@@ -90,7 +89,7 @@ const TrendingListings = () => {
                     `}</style>
 
           {list.map((item, idx) => (
-            <div key={item.id} className="min-w-[300px] md:min-w-[350px]">
+            <div key={item._id} className="min-w-[300px] md:min-w-[350px]">
               <AssetCard item={item} idx={idx} />
             </div>
           ))}

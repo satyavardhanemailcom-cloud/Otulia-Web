@@ -80,7 +80,7 @@ const Trending_Section = ({ type }) => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {listings.map((item, idx) => (
             <div key={item.id}>
               <AssetCard item={item} idx={idx} />

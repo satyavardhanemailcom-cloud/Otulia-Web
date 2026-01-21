@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 // Reusable Chevron Icon
 const ChevronDown = () => (
@@ -7,27 +7,100 @@ const ChevronDown = () => (
   </svg>
 );
 
+// --- NEW COMPONENT: Auto-Width Dropdown ---
+const AutoWidthDropdown = ({ label, value, options, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSelect = (optionValue) => {
+    onChange(optionValue);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative inline-block w-full xl:w-auto" ref={dropdownRef}>
+      {/* TRIGGER BUTTON (Auto-width based on content) */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="
+          w-full xl:w-auto
+          flex items-center justify-between xl:justify-start gap-2
+          border border-gray-300
+          rounded-lg xl:rounded-full 
+          py-2.5 px-4 
+          bg-white hover:bg-gray-50
+          transition-colors
+          whitespace-nowrap
+        "
+      >
+        <span className="text-black montserrat text-base">
+          {value || label}
+        </span>
+        <ChevronDown />
+      </button>
+
+      {/* DROPDOWN MENU */}
+      {isOpen && (
+        <div className="
+          absolute z-50 mt-2 min-w-[150px] w-full xl:w-auto
+          bg-white border border-gray-200 rounded-lg shadow-lg 
+          max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-100
+        ">
+          {/* Header option (Reset) */}
+          <div 
+            className="px-4 py-2 text-gray-400 text-sm cursor-pointer hover:bg-gray-50"
+            onClick={() => handleSelect('')}
+          >
+            {label}
+          </div>
+          {/* Options */}
+          {options.map((opt) => (
+            <div
+              key={opt}
+              onClick={() => handleSelect(opt)}
+              className={`
+                px-4 py-2 cursor-pointer transition-colors montserrat text-sm
+                ${value === opt ? 'bg-[#9C824A]/10 text-[#9C824A] font-medium' : 'text-gray-700 hover:bg-gray-50 hover:text-black'}
+              `}
+            >
+              {opt}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const FilterBar = () => {
   const [filters, setFilters] = useState({
-    category: 'Supercars',
+    category: '',
     brand: '',
     model: '',
     country: '',
     price: ''
   });
 
-  const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
   };
 
   return (
     <div className="w-full flex justify-center p-4">
       
       {/* MAIN CONTAINER */}
-      {/* RESPONSIVE LOGIC:
-         - Mobile/Tablet: Rounded Rect (flex-col)
-         - Desktop (xl): Long Pill (flex-row) 
-      */}
       <form className="
         w-full max-w-[1400px]
         bg-white border border-gray-300 
@@ -45,108 +118,55 @@ const FilterBar = () => {
         </div>
 
         {/* INPUTS GROUP */}
-        {/* RESPONSIVE GRID:
-           - Mobile: grid-cols-2 (2 items per row)
-           - Tablet (md): grid-cols-3 (3 items per row, fits nicely)
-           - Desktop (xl): flex (Single line)
-        */}
         <div className="w-full grid grid-cols-2 md:grid-cols-3 xl:flex xl:items-center gap-4 xl:gap-0">
           
-          {/* 1. Category */}
-          <div className="relative group w-full xl:w-auto">
-            <select 
-              name="category" 
-              value={filters.category}
-              onChange={handleChange}
-              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
-            >
-              <option>Supercars</option>
-              <option>Luxury Sedans</option>
-              <option>Ultra-Luxury</option>
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <ChevronDown />
-            </div>
-          </div>
+          <AutoWidthDropdown 
+            label="Category" 
+            value={filters.category} 
+            options={['Supercars', 'Luxury Sedans', 'Ultra-Luxury']}
+            onChange={(val) => handleFilterChange('category', val)}
+          />
 
-          {/* DIVIDER (Desktop Only) */}
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          {/* 2. Brand */}
-          <div className="relative group w-full xl:w-auto">
-            <select 
-              name="brand" 
-              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
-            >
-              <option value="" disabled selected>Brand</option>
-              <option>Ferrari</option>
-              <option>Lamborghini</option>
-              <option>Porsche</option>
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <ChevronDown />
-            </div>
-          </div>
+          <AutoWidthDropdown 
+            label="Brand" 
+            value={filters.brand} 
+            options={['Ferrari', 'Lamborghini', 'Porsche']}
+            onChange={(val) => handleFilterChange('brand', val)}
+          />
 
-          {/* DIVIDER (Desktop Only) */}
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          {/* 3. Model */}
-          <div className="relative group w-full xl:w-auto">
-            <select 
-              name="model" 
-              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
-            >
-              <option value="" disabled selected>Model</option>
-              <option>Aventador</option>
-              <option>Huracan</option>
-              <option>911 GT3</option>
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <ChevronDown />
-            </div>
-          </div>
+          <AutoWidthDropdown 
+            label="Model" 
+            value={filters.model} 
+            options={['Aventador', 'Huracan', '911 GT3']}
+            onChange={(val) => handleFilterChange('model', val)}
+          />
 
-          {/* DIVIDER (Desktop Only) */}
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          {/* 4. Country */}
-          <div className="relative group w-full xl:w-auto">
-            <select 
-              name="country" 
-              className="w-full xl:w-40 appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
-            >
-              <option value="" disabled selected>Country</option>
-              <option>Italy</option>
-              <option>Germany</option>
-              <option>UK</option>
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <ChevronDown />
-            </div>
-          </div>
+          <AutoWidthDropdown 
+            label="Country" 
+            value={filters.country} 
+            options={['Italy', 'Germany', 'UK']}
+            onChange={(val) => handleFilterChange('country', val)}
+          />
 
-          {/* DIVIDER (Desktop Only) */}
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          {/* 5. Price */}
-          {/* Spans 2 cols on mobile, 1 on tablet/desktop */}
-          <div className="relative group w-full xl:w-auto col-span-2 md:col-span-1">
-            <select 
-              name="price" 
-              className="w-full xl:w-auto appearance-none border border-gray-200 rounded-lg xl:rounded-full py-2.5 px-4 text-black montserrat text-base focus:outline-none focus:border-[#B8860B] focus:bg-white cursor-pointer hover:bg-gray-100 xl:hover:bg-transparent transition-colors"
-            >
-              <option value="" disabled selected>Price</option>
-              <option>Low to High</option>
-              <option>High to Low</option>
-            </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <ChevronDown />
-            </div>
+          {/* Price - Spans 2 cols on mobile */}
+          <div className="col-span-2 md:col-span-1 xl:col-span-auto w-full xl:w-auto">
+            <AutoWidthDropdown 
+              label="Price" 
+              value={filters.price} 
+              options={['Low to High', 'High to Low']}
+              onChange={(val) => handleFilterChange('price', val)}
+            />
           </div>
 
-          {/* SEARCH BUTTON (Mobile/Tablet Only Placement) */}
-          {/* On Tablet, this moves to the last grid cell to fill the space */}
+          {/* SEARCH BUTTON (Mobile/Tablet) */}
           <div className="xl:hidden w-full col-span-2 md:col-span-1">
              <button 
               type="button"
@@ -158,8 +178,7 @@ const FilterBar = () => {
 
         </div>
 
-        {/* SEARCH BUTTON (Desktop Only Placement) */}
-        {/* Keeps the 'Pill' look clean on large screens */}
+        {/* SEARCH BUTTON (Desktop) */}
         <button 
           type="button"
           className="

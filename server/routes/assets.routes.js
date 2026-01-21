@@ -190,4 +190,30 @@ router.get("/combined", async (req, res) => {
   }
 });
 
+/**
+ * ALL CAR ASSETS (NEW ENDPOINT)
+ * /api/assets/car
+ */
+router.get("/car", async (req, res) => {
+  try {
+    const data = await CarAsset.find().sort({ createdAt: -1 }).limit(15);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all car assets" });
+  }
+});
+
+/**
+ * ALL ESTATE ASSETS (NEW ENDPOINT)
+ * /api/assets/estate
+ */
+router.get("/estate", async (req, res) => {
+  try {
+    const data = await EstateAsset.find().sort({ createdAt: -1 }).limit(15);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all estate assets" });
+  }
+});
+
 module.exports = router;
