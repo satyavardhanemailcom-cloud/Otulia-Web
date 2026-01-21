@@ -55,6 +55,32 @@ router.get("/estates", async (req, res) => {
 });
 
 /**
+ * ALL CAR ASSETS
+ * /api/assets/all/cars
+ */
+router.get("/all/cars", async (req, res) => {
+  try {
+    const data = await CarAsset.find().sort({ createdAt: -1 });
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all car assets" });
+  }
+});
+
+/**
+ * ALL ESTATE ASSETS
+ * /api/assets/all/estates
+ */
+router.get("/all/estates", async (req, res) => {
+  try {
+    const data = await EstateAsset.find().sort({ createdAt: -1 });
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all estate assets" });
+  }
+});
+
+/**
  * ASSET DETAIL
  * /api/assets/:type/:id
  */

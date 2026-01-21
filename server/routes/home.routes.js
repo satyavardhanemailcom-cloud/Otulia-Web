@@ -30,7 +30,9 @@ router.get("/featured", async(req, res) => {
  * Logic: highest bookings
  */
 
-const [carAssets, estateAssets] = await Promise.all([
+router.get("/popularity", async (req, res) => {
+  try {
+    const [carAssets, estateAssets] = await Promise.all([
       CarAsset.find(),
       EstateAsset.find(),
     ]);
