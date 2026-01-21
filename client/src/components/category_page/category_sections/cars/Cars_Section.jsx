@@ -2,7 +2,7 @@ import React from 'react'
 import Cars_Hero from './cars_hero'
 import FilterBar from './FilterBar'
 import AssetCard from '../../../AssetCard'
-import SortDropdown from './SortDropdown'
+import SortDropdown from '../SortDropdown'
 
 const Cars_Section = () => {
 
