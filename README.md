@@ -21,6 +21,10 @@ Find the most exquisite collection of luxury items at Otulia. We strive to provi
   ```
 - Open the client at `localhost:5173`
 - For move type the IP address shown after running the Run command
+- Run the backend
+  ```
+  node --watch server.js
+  ```
 
 ### Contribution rules
 

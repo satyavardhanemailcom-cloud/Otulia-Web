@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import numberWithCommas from '../modules/numberwithcomma'
 
 const AssetCard = ({item, idx}) => {
   const navigate = useNavigate()
@@ -95,7 +96,7 @@ const AssetCard = ({item, idx}) => {
             {item.title}
           </h3>
           <p className="text-md font-bold text-black mb-1 font-sans">
-            {item.price}
+            {`₹ ${numberWithCommas(item.price)}`}
           </p>
           <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest">
             {item.location}
