@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const VehicleAsset = require("../models/VehicleAsset.model");
+const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 
 const carImages = [
@@ -23,7 +23,7 @@ const run = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
 
-    const vehicleResult = await VehicleAsset.updateMany(
+    const vehicleResult = await CarAsset.updateMany(
       {
         $or: [
           { images: { $size: 0 } },

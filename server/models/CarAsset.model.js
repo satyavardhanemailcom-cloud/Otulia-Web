@@ -68,4 +68,4 @@ const vehicleAssetSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("VehicleAsset", vehicleAssetSchema);
+module.exports = mongoose.model("CarAsset", vehicleAssetSchema);

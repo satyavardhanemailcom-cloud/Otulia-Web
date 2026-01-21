@@ -1,15 +1,15 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const VehicleAsset = require("../models/VehicleAsset.model");
+const CarAsset = require("../models/CarAsset.model");
 
-const seedVehicleAssets = async () => {
+const seedCarAssets = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
 
-    const existingCount = await VehicleAsset.countDocuments();
+    const existingCount = await CarAsset.countDocuments();
 
     if (existingCount >= 20) {
-      console.log("ℹ️ Vehicle assets already sufficient:", existingCount);
+      console.log("ℹ️ Car assets already sufficient:", existingCount);
       process.exit();
     }
 
@@ -33,17 +33,17 @@ const seedVehicleAssets = async () => {
     }
 
     if (vehiclesToAdd.length > 0) {
-      await VehicleAsset.insertMany(vehiclesToAdd);
-      console.log("✅ Vehicle assets extended to 20");
+      await CarAsset.insertMany(vehiclesToAdd);
+      console.log("✅ Car assets extended to 20");
     } else {
       console.log("ℹ️ No vehicle assets added");
     }
 
     process.exit();
   } catch (err) {
-    console.error("❌ Vehicle seed error", err);
+    console.error("❌ Car seed error", err);
     process.exit(1);
   }
 };
 
-seedVehicleAssets();
+seedCarAssets();

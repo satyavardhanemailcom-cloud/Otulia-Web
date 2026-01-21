@@ -1,17 +1,17 @@
 const express = require("express");
-const VehicleAsset = require("../models/VehicleAsset.model");
+const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const [vehicleAssets, estateAssets] = await Promise.all([
-      VehicleAsset.find(),
+    const [carAssets, estateAssets] = await Promise.all([
+      CarAsset.find(),
       EstateAsset.find(),
     ]);
 
-    const combinedAssets = [...vehicleAssets, ...estateAssets];
+    const combinedAssets = [...carAssets, ...estateAssets];
 
     const popularAssets = combinedAssets
       .sort((a, b) => b.popularity - a.popularity)

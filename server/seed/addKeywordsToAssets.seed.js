@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const VehicleAsset = require("../models/VehicleAsset.model");
+const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 
 const normalize = (text = "") =>
@@ -11,7 +11,7 @@ const run = async () => {
     await mongoose.connect(process.env.MONGO_URI);
 
     // ---------- VEHICLES ----------
-    const vehicles = await VehicleAsset.find();
+    const vehicles = await CarAsset.find();
 
     for (const v of vehicles) {
       const keywords = new Set([

@@ -1,7 +1,7 @@
 const authMiddleware = require("../middleware/auth.middleware");
 
 const express = require("express");
-const VehicleAsset = require("../models/VehicleAsset.model");
+const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.get("/vehicles", async (req, res) => {
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
-    const data = await VehicleAsset.find(query)
+    const data = await CarAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
       .sort({ createdAt: -1 });
@@ -65,7 +65,7 @@ router.get("/:type/:id", async (req, res) => {
     let asset;
 
     if (type === "vehicles") {
-      asset = await VehicleAsset.findById(id);
+      asset = await CarAsset.findById(id);
     } else if (type === "estates") {
       asset = await EstateAsset.findById(id);
     } else {
@@ -97,7 +97,7 @@ router.post("/:type/:id/like", authMiddleware,  async (req, res) => {
     let asset;
 
     if (type === "vehicles") {
-      asset = await VehicleAsset.findById(id);
+      asset = await CarAsset.findById(id);
     } else if (type === "estates") {
       asset = await EstateAsset.findById(id);
     } else {
@@ -141,8 +141,8 @@ router.get("/combined", async (req, res) => {
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
-    const [vehicleAssets, estateAssets] = await Promise.all([
-      VehicleAsset.find(query)
+    const [carAssets, estateAssets] = await Promise.all([
+      CarAsset.find(query)
         .skip((page - 1) * limit)
         .limit(Number(limit))
         .sort({ createdAt: -1 }),
@@ -152,7 +152,7 @@ router.get("/combined", async (req, res) => {
         .sort({ createdAt: -1 }),
     ]);
 
-    const combinedAssets = [...vehicleAssets, ...estateAssets];
+    const combinedAssets = [...carAssets, ...estateAssets];
 
     // Optionally, sort the combined assets by createdAt if needed
     combinedAssets.sort((a, b) => b.createdAt - a.createdAt);
