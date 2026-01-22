@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import numberWithCommas from '../modules/numberwithcomma'
 
 const AssetCard = ({item}) => {
   const navigate = useNavigate()
+
+  const pathname = useLocation()
+  // Correctly checking if it is the homepage
+  const homepage = pathname.pathname === '/'
   
   // STATE
   const [isLiked, setIsLiked] = useState(false);
@@ -131,16 +135,27 @@ const AssetCard = ({item}) => {
       </div>
 
       {/* Content Section */}
-      <div className="p-5">
-        <h3 className="text-xl playfair-display text-black mb-1 font-sans truncate">
+      <div className="p-5 relative">
+        <h3 className="text-xl playfair-display text-black mb-1 font-sans truncate pr-14">
           {item.title}
         </h3>
         <p className="text-md font-bold text-black mb-1 font-sans">
           {typeof item.price === 'number' ? `₹ ${numberWithCommas(item.price)}` : item.price}
         </p>
+        
         <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest truncate">
           {item.location}
         </p>
+        
+        {!homepage && (
+          <div className='absolute top-5 right-4 flex gap-2 items-center p-2 border border-gray-200 rounded-lg bg-white shadow-sm'>
+            <img className='w-8 h-8 rounded-full object-cover' src={item.agent.photo} alt="agent" />
+            {/* UPDATED RESPONSIVENESS: Hidden on mobile/tablet, visible on XL screens */}
+            <p className="text-[10px] hidden xl:block text-gray-500 font-medium uppercase tracking-wider truncate max-w-[80px]">
+              {item.agent.name}
+            </p>
+          </div>
+        )}
 
         <div className="w-full h-px bg-gray-100 mb-2"></div>
 
@@ -148,6 +163,10 @@ const AssetCard = ({item}) => {
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest truncate">
             {displayDetails || "View Details"}
           </p>
+          {!homepage && item.agent?.companyLogo && (
+              /* UPDATED LOGO: Constrained height to prevent layout shift */
+              <img className="h-10 rounded-md object-contain" src={item.agent.companyLogo} alt="companyLogo" />
+          )}
         </div>
       </div>
     </div>
