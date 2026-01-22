@@ -1,6 +1,6 @@
 import React from 'react'
-import SearchBar from '../components/navbar_sidepanel/SearchBar'
-import LoginButton from '../components/navbar/LoginButton'
+import SearchBar from './navbar_sidepanel/SearchBar'
+import LoginButton from './navbar/LoginButton'
 
 const NavbarMobile = () => {
   return (

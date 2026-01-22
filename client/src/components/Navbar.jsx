@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, NavLink} from "react-router-dom";
-import Cart from "../navbar/Cart";
-import Search from "../navbar/Search";
-import LoginButton from "../navbar/LoginButton";
-import NavbarMobile from "../Navbar_mobile";
+import Cart from "./navbar/Cart";
+import Search from "./navbar/Search";
+import LoginButton from "./navbar/LoginButton";
+import NavbarMobile from "./Navbar_mobile";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);

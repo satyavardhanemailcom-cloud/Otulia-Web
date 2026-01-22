@@ -1,10 +1,10 @@
 import React from 'react'
-import Asset_Navbar from '../components/asset_page/Asset_Navbar'
+import Navbar from '../components/Navbar'
 
 const Asset = () => {
   return (
     <div>
-      <Asset_Navbar />
+      <Navbar />
     </div>
   )
 }
