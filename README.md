@@ -15,14 +15,18 @@ Find the most exquisite collection of luxury items at Otulia. We strive to provi
   ```
   npm install
   ```
-- Run the client app
+- Run the client app  
+  Open terminal, go to folder client
   ```
+  npm install
   npm run dev
   ```
 - Open the client at `localhost:5173`
 - For move type the IP address shown after running the Run command
-- Run the backend
+- Run the backend  
+  Open new terminal, go to folder server
   ```
+  npm install
   node --watch server.js
   ```
 
