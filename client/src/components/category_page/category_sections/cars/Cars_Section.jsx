@@ -8,10 +8,11 @@ import randomShuffle from '../../../../modules/randomShuffle'
 const Cars_Section = () => {
 
     const [list, setlist] = useState([]);
+    const [limit, setLimit] = useState(10);
 
     // Fetch data
   const datafetch = async ()=> {
-    const url = "http://localhost:8000/api/assets/car";
+    const url = `http://localhost:8000/api/assets/car?limit=${limit}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -25,7 +26,7 @@ const Cars_Section = () => {
   }
   useEffect(() => {
     datafetch()
-  }, []);
+  }, [limit]);
 
     const brands = [
         {
@@ -97,13 +98,16 @@ const Cars_Section = () => {
 
             <div className="w-[92%] md:w-[95%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
+          <div className='w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8'>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
           {list.map((item, idx) => (
             <div key={item._id}>
               <AssetCard item={item} idx={idx} />
             </div>
           ))}
         </div>
+          </div>
+            
 
          </section>            
         

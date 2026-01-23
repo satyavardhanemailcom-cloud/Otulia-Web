@@ -196,7 +196,10 @@ router.get("/combined", async (req, res) => {
  */
 router.get("/car", async (req, res) => {
   try {
-    const data = await CarAsset.find().sort({ createdAt: -1 }).limit(15);
+    const { limit = 15 } = req.query;
+    const data = await CarAsset.find()
+      .sort({ createdAt: -1 })
+      .limit(Number(limit));
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all car assets" });
@@ -209,7 +212,10 @@ router.get("/car", async (req, res) => {
  */
 router.get("/estate", async (req, res) => {
   try {
-    const data = await EstateAsset.find().sort({ createdAt: -1 }).limit(15);
+    const { limit = 15 } = req.query;
+    const data = await EstateAsset.find()
+      .sort({ createdAt: -1 })
+      .limit(Number(limit));
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });

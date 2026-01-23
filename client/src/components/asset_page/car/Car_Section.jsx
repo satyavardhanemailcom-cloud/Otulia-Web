@@ -4,13 +4,13 @@ import CarDetails from "./car/CarDetails";
 import CarKeyFeatures from "./car/CarKeyFeat";
 import CarFeatures from "./car/CarFeatures";
 import AssetCard from "../AssetCard";
+import { useLocation } from "react-router-dom";
 
-const Asset_Section = () => {
+const Car_Section = () => {
+  const [info, setinfo] = useState({})
   const [list, setlist] = useState([]);
   const [limit, setLimit] = useState(3);
-    const path = useLocation()
-  const cat = path.pathname.split('/')
-  const id = cat[3]
+
   // Fetch data
   const datafetch = async () => {
     const url = `http://localhost:8000/api/assets/car?limit=${limit}`;
@@ -70,4 +70,4 @@ const Asset_Section = () => {
   );
 };
 
-export default Asset_Section;
+export default Car_Section;
