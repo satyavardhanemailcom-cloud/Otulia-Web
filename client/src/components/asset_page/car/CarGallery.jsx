@@ -1,27 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const CarGallery = ({ images = [] }) => {
+const CarGallery = ({ images }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollContainerRef = useRef(null);
-
-    images = [
-    "https://images.unsplash.com/photo-1723083467100-c0b389b9c205?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fDIwMjMlMjBCZW50bGV5JTIwQ29udGluZW50YWwlMjBHVCUyMFNwZWVkfGVufDB8fDB8fHww", // Main Porsche-like
-    "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=1200&q=80", // Detail 1
-    "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80", // Interior 1
-    "https://images.unsplash.com/photo-1655207297101-74aadf311205?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8SmFndWFyJTIwRS1UeXBlJTIwU2VyaWVzJTIwMXxlbnwwfHwwfHx8MA%3D%3D", // Interior 2
-    "https://images.unsplash.com/photo-1599912027806-cfec9f5944b6?auto=format&fit=crop&w=1200&q=80", // Side View
-    "https://images.unsplash.com/photo-1611766424498-57b8418ed48d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8eGtlfGVufDB8fDB8fHww", // Rear
-  ];
-
-  // Safety check: If no images are passed, show a placeholder or nothing
-  if (!images || images.length === 0) {
-    return (
-      <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-400">
-        No Images Available
-      </div>
-    );
-  }
-
+  
   // Handlers for main arrows
   const handlePrev = () => {
     setActiveIndex((prev) => {
@@ -54,6 +36,15 @@ const CarGallery = ({ images = [] }) => {
   useEffect(() => {
     scrollToThumbnail(activeIndex);
   }, [activeIndex]);
+
+  // Safety check: If no images are passed, show a placeholder or nothing
+  if (!images || images.length === 0) {
+    return (
+      <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-gray-400">
+        No Images Available
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-[1000px] mx-auto p-4 bg-white">

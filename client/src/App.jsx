@@ -37,7 +37,7 @@ function App() {
          <Route path="/seller" element={<Seller />} />
          <Route path="/pricing" element={<Pricing />} />
          <Route path="/category/*" element={<Categorty />} />
-         <Route path="/asset/*" element={<Asset />} />
+         <Route path="/asset/:category/:id" element={<Asset />} />
          <Route path="/blogs" element={<Blogs />} />
          
          {/* Routes for company pages */}

@@ -2,22 +2,26 @@ import React from 'react';
 import numberWithCommas from '../../../modules/numberwithcomma';
 
 const CarDetails = ({ item }) => {
-  // Fallback data if no item is passed (for preview purposes)
-  const data = item || {
-    title: "Porsche 911 S/T",
-    price: 468600,
-    location: "Mayfair, London, UK",
-    description: "The Porsche 911 S/T is a lightweight, limited-edition 911 focused on pure driving feel, featuring a high-revving naturally aspirated engine and a manual gearbox. It blends classic Porsche character with modern performance for true enthusiasts.",
-    brandLogo: "https://cdn.worldvectorlogo.com/logos/porsche-3.svg", // Porsche Crest
-    agent: {
-      name: "Fernanda Collet",
-      joined: "Joined 2 months ago",
-      photo: "https://randomuser.me/api/portraits/women/44.jpg",
-      company: "Dourado Luxury Cars",
-      listingsCount: 83,
-      companyLogo: "https://douradocars.com/wp-content/uploads/2020/07/Dourado-Logo-Yellow-Gold-1-1.png" // Placeholder logo
+  // Destructure with fallbacks to prevent errors if item or its properties are missing
+  const { 
+    title = "Untitled Asset", 
+    brand_logo = "", 
+    location = "Unknown Location", 
+    description = "No description available.", 
+    price = 0, 
+    agent = {} // Use an empty object as a fallback for agent
+  } = item || {}; // Use an empty object as a fallback for item itself
+
+  function convertMonthsToYears(totalMonths) {
+    if (totalMonths < 12) {
+      return `${totalMonths} months ago`
     }
-  };
+
+  const years = Math.floor(totalMonths / 12);
+  const remainingMonths = totalMonths % 12;
+  
+  return `${years} years ago`
+}
 
   return (
     <div className="w-full max-w-[1200px] mx-auto p-4 md:p-8 bg-white font-sans">
@@ -31,10 +35,10 @@ const CarDetails = ({ item }) => {
           
           <div className="flex items-center gap-4 mb-4">
             <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
-              {data.title}
+              {title}
             </h1>
-            {data.brandLogo && (
-               <img src={data.brandLogo} alt="Brand" className="h-10 md:h-12 w-auto object-contain" />
+            {brand_logo && (
+               <img src={brand_logo} alt="Brand" className="h-10 md:h-12 w-auto object-contain" />
             )}
           </div>
 
@@ -44,7 +48,7 @@ const CarDetails = ({ item }) => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
             </svg>
-            <span className="text-sm font-medium montserrat">{data.location}</span>
+            <span className="text-sm font-medium montserrat">{location}</span>
           </div>
 
           {/* Description Section */}
@@ -53,7 +57,7 @@ const CarDetails = ({ item }) => {
               About The Porsche :
             </h2>
             <p className="text-gray-700 leading-relaxed text-base md:text-lg montserrat">
-              {data.description}
+              {description}
             </p>
           </div>
         </div>
@@ -64,7 +68,7 @@ const CarDetails = ({ item }) => {
           {/* Price Header (Right aligned on desktop) */}
           <div className="w-full text-left lg:text-right">
             <h2 className="text-3xl md:text-4xl font-bold playfair-display text-black">
-              ₹ {numberWithCommas(data.price)}
+              ₹ {numberWithCommas(price)}
             </h2>
           </div>
 
@@ -74,13 +78,13 @@ const CarDetails = ({ item }) => {
             {/* Agent Header */}
             <div className="flex items-center gap-4 mb-6 montserrat">
               <img 
-                src={data.agent.photo} 
-                alt={data.agent.name} 
+                src={agent.photo} 
+                alt={agent.name} 
                 className="w-14 h-14 rounded-full object-cover border border-gray-100"
               />
               <div>
-                <h3 className="text-lg font-bold text-black">{data.agent.name}</h3>
-                <p className="text-sm text-gray-400">{data.agent.joined}</p>
+                <h3 className="text-lg font-bold text-black">{agent.name}</h3>
+                <p className="text-sm text-gray-400">{`Joined ${convertMonthsToYears(agent.joined)}`}</p>
               </div>
             </div>
 
@@ -108,14 +112,14 @@ const CarDetails = ({ item }) => {
             <div className="flex items-center justify-between montserrat">
               <div>
                 <p className="text-xs font-bold text-black uppercase tracking-wide mb-2">
-                  {data.agent.company}
+                  {agent.company}
                 </p>
                 <p className="text-xs text-gray-400 decoration-gray-300 cursor-pointer">
-                  {data.agent.listingsCount} Listings for Sale
+                  Listings for Sale
                 </p>
               </div>
               <img 
-                src={data.agent.companyLogo} 
+                src={agent.companyLogo} 
                 alt="Company Logo" 
                 className="h-8 w-auto object-contain bg-black p-1"
               />

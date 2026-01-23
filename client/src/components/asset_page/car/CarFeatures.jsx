@@ -6,7 +6,7 @@ const CarFeatures = ({ item }) => {
 
   // Helper function to render a single row
   const SpecRow = ({ label, value, isLink = false, icon = null }) => (
-    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0">
+    <div className="flex justify-between items-center py-4 border-b border-gray-100 last:border-0 montserrat">
       <span className="text-gray-500 font-normal text-sm md:text-base">
         {label}
       </span>

@@ -11,6 +11,7 @@ const vehicleAssetSchema = new mongoose.Schema(
     images: [{ type: String }],
 
     brand: { type: String },
+    brand_logo: { type: String },
 
     keySpecifications: {
       power: String,
@@ -53,6 +54,7 @@ const vehicleAssetSchema = new mongoose.Schema(
       email: String,
       company: String,
       companyLogo: String,
+      joined: { type: Number },
     },
 
     isTrending: { type: Boolean, default: false },
