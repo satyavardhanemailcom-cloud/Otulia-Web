@@ -4,6 +4,7 @@ import CarDetails from "./car/CarDetails";
 import CarKeyFeatures from "./car/CarKeyFeat";
 import CarFeatures from "./car/CarFeatures";
 import AssetCard from "../AssetCard";
+import { useLocation } from "react-router-dom";
 
 const Asset_Section = () => {
   const [list, setlist] = useState([]);
