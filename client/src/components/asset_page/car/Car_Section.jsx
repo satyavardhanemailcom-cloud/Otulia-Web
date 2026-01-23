@@ -1,15 +1,39 @@
 import React, { useState, useEffect } from "react";
-import CarGallery from "./car/CarGallery";
-import CarDetails from "./car/CarDetails";
-import CarKeyFeatures from "./car/CarKeyFeat";
-import CarFeatures from "./car/CarFeatures";
-import AssetCard from "../AssetCard";
+import CarGallery from "../car/CarGallery";
+import CarDetails from "../car/CarDetails";
+import CarKeyFeatures from "../car/CarKeyFeat";
+import CarFeatures from "../car/CarFeatures";
+import AssetCard from "../../AssetCard"
 import { useLocation } from "react-router-dom";
 
 const Car_Section = () => {
   const [info, setinfo] = useState({})
   const [list, setlist] = useState([]);
   const [limit, setLimit] = useState(3);
+
+  const path = useLocation()
+    const patharray = path.pathname.split('/')
+    const id = patharray[3]
+
+
+  // Car info fetching
+  const infofetch = async () => {
+    const url = `http://localhost:8000/api/assets/car/${id}`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log(result)
+      setinfo(result);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+  useEffect(() => {
+    infofetch();
+  }, []);
 
   // Fetch data
   const datafetch = async () => {

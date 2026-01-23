@@ -81,6 +81,30 @@ router.get("/all/estates", async (req, res) => {
 });
 
 /**
+ * FETCH SINGLE CAR ASSET BY ID
+ * /api/assets/car/:id
+ */
+router.get("/car/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let asset = await CarAsset.findById(id);
+
+    if (!asset) {
+      return res.status(404).json({ message: "Car asset not found" });
+    }
+
+    // Increment views, similar to the existing /:type/:id route
+    asset.views += 1;
+    await asset.save();
+
+    res.json(asset);
+  } catch (error) {
+    console.error("Error fetching car asset by ID:", error);
+    res.status(500).json({ message: "Failed to fetch car asset" });
+  }
+});
+
+/**
  * ASSET DETAIL
  * /api/assets/:type/:id
  */
@@ -219,30 +243,6 @@ router.get("/estate", async (req, res) => {
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });
-  }
-});
-
-/**
- * FETCH SINGLE CAR ASSET BY ID
- * /api/assets/car/:id
- */
-router.get("/car/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    let asset = await CarAsset.findById(id);
-
-    if (!asset) {
-      return res.status(404).json({ message: "Car asset not found" });
-    }
-
-    // Increment views, similar to the existing /:type/:id route
-    asset.views += 1;
-    await asset.save();
-
-    res.json(asset);
-  } catch (error) {
-    console.error("Error fetching car asset by ID:", error);
-    res.status(500).json({ message: "Failed to fetch car asset" });
   }
 });
 
