@@ -25,9 +25,9 @@ const Navbar = () => {
   // Dynamic Navbar Classes
   const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${
     !isHeroPage
-      ? "bg-[#F8F8F8] text-white"
+      ? "bg-white text-white"
       : isScrolled
-      ? "bg-[#F8F8F8] shadow-md text-white"
+      ? "bg-white shadow-md text-white"
       : "bg-transparent text-white"
   }`;
 
