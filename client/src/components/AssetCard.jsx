@@ -13,6 +13,7 @@ const AssetCard = ({item}) => {
   const [isLiked, setIsLiked] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false); 
+  let category = '.'
 
   // 1. GET TOP 3 IMAGES ONLY
   const validImages = (() => {
@@ -43,13 +44,16 @@ const AssetCard = ({item}) => {
   let displayDetails = item.details;
   if (!displayDetails && item.keySpecifications) {
     const specs = item.keySpecifications;
+   
     if (specs.power || specs.mileage) {
       displayDetails = [specs.power, specs.mileage, specs.cylinderCapacity].filter(Boolean).join(' | ');
+      category = 'car'
     } else {
       const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
       const baths = specs.bathrooms ? `${specs.bathrooms} Baths` : null;
       const area = specs.builtUpArea || specs.landArea;
       displayDetails = [beds, baths, area].filter(Boolean).join(' | ');
+      category = 'estate'
     }
   }
 
@@ -66,7 +70,7 @@ const AssetCard = ({item}) => {
 
   return (
     <div
-      onClick={() => navigate(`/asset/${item.id}`)}
+      onClick={() => navigate(`/asset/${category}/${item._id}`)}
       onMouseEnter={() => setIsHovered(true)} 
       onMouseLeave={() => setIsHovered(false)}
       className="relative border border-gray-100 shadow-sm transition-all duration-300 bg-white cursor-pointer block hover:shadow-lg"

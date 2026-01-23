@@ -46,6 +46,7 @@ const vehicleAssetSchema = new mongoose.Schema(
     },
 
     agent: {
+      id: String,
       name: String,
       photo: String,
       phone: String,
