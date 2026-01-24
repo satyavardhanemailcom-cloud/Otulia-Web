@@ -19,7 +19,7 @@ const Estate_Section = () => {
     
     if (!id) return;
 
-    const url = `http://localhost:8000/api/assets/estate/${id}`;
+    const url = `/api/assets/estate/${id}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -40,7 +40,7 @@ const Estate_Section = () => {
 
   
   const dataFetch = async () => {
-    const url = `http://localhost:8000/api/assets/estate?limit=${limit}`;
+    const url = `/api/assets/estate?limit=${limit}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

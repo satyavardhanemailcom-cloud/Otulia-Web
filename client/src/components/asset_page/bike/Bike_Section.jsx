@@ -15,7 +15,7 @@ const Bike_Section = () => {
 
     const infoFetch = async () => {
         if (!id) return;
-        const url = `http://localhost:8000/api/assets/bike/${id}`;
+        const url = `/api/assets/bike/${id}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -33,7 +33,7 @@ const Bike_Section = () => {
     }, [id]);
 
     const dataFetch = async () => {
-        const url = `http://localhost:8000/api/assets/bike?limit=${limit}`;
+        const url = `/api/assets/bike?limit=${limit}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {

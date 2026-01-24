@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const connectDB = require("./db");
+const path = require("path");
 
 // middleware import
 const corsMiddleware = require("./middleware/cors.middleware.js");
@@ -19,6 +20,8 @@ connectDB();
 
 app.use(express.json());
 app.use(corsMiddleware);
+const PORT = process.env.PORT || 8000;
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // routes register
 app.use("/api/auth", authRoutes);
@@ -37,8 +40,10 @@ app.get("/health", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 8000;
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
 
 app.listen(PORT, () => {
-  // Server is running on port 8000
+  console.log(`Server running on ${PORT}`)
 });

@@ -30,6 +30,16 @@ Find the most exquisite collection of luxury items at Otulia. We strive to provi
   node --watch server.js
   ```
 
+- To server frontend directly from backend  
+  Run build command on client
+  ```
+  npm run build
+  ```
+  Run backend
+  ```
+  npm run dev
+  ```
+
 ### Contribution rules
 
 ### Folder Structure

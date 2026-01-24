@@ -20,7 +20,7 @@ const Car_Section = () => {
     // Safety check
     if (!id) return;
 
-    const url = `http://localhost:8000/api/assets/car/${id}`;
+    const url = `/api/assets/car/${id}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
@@ -41,7 +41,7 @@ const Car_Section = () => {
 
   // Fetch sidebar list
   const dataFetch = async () => {
-    const url = `http://localhost:8000/api/assets/car?limit=${limit}`;
+    const url = `/api/assets/car?limit=${limit}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

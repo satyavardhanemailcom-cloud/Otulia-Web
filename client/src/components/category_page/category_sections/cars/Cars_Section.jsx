@@ -12,7 +12,7 @@ const Cars_Section = () => {
 
     // Fetch data
   const datafetch = async ()=> {
-    const url = `http://localhost:8000/api/assets/car?limit=${limit}`;
+    const url = `/api/assets/car?limit=${limit}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
