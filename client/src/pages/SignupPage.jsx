@@ -63,14 +63,14 @@ const SignupPage = () => {
                     <div>
                         <button
                             type="submit"
-                            className="w-full px-4 py-2 font-bold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className="w-full px-4 py-2 font-bold text-white bg-black rounded-md hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
                             Sign Up
                         </button>
                     </div>
                 </form>
                 <p className="text-sm text-center text-gray-600">
-                    Already have an account? <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">Log in</Link>
+                    Already have an account? <Link to="/login" className="font-medium text-gray-800 hover:text-gray-700">Log in</Link>
                 </p>
             </div>
         </div>
