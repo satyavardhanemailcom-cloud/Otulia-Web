@@ -36,7 +36,7 @@ const Category_Navbar = () => {
     
     const navClasses = `fixed left-0 z-50 h-15 transition-all duration-200 flex items-center justify-between p-4 ${
         isScrolled 
-            ? "bg-[#2C2C2C] shadow-md text-white w-screen" // NOTE: I changed text-black to text-white for visibility on dark bg
+            ? "bg-[#2C2C2C] text-white w-screen" // NOTE: I changed text-black to text-white for visibility on dark bg
             : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-full"
     }`;
     

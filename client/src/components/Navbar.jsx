@@ -32,9 +32,9 @@ const Navbar = () => {
 
   const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${
     !isHeroPage
-      ? "bg-white text-black shadow-sm" // FIXED: Changed text-white to text-black
+      ? "bg-white text-black" // FIXED: Changed text-white to text-black
       : isScrolled
-      ? "bg-white shadow-md text-black"
+      ? "bg-white text-black"
       : "bg-transparent text-white"
   }`;
 
