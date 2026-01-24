@@ -25,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/listings", listingRoutes);
 app.use("/api/assets", assetsRoutes);
+app.use("/api/test", require("./routes/test.routes"));
 app.use("/api/trending", trendingRoutes);
 app.use("/api/popular", popularRoutes);
 
