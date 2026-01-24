@@ -1,25 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import numberWithCommas from '../../../modules/numberwithcomma';
 
 const CarDetails = ({ item }) => {
-  // Destructure with fallbacks to prevent errors if item or its properties are missing
+  const { user, token, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [activityLoading, setActivityLoading] = useState(false);
+
+  // Destructure with fallbacks 
   const {
+    _id,
     title = "Untitled Asset",
     brand_logo = "",
     location = "Unknown Location",
     description = "No description available.",
     price = 0,
-    agent = {} // Use an empty object as a fallback for agent
-  } = item || {}; // Use an empty object as a fallback for item itself
+    agent = {}
+  } = item || {};
+
+  const handleCallAgent = async () => {
+    if (!isAuthenticated) {
+      alert("Please login to contact our luxury agents.");
+      navigate('/login');
+      return;
+    }
+
+    setActivityLoading(true);
+    try {
+      await fetch('http://127.0.0.1:8000/api/activity/record', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          assetId: _id,
+          assetModel: 'CarAsset',
+          activityType: 'CALL_AGENT',
+          metadata: { agentName: agent.name, company: agent.company }
+        })
+      });
+
+      console.log("📈 Activity recorded: User interested in", title);
+      alert(`Request sent! Agent ${agent.name} will call you shortly.`);
+    } catch (error) {
+      console.error("Failed to record activity:", error);
+    } finally {
+      setActivityLoading(false);
+    }
+  };
 
   function convertMonthsToYears(totalMonths) {
     if (totalMonths < 12) {
       return `${totalMonths} months ago`
     }
-
     const years = Math.floor(totalMonths / 12);
-    const remainingMonths = totalMonths % 12;
-
     return `${years} years ago`
   }
 
@@ -32,7 +68,6 @@ const CarDetails = ({ item }) => {
         <div className="w-full lg:w-2/3">
 
           {/* Title & Brand Logo */}
-
           <div className="flex items-center gap-4 mb-4">
             <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
               {title}
@@ -89,18 +124,22 @@ const CarDetails = ({ item }) => {
             </div>
 
             {/* Call Action */}
-            <button className="w-full flex items-center justify-center gap-2 text-[#008080] font-medium mb-6 hover:underline montserrat">
+            <button
+              onClick={handleCallAgent}
+              disabled={activityLoading}
+              className="w-full flex items-center justify-center gap-2 bg-black text-white py-4 rounded-sm font-medium mb-6 hover:bg-gray-800 transition-all montserrat disabled:opacity-50"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
               </svg>
-              Call Agent
+              {activityLoading ? 'Sending...' : 'Call Agent'}
             </button>
 
             {/* Input Field */}
             <div className="mb-8 montserrat">
               <input
                 type="text"
-                placeholder="Your name"
+                placeholder="What can we help you with?"
                 className="w-full border border-gray-200 p-3 text-sm outline-none focus:border-gray-400 transition-colors"
               />
             </div>
@@ -133,5 +172,6 @@ const CarDetails = ({ item }) => {
     </div>
   );
 };
+
 
 export default CarDetails;

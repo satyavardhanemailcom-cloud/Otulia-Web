@@ -10,7 +10,7 @@ import { useAuth } from "../contexts/AuthContext"; // Import useAuth
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [panelFlag, setpanelFlag] = useState(false);
-  const { isAuthenticated } = useAuth(); // Get authentication status
+  const { isAuthenticated, loading } = useAuth(); // Get authentication status and loading state
 
   const location = useLocation();
   const isHeroPage = location.pathname === "/";
@@ -23,13 +23,12 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${
-    !isHeroPage
-      ? "bg-white text-white"
-      : isScrolled
-      ? "bg-white shadow-md text-white"
+  const navClasses = `fixed top-0 left-0 w-screen z-50 transition-all duration-200 flex items-center justify-between p-6 ${!isHeroPage
+    ? "bg-white text-black"
+    : isScrolled
+      ? "bg-white shadow-md text-black"
       : "bg-transparent text-white"
-  }`;
+    }`;
 
   return (
     <nav className={navClasses}>
@@ -66,9 +65,8 @@ const Navbar = () => {
 
       {/* 3. THE MOBILE PANEL FIX */}
       <div
-        className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-51 transform transition-transform duration-300 ease-in-out ${
-          panelFlag ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-51 transform transition-transform duration-300 ease-in-out ${panelFlag ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <button
           onClick={() => setpanelFlag(false)}
@@ -100,16 +98,20 @@ const Navbar = () => {
         <li>
           <Search />
         </li>
-        {!isAuthenticated && (
-          <li>
-            <LoginButton />
-          </li>
-        )}
-        {isAuthenticated && (
-          <li className="text-black flex gap-3 items-center justify-center">
-            <ProfileDropdown />
-            <Cart />
-          </li>
+        {!loading && (
+          <>
+            {!isAuthenticated && (
+              <li>
+                <LoginButton />
+              </li>
+            )}
+            {isAuthenticated && (
+              <li className="flex gap-3 items-center justify-center">
+                <ProfileDropdown />
+                <Cart />
+              </li>
+            )}
+          </>
         )}
       </ul>
     </nav>

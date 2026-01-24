@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import freemiumUrl from '../../assets/pricing/freemium.jpg'
 import premiumUrl from '../../assets/pricing/premium.jpg'
 import businessUrl from '../../assets/pricing/business_plan.jpg'
 
 const PricingSection = () => {
+  const { user, token, isAuthenticated, refreshUser } = useAuth();
+  const navigate = useNavigate();
+  const [loadingPlanId, setLoadingPlanId] = useState(null);
+  const [statusMessage, setStatusMessage] = useState({ text: '', type: '' });
+
   const plans = [
     {
       id: 1,
@@ -55,6 +62,45 @@ const PricingSection = () => {
     }
   ];
 
+  const handlePlanSelection = async (plan) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (user && user.plan === plan.name) {
+      setStatusMessage({ text: `You are already on the ${plan.name} plan.`, type: 'info' });
+      return;
+    }
+
+    setLoadingPlanId(plan.id);
+    setStatusMessage({ text: '', type: '' });
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/upgrade-plan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ plan: plan.name })
+      });
+
+      if (response.ok) {
+        setStatusMessage({ text: `Successfully upgraded to ${plan.name}! Your profile is now active.`, type: 'success' });
+        await refreshUser(); // Update global user state immediately
+      } else {
+        const err = await response.json();
+        setStatusMessage({ text: err.error || 'Failed to upgrade. Please try again.', type: 'error' });
+      }
+    } catch (error) {
+      console.error('Plan upgrade error:', error);
+      setStatusMessage({ text: 'A connection error occurred.', type: 'error' });
+    } finally {
+      setLoadingPlanId(null);
+    }
+  };
+
   return (
     <div className="w-full py-16 px-4 bg-white montserrat">
 
@@ -63,9 +109,17 @@ const PricingSection = () => {
         <h2 className="text-3xl md:text-5xl playfair-display text-black mb-4">
           Choose your pricing plan
         </h2>
-        <p className="text-gray-500 text-sm md:text-lg max-w-xl mx-auto">
+        <p className="text-gray-500 text-sm md:text-lg max-w-xl mx-auto mb-6">
           Find the perfect plan for your luxury assets. Elevate your presence with Otulia's premium listing features.
         </p>
+
+        {statusMessage.text && (
+          <div className={`max-w-md mx-auto p-4 rounded-md mb-8 ${statusMessage.type === 'success' ? 'bg-green-50 text-green-700' :
+            statusMessage.type === 'info' ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700'
+            }`}>
+            {statusMessage.text}
+          </div>
+        )}
       </div>
 
       {/* CARDS GRID */}
@@ -74,8 +128,17 @@ const PricingSection = () => {
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className="flex flex-col bg-white border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 rounded-sm overflow-hidden"
+            className={`flex flex-col bg-white border shadow-sm hover:shadow-2xl transition-all duration-500 rounded-sm overflow-hidden 
+                ${user?.plan === plan.name ? 'border-[#D90416]' : 'border-gray-100'}
+            `}
           >
+
+            {/* CURRENT PLAN BADGE */}
+            {user?.plan === plan.name && (
+              <div className="bg-[#D90416] text-white text-[10px] font-bold uppercase tracking-widest text-center py-1">
+                Your Current Plan
+              </div>
+            )}
 
             {/* CARD IMAGE HEADER */}
             <div className="h-44 w-full overflow-hidden">
@@ -144,14 +207,17 @@ const PricingSection = () => {
                   Valid until canceled • Tax included
                 </p>
                 <button
+                  onClick={() => handlePlanSelection(plan)}
+                  disabled={loadingPlanId === plan.id || user?.plan === plan.name}
                   className={`
                     w-full py-4 rounded-full
                     ${plan.buttonColor} hover:brightness-110 
                     text-white font-bold text-sm tracking-widest uppercase
                     transition-all duration-300 shadow-md active:scale-95
+                    ${(loadingPlanId === plan.id || user?.plan === plan.name) ? 'opacity-50 cursor-not-allowed' : ''}
                   `}
                 >
-                  Get Started
+                  {loadingPlanId === plan.id ? 'Processing...' : user?.plan === plan.name ? 'Active' : 'Get Started'}
                 </button>
               </div>
 

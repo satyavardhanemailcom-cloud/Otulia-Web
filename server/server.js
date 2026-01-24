@@ -13,6 +13,7 @@ const authRoutes = require("./routes/auth.routes");
 const trendingRoutes = require("./routes/trending.routes");
 const popularRoutes = require("./routes/popular.routes");
 const sellerRoutes = require("./routes/seller.routes");
+const activityRoutes = require("./routes/activity.routes");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/home", homeRoutes);
 app.use("/api/listings", listingRoutes);
 app.use("/api/assets", assetsRoutes);
 app.use("/api/seller", sellerRoutes);
+app.use("/api/activity", activityRoutes);
 app.use("/api/test", require("./routes/test.routes"));
 app.use("/api/trending", trendingRoutes);
 app.use("/api/popular", popularRoutes);

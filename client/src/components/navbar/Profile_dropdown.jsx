@@ -1,23 +1,110 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import UserURL from '../../assets/user.png'
 
 const ProfileDropdown = () => {
     const { user, logout } = useAuth();
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const navigate = useNavigate();
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    if (!user) return null;
+
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
     return (
-        <div className="relative">
-            <div className="flex items-center gap-2 cursor-pointer">
-                <img src={user.photo || UserURL} alt="user" className="w-8 h-8 rounded-full" />
-                <span className="">{user.name}</span>
+        <div className="relative" ref={dropdownRef}>
+            {/* TRIGGER */}
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 p-1.5 rounded-full transition-all duration-300"
+            >
+                <div className="relative">
+                    <img
+                        src={user.profilePicture || UserURL}
+                        alt="user"
+                        className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                    />
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
+                <div className="flex flex-col items-start leading-none hidden md:flex pr-2">
+                    <span className="text-sm font-bold uppercase tracking-tight truncate max-w-[100px]">
+                        {user.name}
+                    </span>
+                    <span className="text-[10px] opacity-80 font-medium mt-1">
+                        {user.plan || 'Free Member'}
+                    </span>
+                </div>
             </div>
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</Link>
-                <button onClick={logout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Logout
-                </button>
-            </div>
+
+            {/* DROPDOWN MENU */}
+            {isOpen && (
+                <div className="absolute right-0 mt-4 w-64 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 py-3 z-[100] animate-fade-in">
+
+                    {/* Header Info */}
+                    <div className="px-5 py-3 border-b border-gray-50 mb-2">
+                        <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Logged in as</p>
+                        <p className="text-sm font-bold text-black truncate">{user.email}</p>
+                    </div>
+
+                    <div className="flex flex-col py-1">
+                        <Link
+                            to="/profile"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                            <span className="text-lg">👤</span>
+                            <span>My Profile</span>
+                        </Link>
+
+                        <Link
+                            to="/pricing"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                            <span className="text-lg">💎</span>
+                            <div className="flex flex-col">
+                                <span>Membership Plan</span>
+                                <span className="text-[10px] text-gray-400">Current: {user.plan}</span>
+                            </div>
+                        </Link>
+
+                        <Link
+                            to="/listings"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                            <span className="text-lg">📤</span>
+                            <span>My Listings</span>
+                        </Link>
+                    </div>
+
+                    <div className="h-px bg-gray-100 my-2"></div>
+
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-600 font-medium hover:bg-red-50 transition-colors text-left"
+                    >
+                        <span className="text-lg">🚪</span>
+                        <span>Sign Out</span>
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
