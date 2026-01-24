@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["freemium", "premium", "business_plan"],
       default: "freemium",
-    }
+    },
   },
   { timestamps: true }
 );

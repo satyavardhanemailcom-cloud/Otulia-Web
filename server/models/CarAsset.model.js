@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const vehicleAssetSchema = new mongoose.Schema(
+const carAssetSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
@@ -71,4 +71,4 @@ const vehicleAssetSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("CarAsset", vehicleAssetSchema);
+module.exports = mongoose.model("CarAsset", carAssetSchema);
