@@ -53,11 +53,13 @@
     "phone": "+33 6 12 34 56 78",
     "email": "jp.dubois@luxestates.fr",
     "company": "Riviera Realty",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 9,
-  "views": 15420,
+  "views": 15422,
   "likes": 340,
   "keywords": [
     "ocean view",
@@ -65,7 +67,10 @@
     "pool",
     "france",
     "luxury"
-  ]
+  ],
+  "updatedAt": {
+    "$date": "2026-01-24T03:37:15.977Z"
+  }
 },
 {
   "_id": {
@@ -122,11 +127,13 @@
     "phone": "+1 310 555 0199",
     "email": "sarah.j@beverlyluxury.com",
     "company": "Beverly Luxury Group",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 10,
-  "views": 22100,
+  "views": 22101,
   "likes": 890,
   "keywords": [
     "historic",
@@ -134,7 +141,10 @@
     "spanish style",
     "garden",
     "celebrity"
-  ]
+  ],
+  "updatedAt": {
+    "$date": "2026-01-24T03:56:17.767Z"
+  }
 },
 {
   "_id": {
@@ -191,7 +201,9 @@
     "phone": "+971 50 123 4567",
     "email": "ahmed@dubaihighlife.ae",
     "company": "Dubai High Life",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
@@ -260,7 +272,9 @@
     "phone": "+39 055 123 4567",
     "email": "giulia@tuscanyhomes.it",
     "company": "Tuscany Homes",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 7,
@@ -329,11 +343,13 @@
     "phone": "+1 970 555 1212",
     "email": "mike@aspenski.com",
     "company": "Alpine Realty",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 9,
-  "views": 12300,
+  "views": 12304,
   "likes": 450,
   "keywords": [
     "ski",
@@ -341,7 +357,10 @@
     "snow",
     "chalet",
     "winter"
-  ]
+  ],
+  "updatedAt": {
+    "$date": "2026-01-24T03:46:17.794Z"
+  }
 },
 {
   "_id": {
@@ -398,11 +417,13 @@
     "phone": "+81 90 1234 5678",
     "email": "kenji@kyotoestates.jp",
     "company": "Sakura Homes",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 6,
-  "views": 6700,
+  "views": 6706,
   "likes": 150,
   "keywords": [
     "zen",
@@ -410,7 +431,10 @@
     "japan",
     "traditional",
     "peaceful"
-  ]
+  ],
+  "updatedAt": {
+    "$date": "2026-01-24T03:56:13.554Z"
+  }
 },
 {
   "_id": {
@@ -467,11 +491,13 @@
     "phone": "+1 212 555 9988",
     "email": "emily@nycpremier.com",
     "company": "NYC Premier",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
-  "views": 14500,
+  "views": 14504,
   "likes": 320,
   "keywords": [
     "new york",
@@ -479,7 +505,10 @@
     "central park",
     "luxury",
     "city"
-  ]
+  ],
+  "updatedAt": {
+    "$date": "2026-01-24T03:42:47.536Z"
+  }
 },
 {
   "_id": {
@@ -536,7 +565,9 @@
     "phone": "+62 81 234 567",
     "email": "wayan@balieco.com",
     "company": "Bali Eco Living",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
@@ -605,7 +636,9 @@
     "phone": "+44 20 7123 4567",
     "email": "arthur@londonestates.co.uk",
     "company": "London Estates",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 7,
@@ -674,7 +707,9 @@
     "phone": "+27 21 555 1234",
     "email": "charlize@caperealty.za",
     "company": "Cape Realty",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
@@ -743,7 +778,9 @@
     "phone": "+41 79 123 45 67",
     "email": "lukas@swissalps.ch",
     "company": "Swiss Alps Realty",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 7,
@@ -812,7 +849,9 @@
     "phone": "+1 305 555 6789",
     "email": "ricardo@miamivip.com",
     "company": "Miami VIP Realty",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 9,
@@ -881,7 +920,9 @@
     "phone": "+33 1 44 55 66 77",
     "email": "claire@parisprestige.fr",
     "company": "Paris Prestige",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
@@ -950,7 +991,9 @@
     "phone": "+30 2286 012345",
     "email": "nikos@santorinilux.gr",
     "company": "Santorini Lux",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 9,
@@ -1019,7 +1062,9 @@
     "phone": "+1 512 555 4321",
     "email": "jimbob@texasranch.com",
     "company": "Texas Ranch Sales",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 6,
@@ -1088,7 +1133,9 @@
     "phone": "+1 604 555 9876",
     "email": "jessica@vancouverlux.ca",
     "company": "VanCity Homes",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
@@ -1157,7 +1204,9 @@
     "phone": "+61 2 9876 5432",
     "email": "liam@sydneyharbor.com.au",
     "company": "Harbor Realty",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 9,
@@ -1226,7 +1275,9 @@
     "phone": "+212 6 61 23 45 67",
     "email": "yasmine@marrakechliving.ma",
     "company": "Oasis Properties",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 6,
@@ -1295,7 +1346,9 @@
     "phone": "+65 9123 4567",
     "email": "david@singaporeprime.sg",
     "company": "Lion City Realty",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
@@ -1364,7 +1417,9 @@
     "phone": "+1 631 555 2468",
     "email": "amanda@hamptonslux.com",
     "company": "Hamptons Lux",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 9,
@@ -1433,7 +1488,9 @@
     "phone": "+39 031 987 6543",
     "email": "marco@comoproperties.it",
     "company": "Como Properties",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 8,
@@ -1502,7 +1559,9 @@
     "phone": "+66 81 234 5678",
     "email": "somsak@phuketvillas.th",
     "company": "Phuket Villas",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 7,
@@ -1571,7 +1630,9 @@
     "phone": "+34 600 123 456",
     "email": "maria@bcnliving.es",
     "company": "BCN Living",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": false,
   "popularity": 7,
@@ -1640,7 +1701,9 @@
     "phone": "+44 1463 123456",
     "email": "hamish@highlandcastles.co.uk",
     "company": "Highland Estates",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,
@@ -1709,7 +1772,9 @@
     "phone": "+81 3 1234 5678",
     "email": "yuki@tokyoprime.jp",
     "company": "Tokyo Prime",
-    "companyLogo": "https://static.vecteezy.com/system/resources/previews/000/624/602/original/real-estate-logo-design-vector.jpg"
+    "companyLogo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVfDQEFZMX8AyZWAhylw5nbgiSICJ7Be1WKg&s",
+    "id": "10",
+    "joined": 6
   },
   "isTrending": true,
   "popularity": 8,

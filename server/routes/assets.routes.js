@@ -105,6 +105,30 @@ router.get("/car/:id", async (req, res) => {
 });
 
 /**
+ * FETCH SINGLE ESTATE ASSET BY ID
+ * /api/assets/estate/:id
+ */
+router.get("/estate/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let asset = await EstateAsset.findById(id);
+
+    if (!asset) {
+      return res.status(404).json({ message: "Estate asset not found" });
+    }
+
+    // Increment views
+    asset.views += 1;
+    await asset.save();
+
+    res.json(asset);
+  } catch (error) {
+    console.error("Error fetching estate asset by ID:", error);
+    res.status(500).json({ message: "Failed to fetch estate asset" });
+  }
+});
+
+/**
  * ASSET DETAIL
  * /api/assets/:type/:id
  */
