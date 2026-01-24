@@ -25,7 +25,7 @@ import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollTop";
 
 function App() {
-  
+
   return (
     <>
       <ScrollToTop />
@@ -41,7 +41,7 @@ function App() {
         <Route path="/category/*" element={<Categorty />} />
         <Route path="/asset/:category/:id" element={<Asset />} />
         <Route path="/blogs" element={<Blogs />} />
-        
+
         {/* Auth routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
@@ -50,9 +50,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/faq" element={<FAQ />} />
-         
+
       </Routes>
-      <PopularLinks />
       <Footer />
     </>
   )
