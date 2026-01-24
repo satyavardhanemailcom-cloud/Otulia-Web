@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import Cars_Hero from './cars_hero'
+import Cars_Hero from './Cars_Hero'
 import FilterBar from './FilterBar'
 import AssetCard from '../../../AssetCard'
 import SortDropdown from '../SortDropdown'
