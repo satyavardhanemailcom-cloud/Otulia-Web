@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import numberWithCommas from '../modules/numberwithcomma'
 
-const AssetCard = ({item}) => {
+const AssetCard = ({ item }) => {
   const navigate = useNavigate()
 
   const pathname = useLocation()
   // Correctly checking if it is the homepage
   const homepage = pathname.pathname === '/'
-  
+
   // STATE
   const [isLiked, setIsLiked] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false); 
+  const [isHovered, setIsHovered] = useState(false);
   let category = '.'
 
   // 1. GET TOP 3 IMAGES ONLY
@@ -22,7 +22,7 @@ const AssetCard = ({item}) => {
     else if (Array.isArray(item.image) && item.image.length > 0) imgs = item.image;
     else if (typeof item.image === 'string') imgs = [item.image];
     else imgs = ['https://via.placeholder.com/400x300?text=No+Image'];
-    
+
     return imgs.slice(0, 3);
   })();
 
@@ -31,29 +31,40 @@ const AssetCard = ({item}) => {
     if (validImages.length <= 1) return;
 
     // Pause auto-slide if user is hovering (optional polish)
-    if (isHovered) return; 
+    if (isHovered) return;
 
     const interval = setInterval(() => {
       setActiveImageIndex((prev) => (prev + 1) % validImages.length);
-    }, 3000); 
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [validImages.length, isHovered]); // dependency on isHovered allows pausing
 
   // 3. DETAILS LOGIC
   let displayDetails = item.details;
+
+  // Set category based on explicit field or infer from specs
+  if (item.category) {
+    category = item.category.toLowerCase();
+  }
+
   if (!displayDetails && item.keySpecifications) {
     const specs = item.keySpecifications;
-   
+
     if (specs.power || specs.mileage) {
       displayDetails = [specs.power, specs.mileage, specs.cylinderCapacity].filter(Boolean).join(' | ');
-      category = 'car'
+      // Only set if not already set by item.category
+      if (category === '.') {
+        category = 'car';
+      }
     } else {
       const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
       const baths = specs.bathrooms ? `${specs.bathrooms} Baths` : null;
       const area = specs.builtUpArea || specs.landArea;
       displayDetails = [beds, baths, area].filter(Boolean).join(' | ');
-      category = 'estate'
+      if (category === '.') {
+        category = 'estate';
+      }
     }
   }
 
@@ -71,15 +82,15 @@ const AssetCard = ({item}) => {
   return (
     <div
       onClick={() => navigate(`/asset/${category}/${item._id}`)}
-      onMouseEnter={() => setIsHovered(true)} 
+      onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="relative border border-gray-100 shadow-sm transition-all duration-300 bg-white cursor-pointer block hover:shadow-lg"
     >
       {/* Image Container (Mask) */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-        
+
         {/* SLIDER TRACK: This moves left/right smoothly */}
-        <div 
+        <div
           className="flex h-full w-full transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${activeImageIndex * 100}%)` }}
         >
@@ -90,9 +101,8 @@ const AssetCard = ({item}) => {
               alt={item.title}
               // Each image takes up 100% of the card width (min-w-full)
               // The scale effect works independently of the slide
-              className={`min-w-full h-full object-cover transition-transform duration-1000 ease-in-out ${
-                isHovered ? "scale-110" : "scale-100"
-              }`}
+              className={`min-w-full h-full object-cover transition-transform duration-1000 ease-in-out ${isHovered ? "scale-110" : "scale-100"
+                }`}
             />
           ))}
         </div>
@@ -105,8 +115,8 @@ const AssetCard = ({item}) => {
                 key={index}
                 onClick={(e) => handleDotClick(e, index)}
                 className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 shadow-sm border border-black/10 
-                  ${activeImageIndex === index 
-                    ? "bg-white scale-125" 
+                  ${activeImageIndex === index
+                    ? "bg-white scale-125"
                     : "bg-white/50 hover:bg-white/80"
                   }`}
               ></div>
@@ -116,9 +126,8 @@ const AssetCard = ({item}) => {
 
         {/* Heart Button */}
         <button
-          className={`absolute top-2 right-3 z-20 focus:outline-none transition-transform duration-300 ${
-            isHovered ? "scale-110" : "scale-100"
-          }`}
+          className={`absolute top-2 right-3 z-20 focus:outline-none transition-transform duration-300 ${isHovered ? "scale-110" : "scale-100"
+            }`}
           onClick={handleHeartClick}
         >
           <svg
@@ -146,11 +155,11 @@ const AssetCard = ({item}) => {
         <p className="text-md font-bold text-black mb-1 font-sans">
           {typeof item.price === 'number' ? `₹ ${numberWithCommas(item.price)}` : item.price}
         </p>
-        
+
         <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest truncate">
           {item.location}
         </p>
-        
+
         {!homepage && (
           <div className='absolute top-5 right-4 flex gap-2 items-center p-2 border border-gray-200 rounded-lg bg-white shadow-sm'>
             <img className='w-8 h-8 rounded-full object-cover' src={item.agent.photo} alt="agent" />
@@ -168,8 +177,8 @@ const AssetCard = ({item}) => {
             {displayDetails || "View Details"}
           </p>
           {!homepage && item.agent?.companyLogo && (
-              /* UPDATED LOGO: Constrained height to prevent layout shift */
-              <img className="h-10 rounded-md object-contain" src={item.agent.companyLogo} alt="companyLogo" />
+            /* UPDATED LOGO: Constrained height to prevent layout shift */
+            <img className="h-10 rounded-md object-contain" src={item.agent.companyLogo} alt="companyLogo" />
           )}
         </div>
       </div>

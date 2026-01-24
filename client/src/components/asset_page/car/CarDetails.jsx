@@ -3,12 +3,12 @@ import numberWithCommas from '../../../modules/numberwithcomma';
 
 const CarDetails = ({ item }) => {
   // Destructure with fallbacks to prevent errors if item or its properties are missing
-  const { 
-    title = "Untitled Asset", 
-    brand_logo = "", 
-    location = "Unknown Location", 
-    description = "No description available.", 
-    price = 0, 
+  const {
+    title = "Untitled Asset",
+    brand_logo = "",
+    location = "Unknown Location",
+    description = "No description available.",
+    price = 0,
     agent = {} // Use an empty object as a fallback for agent
   } = item || {}; // Use an empty object as a fallback for item itself
 
@@ -17,28 +17,28 @@ const CarDetails = ({ item }) => {
       return `${totalMonths} months ago`
     }
 
-  const years = Math.floor(totalMonths / 12);
-  const remainingMonths = totalMonths % 12;
-  
-  return `${years} years ago`
-}
+    const years = Math.floor(totalMonths / 12);
+    const remainingMonths = totalMonths % 12;
+
+    return `${years} years ago`
+  }
 
   return (
     <div className="w-full max-w-[1200px] mx-auto p-4 md:p-8 bg-white font-sans">
-      
+
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start">
-        
+
         {/* LEFT COLUMN: Details */}
         <div className="w-full lg:w-2/3">
-          
+
           {/* Title & Brand Logo */}
-          
+
           <div className="flex items-center gap-4 mb-4">
             <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
               {title}
             </h1>
             {brand_logo && (
-               <img src={brand_logo} alt="Brand" className="h-10 md:h-12 w-auto object-contain" />
+              <img src={brand_logo} alt="Brand" className="h-10 md:h-12 w-auto object-contain" />
             )}
           </div>
 
@@ -54,7 +54,7 @@ const CarDetails = ({ item }) => {
           {/* Description Section */}
           <div className="mb-8">
             <h2 className="text-xl md:text-2xl font-bold playfair-display text-black mb-4">
-              About The Porsche :
+              Description :
             </h2>
             <p className="text-gray-700 leading-relaxed text-base md:text-lg montserrat">
               {description}
@@ -64,7 +64,7 @@ const CarDetails = ({ item }) => {
 
         {/* RIGHT COLUMN: Price & Agent Card */}
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
-          
+
           {/* Price Header (Right aligned on desktop) */}
           <div className="w-full text-left lg:text-right">
             <h2 className="text-3xl md:text-4xl font-bold playfair-display text-black">
@@ -74,12 +74,12 @@ const CarDetails = ({ item }) => {
 
           {/* Agent Card Box */}
           <div className="border border-gray-200 rounded-sm shadow-sm p-6 bg-white">
-            
+
             {/* Agent Header */}
             <div className="flex items-center gap-4 mb-6 montserrat">
-              <img 
-                src={agent.photo} 
-                alt={agent.name} 
+              <img
+                src={agent.photo}
+                alt={agent.name}
                 className="w-14 h-14 rounded-full object-cover border border-gray-100"
               />
               <div>
@@ -98,11 +98,11 @@ const CarDetails = ({ item }) => {
 
             {/* Input Field */}
             <div className="mb-8 montserrat">
-               <input 
-                 type="text" 
-                 placeholder="Your name" 
-                 className="w-full border border-gray-200 p-3 text-sm outline-none focus:border-gray-400 transition-colors"
-               />
+              <input
+                type="text"
+                placeholder="Your name"
+                className="w-full border border-gray-200 p-3 text-sm outline-none focus:border-gray-400 transition-colors"
+              />
             </div>
 
             {/* Divider */}
@@ -118,9 +118,9 @@ const CarDetails = ({ item }) => {
                   Listings for Sale
                 </p>
               </div>
-              <img 
-                src={agent.companyLogo} 
-                alt="Company Logo" 
+              <img
+                src={agent.companyLogo}
+                alt="Company Logo"
                 className="h-8 w-auto object-contain bg-black p-1"
               />
             </div>
