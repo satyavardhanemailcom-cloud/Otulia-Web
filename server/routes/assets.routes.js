@@ -3,6 +3,8 @@ const authMiddleware = require("../middleware/auth.middleware");
 const express = require("express");
 const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
+const BikeAsset = require("../models/BikeAsset.model");
+const YachtAsset = require("../models/YachtAsset.model");
 
 const router = express.Router();
 
@@ -55,6 +57,54 @@ router.get("/estates", async (req, res) => {
 });
 
 /**
+ * BIKE ASSETS
+ * /api/assets/bikes
+ * Supports: ?search=&page=&limit=
+ */
+router.get("/bikes", async (req, res) => {
+  try {
+    const { search = "", page = 1, limit = 12 } = req.query;
+
+    const query = search
+      ? { title: { $regex: search, $options: "i" } }
+      : {};
+
+    const data = await BikeAsset.find(query)
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch bike assets" });
+  }
+});
+
+/**
+ * YACHT ASSETS
+ * /api/assets/yachts
+ * Supports: ?search=&page=&limit=
+ */
+router.get("/yachts", async (req, res) => {
+  try {
+    const { search = "", page = 1, limit = 12 } = req.query;
+
+    const query = search
+      ? { title: { $regex: search, $options: "i" } }
+      : {};
+
+    const data = await YachtAsset.find(query)
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch yacht assets" });
+  }
+});
+
+/**
  * ALL CAR ASSETS
  * /api/assets/all/cars
  */
@@ -77,6 +127,32 @@ router.get("/all/estates", async (req, res) => {
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });
+  }
+});
+
+/**
+ * ALL BIKE ASSETS
+ * /api/assets/all/bikes
+ */
+router.get("/all/bikes", async (req, res) => {
+  try {
+    const data = await BikeAsset.find().sort({ createdAt: -1 });
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all bike assets" });
+  }
+});
+
+/**
+ * ALL YACHT ASSETS
+ * /api/assets/all/yachts
+ */
+router.get("/all/yachts", async (req, res) => {
+  try {
+    const data = await YachtAsset.find().sort({ createdAt: -1 });
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all yacht assets" });
   }
 });
 
@@ -129,6 +205,54 @@ router.get("/estate/:id", async (req, res) => {
 });
 
 /**
+ * FETCH SINGLE BIKE ASSET BY ID
+ * /api/assets/bike/:id
+ */
+router.get("/bike/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let asset = await BikeAsset.findById(id);
+
+    if (!asset) {
+      return res.status(404).json({ message: "Bike asset not found" });
+    }
+
+    // Increment views
+    asset.views += 1;
+    await asset.save();
+
+    res.json(asset);
+  } catch (error) {
+    console.error("Error fetching bike asset by ID:", error);
+    res.status(500).json({ message: "Failed to fetch bike asset" });
+  }
+});
+
+/**
+ * FETCH SINGLE YACHT ASSET BY ID
+ * /api/assets/yacht/:id
+ */
+router.get("/yacht/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    let asset = await YachtAsset.findById(id);
+
+    if (!asset) {
+      return res.status(404).json({ message: "Yacht asset not found" });
+    }
+
+    // Increment views
+    asset.views += 1;
+    await asset.save();
+
+    res.json(asset);
+  } catch (error) {
+    console.error("Error fetching yacht asset by ID:", error);
+    res.status(500).json({ message: "Failed to fetch yacht asset" });
+  }
+});
+
+/**
  * ASSET DETAIL
  * /api/assets/:type/:id
  */
@@ -142,6 +266,10 @@ router.get("/:type/:id", async (req, res) => {
       asset = await CarAsset.findById(id);
     } else if (type === "estates") {
       asset = await EstateAsset.findById(id);
+    } else if (type === "bikes") {
+      asset = await BikeAsset.findById(id);
+    } else if (type === "yachts") {
+      asset = await YachtAsset.findById(id);
     } else {
       return res.status(400).json({ message: "Invalid asset type" });
     }
@@ -164,7 +292,7 @@ router.get("/:type/:id", async (req, res) => {
  * LIKE ASSET
  * /api/assets/:type/:id/like
  */
-router.post("/:type/:id/like", authMiddleware,  async (req, res) => {
+router.post("/:type/:id/like", authMiddleware, async (req, res) => {
   try {
     const { type, id } = req.params;
 
@@ -174,6 +302,10 @@ router.post("/:type/:id/like", authMiddleware,  async (req, res) => {
       asset = await CarAsset.findById(id);
     } else if (type === "estates") {
       asset = await EstateAsset.findById(id);
+    } else if (type === "bikes") {
+      asset = await BikeAsset.findById(id);
+    } else if (type === "yachts") {
+      asset = await YachtAsset.findById(id);
     } else {
       return res.status(400).json({ message: "Invalid asset type" });
     }
@@ -215,22 +347,35 @@ router.get("/combined", async (req, res) => {
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
-    const [carAssets, estateAssets] = await Promise.all([
-      CarAsset.find(query)
-        .skip((page - 1) * limit)
-        .limit(Number(limit))
-        .sort({ createdAt: -1 }),
-      EstateAsset.find(query)
-        .skip((page - 1) * limit)
-        .limit(Number(limit))
-        .sort({ createdAt: -1 }),
-    ]);
+    const [carAssets, estateAssets, bikeAssets, yachtAssets] =
+      await Promise.all([
+        CarAsset.find(query)
+          .skip((page - 1) * limit)
+          .limit(Number(limit))
+          .sort({ createdAt: -1 }),
+        EstateAsset.find(query)
+          .skip((page - 1) * limit)
+          .limit(Number(limit))
+          .sort({ createdAt: -1 }),
+        BikeAsset.find(query)
+          .skip((page - 1) * limit)
+          .limit(Number(limit))
+          .sort({ createdAt: -1 }),
+        YachtAsset.find(query)
+          .skip((page - 1) * limit)
+          .limit(Number(limit))
+          .sort({ createdAt: -1 }),
+      ]);
 
-    const combinedAssets = [...carAssets, ...estateAssets];
+    const combinedAssets = [
+      ...carAssets,
+      ...estateAssets,
+      ...bikeAssets,
+      ...yachtAssets,
+    ];
 
     // Optionally, sort the combined assets by createdAt if needed
     combinedAssets.sort((a, b) => b.createdAt - a.createdAt);
-
 
     res.json(combinedAssets);
   } catch (err) {
@@ -267,6 +412,38 @@ router.get("/estate", async (req, res) => {
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });
+  }
+});
+
+/**
+ * ALL BIKE ASSETS (NEW ENDPOINT)
+ * /api/assets/bike
+ */
+router.get("/bike", async (req, res) => {
+  try {
+    const { limit = 15 } = req.query;
+    const data = await BikeAsset.find()
+      .sort({ createdAt: -1 })
+      .limit(Number(limit));
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all bike assets" });
+  }
+});
+
+/**
+ * ALL YACHT ASSETS (NEW ENDPOINT)
+ * /api/assets/yacht
+ */
+router.get("/yacht", async (req, res) => {
+  try {
+    const { limit = 15 } = req.query;
+    const data = await YachtAsset.find()
+      .sort({ createdAt: -1 })
+      .limit(Number(limit));
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch all yacht assets" });
   }
 });
 

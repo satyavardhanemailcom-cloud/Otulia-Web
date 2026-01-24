@@ -2,6 +2,8 @@ const express = require("express");
 const Listing = require("../models/Listing.model");
 const CarAsset = require("../models/CarAsset.model");
 const EstateAsset = require("../models/EstateAsset.model");
+const BikeAsset = require("../models/BikeAsset.model");
+const YachtAsset = require("../models/YachtAsset.model");
 
 const router = express.Router();
 
@@ -31,22 +33,30 @@ router.get("/featured", async(req, res) => {
  */
 
 router.get("/popularity", async (req, res) => {
-  try {
-    const [carAssets, estateAssets] = await Promise.all([
-      CarAsset.find(),
-      EstateAsset.find(),
-    ]);
-
-    const combinedAssets = [...carAssets, ...estateAssets];
-
-    const popularAssets = combinedAssets
-      .sort((a, b) => b.popularity - a.popularity)
-      .slice(0, 10);
-
-    res.json(popularAssets);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch popular assets" });
-  }
+ try {
+     const [carAssets, estateAssets, bikeAssets, yachtAssets] =
+       await Promise.all([
+         CarAsset.find(),
+         EstateAsset.find(),
+         BikeAsset.find(),
+         YachtAsset.find(),
+       ]);
+ 
+     const combinedAssets = [
+       ...carAssets,
+       ...estateAssets,
+       ...bikeAssets,
+       ...yachtAssets,
+     ];
+ 
+     const popularAssets = combinedAssets
+       .sort((a, b) => b.popularity - a.popularity)
+       .slice(0, 10);
+ 
+     res.json(popularAssets);
+   } catch (error) {
+     res.status(500).json({ message: "Failed to fetch popular assets" });
+   }
 });
 
 /** 
@@ -56,17 +66,25 @@ router.get("/popularity", async (req, res) => {
 
 router.get("/trending", async (req, res) => {
   try {
-    const [carAssets, estateAssets] = await Promise.all([
-      CarAsset.find({ isTrending: true }).limit(5),
-      EstateAsset.find({ isTrending: true }).limit(5),
-    ]);
-
-    const combinedAssets = [...carAssets, ...estateAssets];
-
-    res.json(combinedAssets);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch trending assets" });
-  }
+      const [carAssets, estateAssets, bikeAssets, yachtAssets] =
+        await Promise.all([
+          CarAsset.find({ isTrending: true }).limit(5),
+          EstateAsset.find({ isTrending: true }).limit(5),
+          BikeAsset.find({ isTrending: true }).limit(5),
+          YachtAsset.find({ isTrending: true }).limit(5),
+        ]);
+  
+      const combinedAssets = [
+        ...carAssets,
+        ...estateAssets,
+        ...bikeAssets,
+        ...yachtAssets,
+      ];
+  
+      res.json(combinedAssets);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch trending assets" });
+    }
 });
 
 module.exports = router;
