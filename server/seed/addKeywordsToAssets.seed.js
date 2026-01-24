@@ -43,7 +43,7 @@ const run = async () => {
       await e.save();
     }
 
-    console.log("✅ Keywords added to all assets");
+    // Keywords added to all assets
     process.exit();
   } catch (err) {
     console.error("❌ Keyword migration error", err);

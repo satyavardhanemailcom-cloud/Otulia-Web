@@ -9,7 +9,7 @@ const seedCarAssets = async () => {
     const existingCount = await CarAsset.countDocuments();
 
     if (existingCount >= 20) {
-      console.log("ℹ️ Car assets already sufficient:", existingCount);
+      // Car assets already sufficient
       process.exit();
     }
 
@@ -34,9 +34,9 @@ const seedCarAssets = async () => {
 
     if (vehiclesToAdd.length > 0) {
       await CarAsset.insertMany(vehiclesToAdd);
-      console.log("✅ Car assets extended to 20");
+      // Car assets extended to 20
     } else {
-      console.log("ℹ️ No vehicle assets added");
+      // No vehicle assets added
     }
 
     process.exit();

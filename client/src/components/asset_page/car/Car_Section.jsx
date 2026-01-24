@@ -13,7 +13,7 @@ const Car_Section = () => {
 
   // 1. Get ID correctly regardless of URL structure
   const { id } = useParams();
-  console.log(id) 
+   
 
   // Car info fetching
   const infoFetch = async () => {
@@ -27,7 +27,7 @@ const Car_Section = () => {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      console.log(result)
+      
       setInfo(result);  
     } catch (error) {
       console.error("Error fetching car info:", error.message);

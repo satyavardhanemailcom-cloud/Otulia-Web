@@ -18,6 +18,9 @@ import FAQ from "./pages/company_pages/FAQ";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 
+// User pages
+import Profile from "./pages/Profile";
+
 import { Routes, Route } from "react-router-dom";
 
 import PopularLinks from "./components/PopularLinks"
@@ -51,6 +54,8 @@ function App() {
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/faq" element={<FAQ />} />
          
+        {/* User routes */}
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       <PopularLinks />
       <Footer />

@@ -12,7 +12,7 @@ const Estate_Section = () => {
   const [limit, setLimit] = useState(3);
 
   const { id } = useParams();
-  console.log(id) 
+   
 
   
   const infoFetch = async () => {
@@ -26,7 +26,7 @@ const Estate_Section = () => {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      console.log(result)
+      
       setInfo(result);  
     } catch (error) {
       console.error("Error fetching estate info:", error.message);

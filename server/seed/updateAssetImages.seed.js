@@ -43,9 +43,7 @@ const run = async () => {
       { $set: { images: estateImages } }
     );
 
-    console.log("✅ Vehicle images updated:", vehicleResult.modifiedCount);
-    console.log("✅ Estate images updated:", estateResult.modifiedCount);
-
+    // Images updated successfully
     process.exit();
   } catch (err) {
     console.error("❌ Image update error", err);

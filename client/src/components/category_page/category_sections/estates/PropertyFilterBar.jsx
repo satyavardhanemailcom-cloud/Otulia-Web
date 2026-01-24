@@ -60,7 +60,7 @@ const PropertyFilterBar = () => {
                       key={idx}
                       className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#B8860B] cursor-pointer transition-colors"
                       onClick={() => {
-                        console.log(`Selected: ${option}`);
+                        
                         setActiveFilter(null); // Close on selection
                       }}
                     >

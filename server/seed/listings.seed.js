@@ -50,7 +50,7 @@ const seedListings = async () => {
       },
     ]);
 
-    console.log("✅ Listings seeded successfully");
+    // Listings seeded successfully
     process.exit();
   } catch (error) {
     console.error("❌ Seeding failed:", error);

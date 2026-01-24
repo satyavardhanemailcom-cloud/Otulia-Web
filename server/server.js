@@ -39,5 +39,5 @@ app.get("/health", (req, res) => {
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+  // Server is running on port 8000
 });
