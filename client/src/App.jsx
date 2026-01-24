@@ -14,7 +14,11 @@ import About from "./pages/company_pages/About";
 import Reviews from "./pages/company_pages/Reviews";
 import FAQ from "./pages/company_pages/FAQ";
 
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+// Auth pages
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+
+import { Routes, Route } from "react-router-dom";
 
 import PopularLinks from "./components/PopularLinks"
 import Footer from "./components/Footer"
@@ -24,31 +28,32 @@ function App() {
   
   return (
     <>
-      <Router>
-      
       <ScrollToTop />
       <Routes>
 
         <Route path="/" element={<Home />} />
-         <Route path="/trending/*" element={<Trending />} />
-         <Route path="/shop" element={<Shop />} />
-         <Route path="/community" element={<Community />} />
-         <Route path="/rent" element={<Rent />} />
-         <Route path="/seller" element={<Seller />} />
-         <Route path="/pricing" element={<Pricing />} />
-         <Route path="/category/*" element={<Categorty />} />
-         <Route path="/asset/:category/:id" element={<Asset />} />
-         <Route path="/blogs" element={<Blogs />} />
-         
-         {/* Routes for company pages */}
-         <Route path="/about" element={<About />} />
-         <Route path="/reviews" element={<Reviews />} />
-         <Route path="/faq" element={<FAQ />} />
+        <Route path="/trending/*" element={<Trending />} />
+        <Route path="/shop" element={<Shop />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/rent" element={<Rent />} />
+        <Route path="/seller" element={<Seller />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/category/*" element={<Categorty />} />
+        <Route path="/asset/:category/:id" element={<Asset />} />
+        <Route path="/blogs" element={<Blogs />} />
+        
+        {/* Auth routes */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+
+        {/* Routes for company pages */}
+        <Route path="/about" element={<About />} />
+        <Route path="/reviews" element={<Reviews />} />
+        <Route path="/faq" element={<FAQ />} />
          
       </Routes>
       <PopularLinks />
       <Footer />
-    </Router>
     </>
   )
 }
