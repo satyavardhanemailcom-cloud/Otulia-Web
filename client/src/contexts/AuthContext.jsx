@@ -27,9 +27,10 @@ export const AuthProvider = ({ children }) => {
                         localStorage.removeItem('token');
                     }
                 } catch (error) {
-                    console.error('Failed to fetch user', error);
-                    setToken(null);
-                    localStorage.removeItem('token');
+                   console.error('Failed to fetch user', error);
+    setToken(null);
+    setUser(null); // Explicitly set user to null
+    localStorage.removeItem('token');
                 }
             }
             setLoading(false);
