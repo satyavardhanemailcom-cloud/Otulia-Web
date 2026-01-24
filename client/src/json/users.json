@@ -1,0 +1,16 @@
+[{
+  "_id": {
+    "$oid": "697448ba98625470a06983a3"
+  },
+  "name": "Syed Afrid",
+  "email": "afrid0052@gmail.com",
+  "password": "$2b$10$bHGMvp0UwNp34j1BXjCSFeGLRLLZNgFVRzD00yvXCfUhp/JuLQPnq",
+  "role": "user",
+  "createdAt": {
+    "$date": "2026-01-24T04:21:14.834Z"
+  },
+  "updatedAt": {
+    "$date": "2026-01-24T04:21:14.834Z"
+  },
+  "__v": 0
+}]
