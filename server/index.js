@@ -1,18 +1,18 @@
 require("dotenv").config();
 const express = require("express");
-const connectDB = require("./db");
+const connectDB = require("./db.js");
 const path = require("path");
 
 // middleware import
 const corsMiddleware = require("./middleware/cors.middleware.js");
 
 // route import
-const homeRoutes = require("./routes/home.routes");
-const listingRoutes = require("./routes/listing.routes");
-const assetsRoutes = require("./routes/assets.routes");
-const authRoutes = require("./routes/auth.routes");
-const trendingRoutes = require("./routes/trending.routes");
-const popularRoutes = require("./routes/popular.routes");
+const homeRoutes = require("./routes/home.routes.js");
+const listingRoutes = require("./routes/listing.routes.js");
+const assetsRoutes = require("./routes/assets.routes.js");
+const authRoutes = require("./routes/auth.routes.js");
+const trendingRoutes = require("./routes/trending.routes.js");
+const popularRoutes = require("./routes/popular.routes.js");
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/listings", listingRoutes);
 app.use("/api/assets", assetsRoutes);
-app.use("/api/test", require("./routes/test.routes"));
+app.use("/api/test", require("./routes/test.routes.js"));
 app.use("/api/trending", trendingRoutes);
 app.use("/api/popular", popularRoutes);
 
