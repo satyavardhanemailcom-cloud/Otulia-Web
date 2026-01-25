@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "build": "npm install && cd ../client && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
@@ -12,14 +14,14 @@
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cookie-session": "^2.1.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.1.4"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.11"
+    "mongoose": "^9.1.4",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
   }
 }

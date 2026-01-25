@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import Cars_Hero from './cars_hero'
+import Cars_Hero from './Cars_Hero'
 import FilterBar from './FilterBar'
 import AssetCard from '../../../AssetCard'
 import SortDropdown from '../SortDropdown'
@@ -12,7 +12,7 @@ const Cars_Section = () => {
 
     // Fetch data
   const datafetch = async ()=> {
-    const url = `http://localhost:8000/api/assets/car?limit=${limit}`;
+    const url = `/api/assets/car?limit=${limit}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

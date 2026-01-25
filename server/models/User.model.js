@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["user", "agent"],
+      enum: ["user", "agent", "admin"],
       default: "user",
     },
 
@@ -64,7 +64,13 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Listing"
       }
-    ]
+    ],
+
+    subscription: {
+      type: String,
+      enum: ["freemium", "premium", "business_plan"],
+      default: "freemium",
+    },
   },
   { timestamps: true }
 );

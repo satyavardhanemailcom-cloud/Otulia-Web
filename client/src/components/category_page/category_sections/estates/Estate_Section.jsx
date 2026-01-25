@@ -12,7 +12,7 @@ const Estate_Section = () => {
     
         // Fetch data
       const datafetch = async ()=> {
-        const url = `http://localhost:8000/api/assets/estate?limit=${limit}`;
+        const url = `/api/assets/estate?limit=${limit}`;
         try {
           const response = await fetch(url);
           if (!response.ok) {

@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
 
         try {
             console.log("🔍 Verifying session with backend...");
-            const response = await fetch('http://127.0.0.1:8000/api/auth/me', {
+            const response = await fetch('/api/auth/me', {
                 headers: {
                     'Authorization': `Bearer ${authToken}`
                 }
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/auth/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
 
     const signup = async (name, email, password) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/auth/register', {
+            const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }) => {
 
     const googleLogin = async (idToken) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/auth/google-login', {
+            const response = await fetch('/api/auth/google-login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

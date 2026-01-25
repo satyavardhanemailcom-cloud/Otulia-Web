@@ -6,33 +6,42 @@ import SortDropdown from '../SortDropdown'
 
 const Bike_Section = () => {
     const [list, setlist] = useState([]);
+    const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(12);
+    const [hasMore, setHasMore] = useState(true);
 
     const brands = [
-        { id: 1, name: 'Ducati', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Ducati_red_logo.svg/1200px-Ducati_red_logo.svg.png' },
-        { id: 2, name: 'Kawasaki', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Kawasaki_logo.svg/1200px-Kawasaki_logo.svg.png' },
+        { id: 1, name: 'Ducati', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Ducati_red_logo.PNG' },
+        { id: 2, name: 'Kawasaki', logo: 'https://www.freepnglogos.com/uploads/kawasaki-png-logo/kawasaki-green-emblem-png-logo-1.png' },
         { id: 3, name: 'BMW', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/BMW_logo_%28gray%29.svg/1200px-BMW_logo_%28gray%29.svg.png' },
-        { id: 4, name: 'Yamaha', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Yamaha_Motor_Logo.svg/1200px-Yamaha_Motor_Logo.svg.png' },
-        { id: 5, name: 'Harley-Davidson', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Harley-Davidson_logo.svg/1200px-Harley-Davidson_logo.svg.png' },
+        { id: 4, name: 'Yamaha', logo: 'https://www.freepnglogos.com/uploads/yamaha-png-logo/company-yamaha-png-logo-1.png' },
+        { id: 5, name: 'Harley-Davidson', logo: 'https://www.freepnglogos.com/uploads/harley-davidson-png-logo/harley-davidson-logo-black-orange-and-white-png-10.png' },
     ];
 
     const datafetch = async () => {
-        const url = `http://localhost:8000/api/assets/bike?limit=${limit}`;
+        const url = `/api/assets/bikes?limit=${limit}&page=${page}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
             const result = await response.json();
-            setlist(result)
+            if (result.length < limit) {
+                setHasMore(false);
+            }
+            setlist(prevList => [...prevList, ...result]);
         } catch (error) {
             console.error(error.message);
         }
     }
 
     useEffect(() => {
-        datafetch()
-    }, [limit]);
+        datafetch();
+    }, [page, limit]);
+
+    const loadMore = () => {
+        setPage(prevPage => prevPage + 1);
+    }
 
     return (
         <div className=''>
@@ -87,6 +96,16 @@ const Bike_Section = () => {
                                 </div>
                             )}
                         </div>
+                        {hasMore && (
+                            <div className="text-center mt-12">
+                                <button
+                                    onClick={loadMore}
+                                    className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors"
+                                >
+                                    Load More
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </section>
             </div>

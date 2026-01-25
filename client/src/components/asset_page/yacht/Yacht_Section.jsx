@@ -15,7 +15,7 @@ const Yacht_Section = () => {
 
     const infoFetch = async () => {
         if (!id) return;
-        const url = `http://localhost:8000/api/assets/yacht/${id}`;
+        const url = `/api/assets/yacht/${id}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -33,7 +33,7 @@ const Yacht_Section = () => {
     }, [id]);
 
     const dataFetch = async () => {
-        const url = `http://localhost:8000/api/assets/yacht?limit=${limit}`;
+        const url = `/api/assets/yacht?limit=${limit}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {

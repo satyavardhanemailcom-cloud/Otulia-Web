@@ -13,21 +13,21 @@ const Car_Section = () => {
 
   // 1. Get ID correctly regardless of URL structure
   const { id } = useParams();
-  console.log(id) 
+   
 
   // Car info fetching
   const infoFetch = async () => {
     // Safety check
     if (!id) return;
 
-    const url = `http://localhost:8000/api/assets/car/${id}`;
+    const url = `/api/assets/car/${id}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      console.log(result)
+      
       setInfo(result);  
     } catch (error) {
       console.error("Error fetching car info:", error.message);
@@ -41,7 +41,7 @@ const Car_Section = () => {
 
   // Fetch sidebar list
   const dataFetch = async () => {
-    const url = `http://localhost:8000/api/assets/car?limit=${limit}`;
+    const url = `/api/assets/car?limit=${limit}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

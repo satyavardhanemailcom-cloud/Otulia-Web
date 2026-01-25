@@ -20,7 +20,7 @@ const MostPopularAssets = () => {
     };
 
     const datafetch = async ()=> {
-        const url = "http://localhost:8000/api/home/trending";
+        const url = "/api/home/trending";
         try {
           const response = await fetch(url);
           if (!response.ok) {

@@ -6,7 +6,9 @@ import SortDropdown from '../SortDropdown'
 
 const Yacht_Section = () => {
     const [list, setlist] = useState([]);
+    const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(12);
+    const [hasMore, setHasMore] = useState(true);
 
     const brands = [
         { id: 1, name: 'Azimut', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Azimut_Yachts_logo.png/1200px-Azimut_Yachts_logo.png' },
@@ -17,22 +19,29 @@ const Yacht_Section = () => {
     ];
 
     const datafetch = async () => {
-        const url = `http://localhost:8000/api/assets/yacht?limit=${limit}`;
+        const url = `/api/assets/yachts?limit=${limit}&page=${page}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
             const result = await response.json();
-            setlist(result)
+            if (result.length < limit) {
+                setHasMore(false);
+            }
+            setlist(prevList => [...prevList, ...result]);
         } catch (error) {
             console.error(error.message);
         }
     }
 
     useEffect(() => {
-        datafetch()
-    }, [limit]);
+        datafetch();
+    }, [page, limit]);
+
+    const loadMore = () => {
+        setPage(prevPage => prevPage + 1);
+    }
 
     return (
         <div className=''>
@@ -87,6 +96,16 @@ const Yacht_Section = () => {
                                 </div>
                             )}
                         </div>
+                        {hasMore && (
+                            <div className="text-center mt-12">
+                                <button
+                                    onClick={loadMore}
+                                    className="bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors"
+                                >
+                                    Load More
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </section>
             </div>

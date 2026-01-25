@@ -9,7 +9,7 @@ const seedEstateAssets = async () => {
     const existingCount = await EstateAsset.countDocuments();
 
     if (existingCount >= 20) {
-      console.log("ℹ️ Estate assets already sufficient:", existingCount);
+      // Estate assets already sufficient
       process.exit();
     }
 
@@ -33,9 +33,9 @@ const seedEstateAssets = async () => {
 
     if (estatesToAdd.length > 0) {
       await EstateAsset.insertMany(estatesToAdd);
-      console.log("✅ Estate assets extended to 20");
+      // Estate assets extended to 20
     } else {
-      console.log("ℹ️ No estate assets added");
+      // No estate assets added
     }
 
     process.exit();

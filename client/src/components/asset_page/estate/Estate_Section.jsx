@@ -12,21 +12,21 @@ const Estate_Section = () => {
   const [limit, setLimit] = useState(3);
 
   const { id } = useParams();
-  console.log(id) 
+   
 
   
   const infoFetch = async () => {
     
     if (!id) return;
 
-    const url = `http://localhost:8000/api/assets/estate/${id}`;
+    const url = `/api/assets/estate/${id}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      console.log(result)
+      
       setInfo(result);  
     } catch (error) {
       console.error("Error fetching estate info:", error.message);
@@ -40,7 +40,7 @@ const Estate_Section = () => {
 
   
   const dataFetch = async () => {
-    const url = `http://localhost:8000/api/assets/estate?limit=${limit}`;
+    const url = `/api/assets/estate?limit=${limit}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {

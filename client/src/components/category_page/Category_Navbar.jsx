@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import Profile_dropdown from '../navbar/Profile_dropdown';
 import Cart from '../navbar/Cart';
-import LoginButton from '../navbar/LoginButton'; // Import LoginButton
+import LoginButton from '../navbar/LoginButton'; 
 import Category_Navbar_Mobile from './Category_Navbar_Mobile';
 import { IoMdMenu } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
-import { useAuth } from '../../contexts/AuthContext'; // Import useAuth
+import { useAuth } from '../../contexts/AuthContext'; 
 
 const Category_Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const { isAuthenticated } = useAuth(); // Get authentication status
+
+    // 1. Get Loading State
+    const { isAuthenticated, loading } = useAuth(); 
     
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -33,7 +35,9 @@ const Category_Navbar = () => {
     ];
     
     const navClasses = `fixed left-0 z-50 h-15 transition-all duration-200 flex items-center justify-between p-4 ${
-        isScrolled ? "bg-[#2C2C2C] shadow-md text-black w-screen" : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-full"
+        isScrolled 
+            ? "bg-[#2C2C2C] text-white w-screen" // NOTE: I changed text-black to text-white for visibility on dark bg
+            : "bg-white/40 m-6 text-white w-[calc(100vw-48px)] rounded-full"
     }`;
     
     return (
@@ -60,28 +64,38 @@ const Category_Navbar = () => {
                     ))}
                 </div>
 
-                <div className='hidden lg:flex items-center justify-center gap-3 mr-3 text-white'>
-                    {isAuthenticated ? (
-                        <>
-                            <Profile_dropdown />
-                            <div className='text-white'>
-                                <Cart />
-                            </div>
-                        </>
+                {/* 2. AUTH SECTION WITH LOADING STATE */}
+                {/* Removed 'text-white' class here so it inherits from navClasses */}
+                <div className='hidden lg:flex items-center justify-center gap-3 mr-3'>
+                    {loading ? (
+                        // Placeholder skeleton while loading
+                        <div className="w-8 h-8 bg-white/20 rounded-full animate-pulse"></div>
                     ) : (
-                        <LoginButton />
+                        <>
+                            {isAuthenticated ? (
+                                <>
+                                    <Profile_dropdown />
+                                    {/* Removed 'text-white' wrapper so Cart takes nav color */}
+                                    <div className='text-inherit'> 
+                                        <Cart />
+                                    </div>
+                                </>
+                            ) : (
+                                <LoginButton />
+                            )}
+                        </>
                     )}
                 </div>
 
                 <div className='lg:hidden flex items-center'>
-                    <button onClick={toggleMenu} className='text-2xl text-white'>
+                    <button onClick={toggleMenu} className='text-2xl text-inherit'>
                         <IoMdMenu />
                     </button>
                 </div>
             </nav>
 
             <div
-                className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-51 transform transition-transform duration-300 ease-in-out ${
+                className={`fixed top-0 right-0 h-screen w-[80vw] bg-white shadow-2xl z-[60] transform transition-transform duration-300 ease-in-out ${
                     isMenuOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >
