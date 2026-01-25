@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import UserURL from '../../assets/user.png'
+import { FiUser, FiCreditCard, FiGrid, FiLogOut } from 'react-icons/fi';
 
 const ProfileDropdown = () => {
     const { user, logout } = useAuth();
@@ -68,7 +69,7 @@ const ProfileDropdown = () => {
                             onClick={() => setIsOpen(false)}
                             className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                            <span className="text-lg">👤</span>
+                            <FiUser className="text-lg" />
                             <span>My Profile</span>
                         </Link>
 
@@ -77,7 +78,7 @@ const ProfileDropdown = () => {
                             onClick={() => setIsOpen(false)}
                             className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                            <span className="text-lg">💎</span>
+                            <FiCreditCard className="text-lg" />
                             <div className="flex flex-col">
                                 <span>Membership Plan</span>
                                 <span className="text-[10px] text-gray-400">Current: {user.plan}</span>
@@ -89,7 +90,7 @@ const ProfileDropdown = () => {
                             onClick={() => setIsOpen(false)}
                             className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
-                            <span className="text-lg">📤</span>
+                            <FiGrid className="text-lg" />
                             <span>My Listings</span>
                         </Link>
                     </div>
@@ -100,7 +101,7 @@ const ProfileDropdown = () => {
                         onClick={handleLogout}
                         className="flex items-center gap-3 w-full px-5 py-3 text-sm text-red-600 font-medium hover:bg-red-50 transition-colors text-left"
                     >
-                        <span className="text-lg">🚪</span>
+                        <FiLogOut className="text-lg" />
                         <span>Sign Out</span>
                     </button>
                 </div>

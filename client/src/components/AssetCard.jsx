@@ -176,10 +176,7 @@ const AssetCard = ({ item }) => {
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest truncate">
             {displayDetails || "View Details"}
           </p>
-          {!homepage && item.agent?.companyLogo && (
-            /* UPDATED LOGO: Constrained height to prevent layout shift */
-            <img className="h-10 rounded-md object-contain" src={item.agent.companyLogo} alt="companyLogo" />
-          )}
+
         </div>
       </div>
     </div>

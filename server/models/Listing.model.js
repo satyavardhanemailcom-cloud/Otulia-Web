@@ -49,8 +49,27 @@ const listingSchema = new mongoose.Schema(
             type: Number,
             default: 0
         },
+
+        documents: [
+            {
+                type: String, // URL/Path to document
+                required: false
+            }
+        ],
+
+        status: {
+            type: String,
+            enum: ['Active', 'Sold', 'Rented'],
+            default: 'Active'
+        },
+
+        type: {
+            type: String,
+            enum: ['Sale', 'Rent'],
+            default: 'Sale'
+        }
     },
-    {timestamps: true}
+    { timestamps: true }
 );
 
 module.exports = mongoose.model("Listing", listingSchema);

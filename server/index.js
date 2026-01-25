@@ -17,6 +17,8 @@ const trendingRoutes = require("./routes/trending.routes.js");
 const popularRoutes = require("./routes/popular.routes.js");
 const sellerRoutes = require("./routes/seller.routes.js");
 const activityRoutes = require("./routes/activity.routes.js");
+const paymentRoutes = require("./routes/payment.routes.js");
+const createListingRoutes = require("./routes/create_listing.routes.js");
 
 const app = express();
 
@@ -30,13 +32,19 @@ app.use(express.static(path.join(__dirname, "../client/dist")));
 // routes register
 app.use("/api/auth", authRoutes);
 app.use("/api/home", homeRoutes);
-app.use("/api/listings", listingRoutes);
+app.use("/api/listings", createListingRoutes); // Routes: /create, /delete/:id
+app.use("/api/listings", listingRoutes); // Routes: /:id
 app.use("/api/assets", assetsRoutes);
 app.use("/api/test", require("./routes/test.routes.js"));
 app.use("/api/trending", trendingRoutes);
 app.use("/api/popular", popularRoutes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/activity", activityRoutes);
+app.use("/api/payment", paymentRoutes);
+app.use("/api/payment", paymentRoutes);
+
+
+
 
 
 app.get("/health", (req, res) => {
@@ -45,6 +53,8 @@ app.get("/health", (req, res) => {
     service: "Otulia Backend",
   });
 });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist/index.html"));

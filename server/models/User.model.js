@@ -61,8 +61,34 @@ const userSchema = new mongoose.Schema(
 
     myListings: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Listing"
+        item: { type: mongoose.Schema.Types.ObjectId, refPath: "myListings.itemModel" },
+        itemModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"], default: "Listing" }
+      }
+    ],
+
+    boughtHistory: [
+      {
+        listing: { type: mongoose.Schema.Types.ObjectId, ref: "Listing" },
+        date: { type: Date, default: Date.now },
+        price: Number
+      }
+    ],
+
+    rentedHistory: [
+      {
+        listing: { type: mongoose.Schema.Types.ObjectId, ref: "Listing" },
+        startDate: Date,
+        endDate: Date,
+        price: Number
+      }
+    ],
+
+    soldHistory: [
+      {
+        listing: { type: mongoose.Schema.Types.ObjectId, ref: "Listing" },
+        date: { type: Date, default: Date.now },
+        amount: Number,
+        buyerEmail: String
       }
     ],
 

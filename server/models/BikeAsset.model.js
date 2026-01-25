@@ -71,6 +71,10 @@ const bikeAssetSchema = new mongoose.Schema(
       joined: { type: Number },
     },
 
+    documents: [{ type: String }],
+    status: { type: String, enum: ['Active', 'Sold', 'Rented'], default: 'Active' },
+    category: { type: String, default: 'bikes' },
+
     isTrending: { type: Boolean, default: false },
 
     popularity: { type: Number, min: 1, max: 10 },

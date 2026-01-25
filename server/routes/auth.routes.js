@@ -199,6 +199,34 @@ router.get("/me", authMiddleware, async (req, res) => {
 });
 
 /**
+ * GET MY LISTINGS
+ */
+router.get("/my-listings", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate("myListings.item");
+    if (!user) {
+      return res.status(404).json({ error: "USER_NOT_FOUND" });
+    }
+
+    // Transform to flat array of items
+    const listings = user.myListings
+      .filter(entry => entry.item) // Filter out nulls if any
+      .map(entry => {
+        const item = entry.item.toObject();
+        return {
+          ...item,
+          category: entry.itemModel // Ensure category is available for UI logic if needed
+        };
+      });
+
+    res.json(listings);
+  } catch (err) {
+    console.error("Fetch My Listings Error:", err);
+    res.status(500).json({ error: "FETCH_LISTINGS_FAILED" });
+  }
+});
+
+/**
  * UPGRADE PLAN
  */
 router.post("/upgrade-plan", authMiddleware, async (req, res) => {

@@ -76,6 +76,40 @@ const PricingSection = () => {
     setLoadingPlanId(plan.id);
     setStatusMessage({ text: '', type: '' });
 
+    // Handle Paid Plans with Stripe
+    if (plan.price !== '0') {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/payment/create-checkout-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ plan: plan.name })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            setStatusMessage({ text: 'Failed to retrieve payment URL.', type: 'error' });
+            setLoadingPlanId(null);
+          }
+        } else {
+          const err = await response.json();
+          setStatusMessage({ text: err.error || 'Payment initiation failed.', type: 'error' });
+          setLoadingPlanId(null);
+        }
+      } catch (error) {
+        console.error('Payment error:', error);
+        setStatusMessage({ text: 'Connection error during payment initiation.', type: 'error' });
+        setLoadingPlanId(null);
+      }
+      return;
+    }
+
+    // Handle Free Plan (Direct Upgrade)
     try {
       const response = await fetch('http://127.0.0.1:8000/api/auth/upgrade-plan', {
         method: 'POST',
@@ -97,7 +131,9 @@ const PricingSection = () => {
       console.error('Plan upgrade error:', error);
       setStatusMessage({ text: 'A connection error occurred.', type: 'error' });
     } finally {
-      setLoadingPlanId(null);
+      if (plan.price === '0') {
+        setLoadingPlanId(null);
+      }
     }
   };
 

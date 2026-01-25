@@ -55,10 +55,10 @@ const yachtAssetSchema = new mongoose.Schema(
       condition: String,         // e.g. "Accident-free"
       usageStatus: String,       // e.g. "Used yacht"
       countryOfFirstDelivery: String, // e.g. "Italy"
-      
+
       // Note: The image label says "Number of owners" but shows a location flag ("Monaco")
       // Keeping type as String to accommodate text values like "Monaco" or numbers.
-      numberOfOwners: String,    
+      numberOfOwners: String,
     },
 
     agent: {
@@ -71,6 +71,10 @@ const yachtAssetSchema = new mongoose.Schema(
       companyLogo: String,
       joined: { type: Number },
     },
+
+    documents: [{ type: String }],
+    status: { type: String, enum: ['Active', 'Sold', 'Rented'], default: 'Active' },
+    category: { type: String, default: 'yachts' },
 
     isTrending: { type: Boolean, default: false },
 

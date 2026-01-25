@@ -20,6 +20,8 @@ import SignupPage from "./pages/SignupPage";
 
 // User pages
 import Profile from "./pages/Profile";
+import Success from "./pages/Success";
+import MyListings from "./pages/MyListings";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -55,6 +57,8 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         {/* User routes */}
         <Route path="/profile" element={<Profile />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/listings" element={<MyListings />} />
       </Routes>
       <Footer />
     </>
