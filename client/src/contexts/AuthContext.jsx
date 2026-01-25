@@ -143,6 +143,7 @@ export const AuthProvider = ({ children }) => {
         googleLogin,
         logout,
         refreshUser: () => fetchUser(token),
+        updateUserLocal: (updates) => setUser(prev => ({ ...prev, ...updates })),
         isAuthenticated: !!token && !!user, // Both must be present for full UI reflection
         loading
     };

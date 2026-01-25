@@ -73,45 +73,10 @@ const PricingSection = () => {
       return;
     }
 
+    // DUMMY TESTING: All plans use direct upgrade, skipping Stripe
     setLoadingPlanId(plan.id);
-    setStatusMessage({ text: '', type: '' });
-
-    // Handle Paid Plans with Stripe
-    if (plan.price !== '0') {
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/payment/create-checkout-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ plan: plan.name })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            setStatusMessage({ text: 'Failed to retrieve payment URL.', type: 'error' });
-            setLoadingPlanId(null);
-          }
-        } else {
-          const err = await response.json();
-          setStatusMessage({ text: err.error || 'Payment initiation failed.', type: 'error' });
-          setLoadingPlanId(null);
-        }
-      } catch (error) {
-        console.error('Payment error:', error);
-        setStatusMessage({ text: 'Connection error during payment initiation.', type: 'error' });
-        setLoadingPlanId(null);
-      }
-      return;
-    }
-
-    // Handle Free Plan (Direct Upgrade)
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/auth/upgrade-plan', {
+      const response = await fetch('/api/auth/upgrade-plan', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,20 +86,19 @@ const PricingSection = () => {
       });
 
       if (response.ok) {
-        setStatusMessage({ text: `Successfully upgraded to ${plan.name}! Your profile is now active.`, type: 'success' });
-        await refreshUser(); // Update global user state immediately
+        setStatusMessage({ text: `Successfully upgraded to ${plan.name}! (TEST MODE)`, type: 'success' });
+        await refreshUser();
       } else {
         const err = await response.json();
-        setStatusMessage({ text: err.error || 'Failed to upgrade. Please try again.', type: 'error' });
+        setStatusMessage({ text: err.error || 'Failed to upgrade.', type: 'error' });
       }
     } catch (error) {
       console.error('Plan upgrade error:', error);
       setStatusMessage({ text: 'A connection error occurred.', type: 'error' });
     } finally {
-      if (plan.price === '0') {
-        setLoadingPlanId(null);
-      }
+      setLoadingPlanId(null);
     }
+    return;
   };
 
   return (

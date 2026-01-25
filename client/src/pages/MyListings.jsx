@@ -61,13 +61,20 @@ const MyListings = () => {
         const currentCount = listings.length;
         const currentPlan = user?.plan || 'Freemium';
 
-        if (currentPlan === 'Freemium' && currentCount >= 5) {
-            setShowUpgradeModal(true);
-        } else if (currentPlan === 'Premium Basic' && currentCount >= 25) {
-            setShowUpgradeModal(true);
-        } else if (currentPlan === 'Business VIP' && currentCount >= 50) {
-            // They reached the absolute max for now
-            alert("You have reached the maximum listing capacity for Business VIP (50 listings). Please contact support for an Enterprise bespoke solution.");
+        const limits = {
+            'Freemium': 5,
+            'Premium Basic': 25,
+            'Business VIP': 100
+        };
+
+        const limit = limits[currentPlan] || 5;
+
+        if (currentCount >= limit) {
+            if (currentPlan === 'Business VIP') {
+                alert(`You have reached the absolute maximum listing capacity for Business VIP (${limit} listings).`);
+            } else {
+                setShowUpgradeModal(true);
+            }
         } else {
             setEditingListing(null);
             setIsModalOpen(true);
@@ -77,6 +84,13 @@ const MyListings = () => {
     const handleEditClick = (item) => {
         setEditingListing(item);
         setIsModalOpen(true);
+    };
+
+    const getLimitText = () => {
+        if (!user) return '';
+        const limits = { 'Freemium': 5, 'Premium Basic': 25, 'Business VIP': 100 };
+        const limit = limits[user.plan] || 5;
+        return `(${listings.length}/${limit} used)`;
     };
 
     const confirmDelete = (id) => {
@@ -151,9 +165,16 @@ const MyListings = () => {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 border-b border-gray-200 pb-6">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 playfair-display mb-2">My Listings</h1>
+                        <div className="flex items-center gap-2 mb-1">
+                            <h1 className="text-3xl font-bold text-gray-900 playfair-display">My Assets</h1>
+                            {(user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') && (
+                                <Link to="/inventory" className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold uppercase tracking-widest hover:bg-blue-100 transition-colors">
+                                    Open Dashboard
+                                </Link>
+                            )}
+                        </div>
                         <p className="text-gray-500 text-sm">
-                            Manage and view all your active listings {user?.plan === 'Freemium' && `(${listings.length}/5 used)`}
+                            Manage and view all your active listings {getLimitText()}
                         </p>
                     </div>
 

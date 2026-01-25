@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import UserURL from '../../assets/user.png'
-import { FiUser, FiCreditCard, FiGrid, FiLogOut } from 'react-icons/fi';
+import { FiUser, FiCreditCard, FiGrid, FiLogOut, FiActivity } from 'react-icons/fi';
 
 const ProfileDropdown = () => {
     const { user, logout } = useAuth();
@@ -93,6 +93,22 @@ const ProfileDropdown = () => {
                             <FiGrid className="text-lg" />
                             <span>My Listings</span>
                         </Link>
+
+                        {(user.plan === 'Premium Basic' || user.plan === 'Business VIP') && (
+                            <Link
+                                to="/inventory"
+                                onClick={() => setIsOpen(false)}
+                                className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                                <FiActivity className="text-lg" />
+                                <div className="flex flex-col">
+                                    <span>Inventory Management</span>
+                                    <span className="text-[10px] text-blue-500 font-bold uppercase tracking-tighter">
+                                        {user.plan === 'Business VIP' ? 'Advanced' : 'Professional'}
+                                    </span>
+                                </div>
+                            </Link>
+                        )}
                     </div>
 
                     <div className="h-px bg-gray-100 my-2"></div>

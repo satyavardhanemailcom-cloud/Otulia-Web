@@ -23,8 +23,8 @@ const userActivitySchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            default: "PENDING",
-            enum: ["PENDING", "COMPLETED", "CANCELLED"],
+            default: "New",
+            enum: ["New", "Contacted", "Negotiating", "Closed"],
         },
         metadata: {
             type: mongoose.Schema.Types.Mixed,

@@ -12,52 +12,31 @@ const bikeAssetSchema = new mongoose.Schema(
 
     brand: { type: String },
     brand_logo: { type: String },
+    variant: { type: String },
+    highlights: [{ type: String }],
+    videoUrl: { type: String },
 
-    // Based on the top 3 icons in your image: 
-    // 1. Engine Icon (803 cc) 
-    // 2. Speedometer Icon (18-20 km/l) 
-    // 3. Fuel Pump Icon (13.5 liters)
     keySpecifications: {
-      engineCapacity: String,   // e.g., "803 cc"
-      mileage: String,          // e.g., "18-20 km/l"
-      fuelTankCapacity: String  // e.g., "13.5 liters"
+      engineCapacity: String,
+      mileage: String,
+      fuelType: String,
+      transmission: String,
+      color: String
     },
 
-    // Detailed fields from the table sections in the image
     specification: {
-      // General
       yearOfConstruction: String,
-      brand: String,            // e.g. "Ducati"
-      model: String,            // e.g. "Scrambler Desert Sled"
-      year: String,             // e.g. "2024"
-      condition: String,        // e.g. "New / Pre-Owned"
-
-      // Engine & Performance
-      engineType: String,       // e.g. "L-Twin, air-cooled"
-      engineCapacity: String,   // e.g. "803 cc"
-      maxPower: String,         // e.g. "73 hp @ 8,250 rpm"
-      maxTorque: String,        // e.g. "67 Nm @ 5,750 rpm"
-      transmission: String,     // e.g. "6-Speed Manual"
-      fuelSystem: String,       // e.g. "Electronic Fuel Injection"
-      mileage: String,          // e.g. "18-20 km/l"
-      fuelType: String,         // e.g. "Petrol"
-
-      // Chassis & Suspension
-      frame: String,            // e.g. "Steel Trellis Frame"
-      frontSuspension: String,  // e.g. "Upside-Down Forks"
-      frontBrake: String,       // e.g. "Dual Disc"
-      rearBrake: String,        // e.g. "Single Disc"
-
-      // Safety & Electronics
-      abs: String,              // e.g. "Yes (Cornering ABS)"
-      tractionControl: String,  // e.g. "Yes"
-      rideModes: String,        // e.g. "Yes"
-      immobilizer: String,      // e.g. "Yes"
-
-      // Wheels & Tyres
-      frontWheel: String,       // e.g. "19-inch Spoked"
-      rearWheel: String,        // e.g. "17-inch Spoked"
-      tyreType: String,         // e.g. "Dual-Purpose"
+      brand: String,
+      model: String,
+      variant: String,
+      engineCapacityCC: Number,
+      mileageKM: Number,
+      fuelType: String,
+      transmission: String,
+      color: String,
+      condition: String,
+      ownershipCount: Number,
+      accidentHistory: String,
     },
 
     agent: {
@@ -72,7 +51,7 @@ const bikeAssetSchema = new mongoose.Schema(
     },
 
     documents: [{ type: String }],
-    status: { type: String, enum: ['Active', 'Sold', 'Rented'], default: 'Active' },
+    status: { type: String, enum: ['Active', 'Sold', 'Rented', 'Draft'], default: 'Active' },
     category: { type: String, default: 'bikes' },
     type: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
 

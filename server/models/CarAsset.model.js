@@ -12,21 +12,27 @@ const carAssetSchema = new mongoose.Schema(
 
     brand: { type: String },
     brand_logo: { type: String },
+    variant: { type: String },
+    highlights: [{ type: String }],
+    videoUrl: { type: String },
 
     keySpecifications: {
       power: String,
       mileage: String,
-      cylinderCapacity: String // Power | Mileage | Cylinder_capacity
+      cylinderCapacity: String,
+      topSpeed: String
     },
 
     specification: {
       yearOfConstruction: String,
       model: String,
+      variant: String,
       body: String,
       series: String,
       mileage: String,
       power: String,
       cylinderCapacity: String,
+      topSpeed: String,
       co2Emission: String,
       consumption: String,
       steering: String,
@@ -41,6 +47,8 @@ const carAssetSchema = new mongoose.Schema(
       matchingNumbers: String,
       condition: String,
       usageStatus: String, // used / unused
+      accidentFree: String,
+      accidentHistory: String,
       countryOfFirstDelivery: String,
       numberOfOwners: Number,
       carLocation: String,
@@ -58,7 +66,7 @@ const carAssetSchema = new mongoose.Schema(
     },
 
     documents: [{ type: String }],
-    status: { type: String, enum: ['Active', 'Sold', 'Rented'], default: 'Active' },
+    status: { type: String, enum: ['Active', 'Sold', 'Rented', 'Draft'], default: 'Active' },
     category: { type: String, default: 'vehicles' },
     type: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
 
