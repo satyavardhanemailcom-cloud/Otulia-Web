@@ -23,6 +23,7 @@ import SignupPage from "./pages/SignupPage";
 import Profile from "./pages/Profile";
 import Success from "./pages/Success";
 import MyListings from "./pages/MyListings";
+import Inventory from "./pages/Inventory";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -63,6 +64,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/success" element={<Success />} />
         <Route path="/listings" element={<MyListings />} />
+        <Route path="/inventory" element={<Inventory />} />
       </Routes>
       <Footer />
     </CartProvider>

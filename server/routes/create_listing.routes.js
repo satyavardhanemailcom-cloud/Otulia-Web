@@ -36,7 +36,11 @@ const upload = multer({
  */
 router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 }, { name: 'documents', maxCount: 3 }]), async (req, res) => {
     try {
-        const { title, price, category, location, description } = req.body;
+        let { title, price, category, location, description } = req.body;
+
+        if (!title && req.body.make && req.body.model) {
+            title = `${req.body.make} ${req.body.model} ${req.body.variant || ''}`.trim();
+        }
 
         // Fetch full user details from DB since token might not have name
         const user = await User.findById(req.user.id);
@@ -44,11 +48,19 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
             return res.status(404).json({ error: "User not found" });
         }
 
-        // Enforce limits for Freemium users
-        if (user.plan === 'Freemium' && user.myListings.length >= 5) {
+        // Enforce tiered limits
+        const planLimits = {
+            'Freemium': 5,
+            'Premium Basic': 25,
+            'Business VIP': 100
+        };
+
+        const currentLimit = planLimits[user.plan] || 5;
+
+        if (user.myListings.length >= currentLimit) {
             return res.status(403).json({
                 error: "LIMIT_REACHED",
-                message: "Freemium users are limited to 5 listings. Please upgrade to list more assets."
+                message: `You have reached the listing limit for your ${user.plan} plan (${currentLimit} assets). Please upgrade to list more.`
             });
         }
 
@@ -67,7 +79,7 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
             description: description || 'No description provided',
             images: imageUrls,
             documents: docUrls,
-            status: 'Active',
+            status: req.body.isPublic === 'true' || req.body.isPublic === true ? 'Active' : 'Draft',
             type: req.body.type || 'Sale',
             agent: {
                 id: user._id,
@@ -89,32 +101,160 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
                 newListing = new CarAsset({
                     ...baseData,
                     category: 'vehicles',
-                    brand: 'Unknown',
-                    specification: { carLocation: location }
+                    brand: req.body.make || 'Unknown',
+                    variant: req.body.variant,
+                    highlights: req.body.highlights ? JSON.parse(req.body.highlights) : [],
+                    videoUrl: req.body.videoUrl,
+                    keySpecifications: {
+                        power: req.body.horsepower,
+                        mileage: req.body.mileage,
+                        cylinderCapacity: req.body.cylinderCapacity,
+                        topSpeed: req.body.topSpeed
+                    },
+                    specification: {
+                        yearOfConstruction: req.body.year,
+                        model: req.body.model,
+                        variant: req.body.variant,
+                        body: req.body.bodyType,
+                        series: req.body.series,
+                        mileage: req.body.mileage,
+                        power: req.body.horsepower,
+                        cylinderCapacity: req.body.cylinderCapacity,
+                        topSpeed: req.body.topSpeed,
+                        steering: req.body.steering,
+                        transmission: req.body.transmission,
+                        drive: req.body.driveType,
+                        fuel: req.body.fuelType,
+                        interiorMaterial: req.body.interiorMaterial,
+                        interiorColor: req.body.interiorColor,
+                        exteriorColor: req.body.exteriorColor,
+                        manufacturerColorCode: req.body.manufacturerColorCode,
+                        matchingNumbers: req.body.matchingNumbers,
+                        condition: req.body.condition,
+                        accidentFree: req.body.accidentFree,
+                        accidentHistory: req.body.accidentHistory,
+                        countryOfFirstDelivery: req.body.countryOfFirstDelivery,
+                        numberOfOwners: req.body.numberOfOwners,
+                        carLocation: req.body.currentCarLocation || location,
+                    }
                 });
                 modelType = 'CarAsset';
                 break;
             case 'Bike':
+                if (!title && req.body.brand && req.body.model) title = `${req.body.brand} ${req.body.model}`;
                 newListing = new BikeAsset({
                     ...baseData,
+                    title: title || `${req.body.brand} ${req.body.model}`,
                     category: 'bikes',
-                    brand: 'Unknown'
+                    brand: req.body.brand,
+                    variant: req.body.variant,
+                    highlights: req.body.highlights ? JSON.parse(req.body.highlights) : [],
+                    videoUrl: req.body.videoUrl,
+                    keySpecifications: {
+                        engineCapacity: req.body.engineCapacity,
+                        mileage: req.body.mileage,
+                        fuelType: req.body.fuelType,
+                        transmission: req.body.transmission,
+                        color: req.body.color
+                    },
+                    specification: {
+                        yearOfConstruction: req.body.year,
+                        brand: req.body.brand,
+                        model: req.body.model,
+                        variant: req.body.variant,
+                        engineCapacityCC: req.body.engineCapacity,
+                        mileageKM: req.body.mileage,
+                        fuelType: req.body.fuelType,
+                        transmission: req.body.transmission,
+                        color: req.body.color,
+                        condition: req.body.condition,
+                        ownershipCount: req.body.ownershipCount,
+                        accidentHistory: req.body.accidentHistory
+                    }
                 });
                 modelType = 'BikeAsset';
                 break;
             case 'Yacht':
+                if (!title && req.body.yachtName) title = req.body.yachtName;
                 newListing = new YachtAsset({
                     ...baseData,
+                    title: title || req.body.yachtName || `${req.body.builder} ${req.body.model}`,
                     category: 'yachts',
-                    brand: 'Unknown'
+                    builder: req.body.builder,
+                    highlights: req.body.highlights ? JSON.parse(req.body.highlights) : [],
+                    videoUrl: req.body.videoUrl,
+                    keySpecifications: {
+                        length: req.body.length,
+                        beam: req.body.beam,
+                        draft: req.body.draft,
+                        cruisingSpeed: req.body.cruisingSpeed,
+                        guestCapacity: req.body.guestCapacity,
+                        crewCapacity: req.body.crewCapacity,
+                        engineType: req.body.engineType
+                    },
+                    specification: {
+                        yearOfConstruction: req.body.year,
+                        builder: req.body.builder,
+                        model: req.body.model,
+                        length: req.body.length,
+                        beam: req.body.beam,
+                        draft: req.body.draft,
+                        engineType: req.body.engineType,
+                        cruisingSpeed: req.body.cruisingSpeed,
+                        guestCapacity: req.body.guestCapacity,
+                        crewCapacity: req.body.crewCapacity,
+                        yachtLocation: req.body.location,
+                        fuelType: req.body.fuelType,
+                        hullMaterial: req.body.hullMaterial,
+                        condition: req.body.condition
+                    }
                 });
                 modelType = 'YachtAsset';
                 break;
             case 'Estate':
+                if (!title && req.body.propertyName) title = req.body.propertyName;
                 newListing = new EstateAsset({
                     ...baseData,
+                    title: title || req.body.propertyName || `${req.body.propertyType} in ${req.body.location}`,
                     category: 'estates',
-                    specification: { country: location }
+                    propertyName: req.body.propertyName,
+                    highlights: req.body.highlights ? JSON.parse(req.body.highlights) : [],
+                    videoUrl: req.body.videoUrl,
+                    amenities: req.body.amenities ? JSON.parse(req.body.amenities) : [],
+                    smartHomeSystems: req.body.smartHomeSystems ? JSON.parse(req.body.smartHomeSystems) : [],
+                    viewTypes: req.body.viewTypes ? JSON.parse(req.body.viewTypes) : [],
+                    keySpecifications: {
+                        bedrooms: req.body.bedrooms,
+                        bathrooms: req.body.bathrooms,
+                        floors: req.body.floors,
+                        builtUpArea: req.body.builtUpArea,
+                        landArea: req.body.landArea,
+                        propertyType: req.body.propertyType
+                    },
+                    specification: {
+                        yearOfConstruction: req.body.year,
+                        propertyType: req.body.propertyType,
+                        architectureStyle: req.body.architectureStyle,
+                        builtUpArea: req.body.builtUpArea,
+                        landArea: req.body.landArea,
+                        floors: req.body.floors,
+                        bedrooms: req.body.bedrooms,
+                        bathrooms: req.body.bathrooms,
+                        furnishingStatus: req.body.furnishingStatus,
+                        configuration: req.body.configuration,
+                        interiorMaterial: req.body.interiorMaterial,
+                        interiorColorTheme: req.body.interiorColorTheme,
+                        exteriorFinish: req.body.exteriorFinish,
+                        climateControl: req.body.climateControl,
+                        condition: req.body.condition,
+                        usageStatus: req.body.usageStatus,
+                        country: req.body.country,
+                        city: req.body.city,
+                        address: req.body.address,
+                        areaNeighborhood: req.body.areaNeighborhood,
+                        latitude: req.body.latitude,
+                        longitude: req.body.longitude
+                    }
                 });
                 modelType = 'EstateAsset';
                 break;
