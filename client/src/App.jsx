@@ -1,4 +1,5 @@
 import Home from "./pages/Home"
+import CartPage from "./pages/CartPage";
 import Trending from "./pages/Trending";
 import Shop from "./pages/Shop";
 import Rent from "./pages/Rent";
@@ -29,10 +30,12 @@ import PopularLinks from "./components/PopularLinks"
 import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollTop";
 
+import { CartProvider } from "./contexts/CartContext";
+
 function App() {
 
   return (
-    <>
+    <CartProvider>
       <ScrollToTop />
       <Routes>
 
@@ -42,6 +45,7 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/rent" element={<Rent />} />
         <Route path="/seller" element={<Seller />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/category/*" element={<Categorty />} />
         <Route path="/asset/:category/:id" element={<Asset />} />
@@ -61,7 +65,7 @@ function App() {
         <Route path="/listings" element={<MyListings />} />
       </Routes>
       <Footer />
-    </>
+    </CartProvider>
   )
 }
 

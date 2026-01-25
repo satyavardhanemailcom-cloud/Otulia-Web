@@ -66,7 +66,7 @@ const Yacht_Section = () => {
 
             <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
-            <CarDetails item={info} />
+            <CarDetails item={info} modelName="YachtAsset" />
 
             <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
 

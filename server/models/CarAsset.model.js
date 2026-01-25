@@ -60,6 +60,7 @@ const carAssetSchema = new mongoose.Schema(
     documents: [{ type: String }],
     status: { type: String, enum: ['Active', 'Sold', 'Rented'], default: 'Active' },
     category: { type: String, default: 'vehicles' },
+    type: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
 
     isTrending: { type: Boolean, default: false },
 

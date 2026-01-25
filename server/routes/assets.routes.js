@@ -15,11 +15,19 @@ const router = express.Router();
  */
 router.get("/vehicles", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12 } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
       : {};
+
+    if (type) query.type = type;
+    if (location) query.location = { $regex: location, $options: "i" };
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
 
     const data = await CarAsset.find(query)
       .skip((page - 1) * limit)
@@ -39,11 +47,19 @@ router.get("/vehicles", async (req, res) => {
  */
 router.get("/estates", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12 } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
       : {};
+
+    if (type) query.type = type;
+    if (location) query.location = { $regex: location, $options: "i" };
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
 
     const data = await EstateAsset.find(query)
       .skip((page - 1) * limit)
@@ -63,11 +79,19 @@ router.get("/estates", async (req, res) => {
  */
 router.get("/bikes", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12 } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
       : {};
+
+    if (type) query.type = type;
+    if (location) query.location = { $regex: location, $options: "i" };
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
 
     const data = await BikeAsset.find(query)
       .skip((page - 1) * limit)
@@ -87,11 +111,19 @@ router.get("/bikes", async (req, res) => {
  */
 router.get("/yachts", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12 } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
       : {};
+
+    if (type) query.type = type;
+    if (location) query.location = { $regex: location, $options: "i" };
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
 
     const data = await YachtAsset.find(query)
       .skip((page - 1) * limit)
@@ -341,11 +373,19 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12 } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
       : {};
+
+    if (type) query.type = type;
+    if (location) query.location = { $regex: location, $options: "i" };
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
 
     const [carAssets, estateAssets, bikeAssets, yachtAssets] =
       await Promise.all([

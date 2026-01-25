@@ -44,6 +44,14 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
             return res.status(404).json({ error: "User not found" });
         }
 
+        // Enforce limits for Freemium users
+        if (user.plan === 'Freemium' && user.myListings.length >= 5) {
+            return res.status(403).json({
+                error: "LIMIT_REACHED",
+                message: "Freemium users are limited to 5 listings. Please upgrade to list more assets."
+            });
+        }
+
         // Handle files
         const imageFiles = req.files['images'] || [];
         const docFiles = req.files['documents'] || [];
@@ -60,6 +68,7 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
             images: imageUrls,
             documents: docUrls,
             status: 'Active',
+            type: req.body.type || 'Sale',
             agent: {
                 id: user._id,
                 name: user.name, // Now cleanly coming from DB
@@ -136,6 +145,59 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
     } catch (error) {
         console.error("Create Listing Error:", error);
         res.status(500).json({ error: "Failed to create listing" });
+    }
+});
+
+/**
+ * UPDATE LISTING
+ * PUT /api/listings/:id
+ */
+router.put('/:id', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 }, { name: 'documents', maxCount: 3 }]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, price, location, description, type } = req.body;
+        const user = await User.findById(req.user.id);
+
+        const listingEntry = user.myListings.find(entry => entry.item && entry.item.toString() === id);
+        if (!listingEntry) {
+            return res.status(404).json({ error: "Listing not found in your profile." });
+        }
+
+        const modelName = listingEntry.itemModel || 'Listing';
+        let Model;
+        switch (modelName) {
+            case 'CarAsset': Model = CarAsset; break;
+            case 'BikeAsset': Model = BikeAsset; break;
+            case 'YachtAsset': Model = YachtAsset; break;
+            case 'EstateAsset': Model = EstateAsset; break;
+            default: Model = Listing;
+        }
+
+        const listing = await Model.findById(id);
+        if (!listing) return res.status(404).json({ error: "Listing not found." });
+
+        // Update fields
+        listing.title = title || listing.title;
+        listing.price = price ? Number(price) : listing.price;
+        listing.location = location || listing.location;
+        listing.description = description || listing.description;
+        listing.type = type || listing.type;
+
+        // Handle new files if any
+        if (req.files['images']) {
+            const newImages = req.files['images'].map(file => `/uploads/${file.filename}`);
+            listing.images = [...listing.images, ...newImages].slice(0, 5);
+        }
+        if (req.files['documents']) {
+            const newDocs = req.files['documents'].map(file => `/uploads/${file.filename}`);
+            listing.documents = [...listing.documents, ...newDocs].slice(0, 3);
+        }
+
+        const updatedListing = await listing.save();
+        res.json(updatedListing);
+    } catch (error) {
+        console.error("Update Listing Error:", error);
+        res.status(500).json({ error: "Failed to update listing" });
     }
 });
 

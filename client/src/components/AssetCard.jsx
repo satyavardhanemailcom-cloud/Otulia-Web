@@ -46,25 +46,26 @@ const AssetCard = ({ item }) => {
   // Set category based on explicit field or infer from specs
   if (item.category) {
     category = item.category.toLowerCase();
+  } else if (item.itemModel) {
+    const model = item.itemModel.toLowerCase();
+    if (model.includes('car')) category = 'car';
+    else if (model.includes('estate')) category = 'estate';
+    else if (model.includes('bike')) category = 'bike';
+    else if (model.includes('yacht')) category = 'yacht';
   }
 
-  if (!displayDetails && item.keySpecifications) {
+  if (category === '.' && item.keySpecifications) {
     const specs = item.keySpecifications;
 
     if (specs.power || specs.mileage) {
       displayDetails = [specs.power, specs.mileage, specs.cylinderCapacity].filter(Boolean).join(' | ');
-      // Only set if not already set by item.category
-      if (category === '.') {
-        category = 'car';
-      }
+      category = 'car';
     } else {
       const beds = specs.bedrooms ? `${specs.bedrooms} Beds` : null;
       const baths = specs.bathrooms ? `${specs.bathrooms} Baths` : null;
       const area = specs.builtUpArea || specs.landArea;
       displayDetails = [beds, baths, area].filter(Boolean).join(' | ');
-      if (category === '.') {
-        category = 'estate';
-      }
+      category = 'estate';
     }
   }
 
@@ -145,6 +146,13 @@ const AssetCard = ({ item }) => {
             />
           </svg>
         </button>
+
+        {/* Rent Badge */}
+        {item.type === 'Rent' && (
+          <div className="absolute top-3 left-3 z-20 bg-black/80 backdrop-blur-md text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest rounded shadow-lg">
+            For Rent
+          </div>
+        )}
       </div>
 
       {/* Content Section */}
@@ -154,6 +162,7 @@ const AssetCard = ({ item }) => {
         </h3>
         <p className="text-md font-bold text-black mb-1 font-sans">
           {typeof item.price === 'number' ? `₹ ${numberWithCommas(item.price)}` : item.price}
+          {item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
         </p>
 
         <p className="text-[10px] text-gray-400 mb-2 font-normal uppercase tracking-widest truncate">

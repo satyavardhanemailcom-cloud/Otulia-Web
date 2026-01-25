@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 import { FiCheckCircle } from 'react-icons/fi';
 
 const Success = () => {
     const [searchParams] = useSearchParams();
     const sessionId = searchParams.get('session_id');
     const { refreshUser, token } = useAuth();
+    const { clearCart } = useCart();
     const navigate = useNavigate();
     const [status, setStatus] = useState('Verifying payment...');
 
@@ -27,10 +29,11 @@ const Success = () => {
 
                 if (response.ok) {
                     await refreshUser();
-                    setStatus('Payment Successful! Redirecting...');
+                    clearCart();
+                    setStatus('Payment Successful! Your order has been placed.');
                     setTimeout(() => {
                         navigate('/profile');
-                    }, 2000);
+                    }, 3000);
                 } else {
                     const data = await response.json();
                     setStatus(`Verification Failed: ${data.error}`);

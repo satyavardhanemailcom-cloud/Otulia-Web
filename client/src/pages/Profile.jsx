@@ -198,26 +198,57 @@ const Profile = () => {
               </div>
             )}
 
-            {/* ORDERS TAB */}
+            {/* ORDERS (Unified Buy & Rent) */}
             {activeTab === 'orders' && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[400px]">
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">My Orders</h3>
-                {user.boughtHistory && user.boughtHistory.length > 0 ? (
-                  <div className="space-y-4">
-                    {user.boughtHistory.map((order, idx) => (
-                      <div key={idx} className="p-4 border border-gray-100 rounded-xl flex justify-between items-center">
-                        <div>
-                          <p className="font-bold text-gray-900">Order #{idx + 1}</p>
-                          <p className="text-xs text-gray-500">{new Date(order.date).toLocaleDateString()}</p>
-                        </div>
-                        <span className="font-bold text-green-600">£{order.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Order History</h3>
+
+                {(!user.boughtHistory || user.boughtHistory.length === 0) && (!user.rentedHistory || user.rentedHistory.length === 0) ? (
                   <div className="text-center py-20 text-gray-400">
                     <FiShoppingBag className="text-4xl mx-auto mb-4 opacity-50" />
-                    <p>No orders yet.</p>
+                    <p>No transactions yet.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Combine and sort by date descending */}
+                    {[
+                      ...(user.boughtHistory || []).map(o => ({ ...o, type: 'Purchase', sortDate: o.date })),
+                      ...(user.rentedHistory || []).map(r => ({ ...r, type: 'Rental', sortDate: r.rentedAt, price: r.totalPrice }))
+                    ]
+                      .sort((a, b) => new Date(b.sortDate) - new Date(a.sortDate))
+                      .map((order, idx) => (
+                        <div key={idx} className="p-5 border border-gray-100 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gray-50/20 hover:bg-gray-50/50 transition-colors">
+                          <div className="flex gap-4 items-center">
+                            <div className="w-16 h-16 bg-gray-100 rounded-xl overflow-hidden shadow-sm border border-gray-200 shrink-0">
+                              {order.item?.images?.[0] ? (
+                                <img src={order.item.images[0]} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400"><FiShoppingBag /></div>
+                              )}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-bold text-gray-900">{order.item?.title || 'Exclusive Asset'}</p>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter ${order.type === 'Rental' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+                                  {order.type}
+                                </span>
+                              </div>
+                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">ID: {order.orderId || `ORD-${idx}`}</p>
+
+                              {order.type === 'Rental' && order.startDate && (
+                                <p className="text-[10px] text-gray-500 font-medium">
+                                  Period: {new Date(order.startDate).toLocaleDateString()} — {new Date(order.endDate).toLocaleDateString()}
+                                </p>
+                              )}
+                              <p className="text-[10px] text-gray-400">Ordered on {new Date(order.sortDate).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <span className="font-bold text-black text-xl font-playfair">₹ {order.price?.toLocaleString()}</span>
+                            <span className="text-[10px] text-green-600 font-bold uppercase tracking-widest mt-1">Confirmed</span>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 )}
               </div>
@@ -226,37 +257,46 @@ const Profile = () => {
             {/* HISTORY TAB */}
             {activeTab === 'history' && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[400px]">
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Trade History</h3>
+                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Activity History</h3>
                 <div className="space-y-8">
 
-                  {/* SOLD ITEMS */}
+                  {/* PURCHASED ITEMS */}
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900 mb-4">Sold Items</h4>
-                    {user.soldHistory && user.soldHistory.length > 0 ? (
-                      <div className="space-y-4">
-                        {user.soldHistory.map((item, idx) => (
-                          <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                            <p className="font-bold">Sold Item #{idx + 1}</p>
-                            <p className="text-xs text-gray-500">Sold for £{item.amount}</p>
+                    <h4 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-tighter">Purchase History</h4>
+                    {user.boughtHistory && user.boughtHistory.length > 0 ? (
+                      <div className="space-y-3">
+                        {user.boughtHistory.map((order, idx) => (
+                          <div key={idx} className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex justify-between items-center">
+                            <div>
+                              <p className="text-sm font-bold text-gray-900">{order.item?.title || 'Exclusive Asset'}</p>
+                              <p className="text-[10px] text-gray-500">Purchased on {new Date(order.date).toLocaleDateString()}</p>
+                            </div>
+                            <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded">Bought</span>
                           </div>
                         ))}
                       </div>
-                    ) : <p className="text-xs text-gray-400 italic">No sold items history.</p>}
+                    ) : <p className="text-xs text-gray-400 italic">No purchase history found.</p>}
                   </div>
 
                   {/* RENTED ITEMS */}
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900 mb-4">Rented Items</h4>
+                    <h4 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-tighter">Rental History</h4>
                     {user.rentedHistory && user.rentedHistory.length > 0 ? (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {user.rentedHistory.map((item, idx) => (
-                          <div key={idx} className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                            <p className="font-bold">Rented Item #{idx + 1}</p>
-                            <p className="text-xs text-gray-500">From {new Date(item.startDate).toLocaleDateString()} to {new Date(item.endDate).toLocaleDateString()}</p>
+                          <div key={idx} className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex justify-between items-start">
+                            <div>
+                              <p className="text-sm font-bold text-gray-900">{item.item?.title || 'Premium Asset'}</p>
+                              <p className="text-[10px] text-gray-500">{new Date(item.startDate).toLocaleDateString()} &mdash; {new Date(item.endDate).toLocaleDateString()}</p>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded mb-1 inline-block uppercase tracking-widest">Leased</span>
+                              <p className="text-[10px] text-gray-400">₹ {item.totalPrice?.toLocaleString()}</p>
+                            </div>
                           </div>
                         ))}
                       </div>
-                    ) : <p className="text-xs text-gray-400 italic">No rented items history.</p>}
+                    ) : <p className="text-xs text-gray-400 italic">No rental history found.</p>}
                   </div>
 
                 </div>

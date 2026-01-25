@@ -68,18 +68,23 @@ const userSchema = new mongoose.Schema(
 
     boughtHistory: [
       {
-        listing: { type: mongoose.Schema.Types.ObjectId, ref: "Listing" },
+        item: { type: mongoose.Schema.Types.ObjectId, refPath: "boughtHistory.itemModel" },
+        itemModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"], default: "Listing" },
         date: { type: Date, default: Date.now },
-        price: Number
+        price: Number,
+        orderId: String
       }
     ],
 
     rentedHistory: [
       {
-        listing: { type: mongoose.Schema.Types.ObjectId, ref: "Listing" },
+        item: { type: mongoose.Schema.Types.ObjectId, refPath: "rentedHistory.itemModel" },
+        itemModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"], default: "Listing" },
         startDate: Date,
         endDate: Date,
-        price: Number
+        totalPrice: Number, // Changed from price to totalPrice for clarity
+        orderId: String,
+        rentedAt: { type: Date, default: Date.now }
       }
     ],
 
@@ -92,11 +97,6 @@ const userSchema = new mongoose.Schema(
       }
     ],
 
-    subscription: {
-      type: String,
-      enum: ["freemium", "premium", "business_plan"],
-      default: "freemium",
-    },
   },
   { timestamps: true }
 );

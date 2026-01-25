@@ -65,6 +65,63 @@ router.post('/create-checkout-session', authMiddleware, async (req, res) => {
     }
 });
 
+router.post('/create-cart-checkout-session', authMiddleware, async (req, res) => {
+    const { cartItems } = req.body;
+
+    if (!cartItems || cartItems.length === 0) {
+        return res.status(400).json({ error: 'Cart is empty' });
+    }
+
+    if (!stripe) {
+        return res.status(500).json({ error: "Server Error: Stripe API key is missing." });
+    }
+
+    try {
+        const line_items = cartItems.map(item => ({
+            price_data: {
+                currency: 'gbp',
+                product_data: {
+                    name: item.title,
+                    description: item.type === 'Rent'
+                        ? `Rental Period: ${item.startDate} to ${item.endDate} (${item.duration} days)`
+                        : `Purchase of ${item.title}`,
+                },
+                unit_amount: Math.round(item.totalPrice * 100), // Stripe expects minor units (cents/pence)
+            },
+            quantity: 1,
+        }));
+
+        // Prepare metadata for order reconstruction
+        // Simplified keys to stay under char limit
+        const cartData = cartItems.map(item => ({
+            id: item.itemId,
+            mod: item.itemModel || 'Listing',
+            type: item.type,
+            s: item.startDate || null,
+            e: item.endDate || null,
+            p: item.totalPrice
+        }));
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items,
+            mode: 'payment',
+            success_url: `${DOMAIN}/success?session_id={CHECKOUT_SESSION_ID}&type=cart_checkout`,
+            cancel_url: `${DOMAIN}/cart`,
+            metadata: {
+                userId: req.user.id,
+                type: 'cart_checkout',
+                cartData: JSON.stringify(cartData)
+            }
+        });
+
+        res.json({ url: session.url });
+    } catch (e) {
+        console.error("Stripe Cart Error:", e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 router.get('/verify-payment', authMiddleware, async (req, res) => {
     const { session_id } = req.query;
     if (!session_id) return res.status(400).json({ error: 'Missing session_id' });
@@ -76,23 +133,55 @@ router.get('/verify-payment', authMiddleware, async (req, res) => {
     try {
         const session = await stripe.checkout.sessions.retrieve(session_id);
 
-        // Simple verification - in production use webhook
         if (session.payment_status === 'paid') {
-            const plan = session.metadata.plan;
             const userId = req.user.id;
-
-            const expiryDate = new Date();
-            expiryDate.setMonth(expiryDate.getMonth() + 1); // 1 month
-
-            const user = await User.findByIdAndUpdate(
-                userId,
-                { plan, planExpiresAt: expiryDate },
-                { new: true }
-            );
-
+            const user = await User.findById(userId);
             if (!user) return res.status(404).json({ error: 'User not found' });
 
-            res.json({ success: true, plan, user });
+            if (session.metadata.type === 'cart_checkout') {
+                const cartData = JSON.parse(session.metadata.cartData);
+                const orderId = `ORD-${Date.now()}`;
+
+                cartData.forEach(item => {
+                    if (item.type === 'Rent') {
+                        user.rentedHistory.push({
+                            item: item.id,
+                            itemModel: item.mod,
+                            startDate: new Date(item.s),
+                            endDate: new Date(item.e),
+                            totalPrice: item.p,
+                            orderId: orderId,
+                            rentedAt: new Date()
+                        });
+                    } else {
+                        user.boughtHistory.push({
+                            item: item.id,
+                            itemModel: item.mod,
+                            price: item.p,
+                            orderId: orderId,
+                            date: new Date()
+                        });
+                    }
+                });
+
+                await user.save();
+                return res.json({ success: true, message: 'Cart processed', user });
+
+            } else {
+                // Subscription logic
+                const plan = session.metadata.plan;
+                if (plan) {
+                    const expiryDate = new Date();
+                    expiryDate.setMonth(expiryDate.getMonth() + 1);
+
+                    user.plan = plan;
+                    user.planExpiresAt = expiryDate;
+                    await user.save();
+                    return res.json({ success: true, plan, user });
+                }
+            }
+
+            res.json({ success: true, message: 'Payment verified.' });
         } else {
             res.status(400).json({ error: 'Payment not completed' });
         }

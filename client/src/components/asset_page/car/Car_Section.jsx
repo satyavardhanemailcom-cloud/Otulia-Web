@@ -13,7 +13,7 @@ const Car_Section = () => {
 
   // 1. Get ID correctly regardless of URL structure
   const { id } = useParams();
-   
+
 
   // Car info fetching
   const infoFetch = async () => {
@@ -27,8 +27,8 @@ const Car_Section = () => {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      
-      setInfo(result);  
+
+      setInfo(result);
     } catch (error) {
       console.error("Error fetching car info:", error.message);
     }
@@ -70,25 +70,25 @@ const Car_Section = () => {
   return (
     <div className="flex flex-col">
       <div className="w-[92%] md:w-[96%] h-px bg-black border-0 self-center my-10"></div>
-      
+
       {/* Pass images array safely */}
       <CarGallery images={info.images} />
-      
+
       <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
-      
+
       {/* 3. Pass the whole 'item' object (info) to children */}
       {/* This works if your CarDetails expects ({ item }) props */}
-      <CarDetails item={info} />
-      
+      <CarDetails item={info} modelName="CarAsset" />
+
       <div className="w-[92%] md:w-[70%] h-px bg-ray-300 border-0 self-center my-5"></div>
-      
+
       {/* 4. Pass 'item' to features components */}
       <CarKeyFeatures item={info} />
-      
+
       <CarFeatures item={info} />
 
       <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
-      
+
       <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 bg-white">
         <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
           More From This Dealer
@@ -103,7 +103,7 @@ const Car_Section = () => {
       </div>
 
       <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
-      
+
       <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 bg-white">
         <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
           Similar Listings

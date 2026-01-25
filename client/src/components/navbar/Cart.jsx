@@ -1,11 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useCart } from '../../contexts/CartContext'
 
 const Cart = () => {
+  const { cart } = useCart();
+  const navigate = useNavigate();
+
   return (
     <>
-
       <button
         type="button"
+        onClick={() => navigate('/cart')}
         className="relative flex items-center justify-center transition-colors duration-300 focus:outline-none cursor-pointer"
         aria-label="View Shopping Bag"
       >
@@ -16,7 +21,7 @@ const Cart = () => {
           viewBox="0 0 24 24"
           strokeWidth="1.0"
           stroke="currentColor"
-          className="w-10 h-10" // Increased size slightly to make room for the number
+          className="w-10 h-10"
         >
           <path
             strokeLinecap="round"
@@ -26,12 +31,10 @@ const Cart = () => {
         </svg>
 
         {/* Number Badge (Centered Inside) */}
-        {/* Position adjusted to sit in the "body" of the bag, below the handles */}
         <span className="absolute mt-2 text-[15px] font-bold pt-1.5">
-          2
+          {cart.length}
         </span>
       </button>
-
     </>
   )
 }

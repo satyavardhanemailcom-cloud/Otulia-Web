@@ -4,15 +4,18 @@ import Navbar from '../components/Navbar';
 import AssetCard from '../components/AssetCard';
 import CreateListingModal from '../components/CreateListingModal';
 import ConfirmationModal from '../components/ConfirmationModal';
-import { FiGrid, FiPlus } from 'react-icons/fi';
+import { FiGrid, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import UpgradeModal from '../components/UpgradeModal';
 
 const MyListings = () => {
-    const { token, isAuthenticated } = useAuth();
+    const { token, isAuthenticated, user } = useAuth();
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [editingListing, setEditingListing] = useState(null);
 
     // Delete Confirmation State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -23,7 +26,7 @@ const MyListings = () => {
             if (!isAuthenticated) return;
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/auth/my-listings', {
+                const response = await fetch('/api/auth/my-listings', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -46,8 +49,34 @@ const MyListings = () => {
         fetchListings();
     }, [isAuthenticated, token]);
 
-    const handleListingCreated = (newListing) => {
-        setListings([newListing, ...listings]);
+    const handleListingCreated = (item, isUpdate) => {
+        if (isUpdate) {
+            setListings(listings.map(l => l._id === item._id ? item : l));
+        } else {
+            setListings([item, ...listings]);
+        }
+    };
+
+    const handleCreateClick = () => {
+        const currentCount = listings.length;
+        const currentPlan = user?.plan || 'Freemium';
+
+        if (currentPlan === 'Freemium' && currentCount >= 5) {
+            setShowUpgradeModal(true);
+        } else if (currentPlan === 'Premium Basic' && currentCount >= 25) {
+            setShowUpgradeModal(true);
+        } else if (currentPlan === 'Business VIP' && currentCount >= 50) {
+            // They reached the absolute max for now
+            alert("You have reached the maximum listing capacity for Business VIP (50 listings). Please contact support for an Enterprise bespoke solution.");
+        } else {
+            setEditingListing(null);
+            setIsModalOpen(true);
+        }
+    };
+
+    const handleEditClick = (item) => {
+        setEditingListing(item);
+        setIsModalOpen(true);
     };
 
     const confirmDelete = (id) => {
@@ -60,7 +89,7 @@ const MyListings = () => {
         const id = listingToDelete;
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/listings/${id}`, {
+            const response = await fetch(`/api/listings/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -97,8 +126,17 @@ const MyListings = () => {
             <Navbar />
             <CreateListingModal
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                editData={editingListing}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setEditingListing(null);
+                }}
                 onCreated={handleListingCreated}
+            />
+
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
             />
 
             <ConfirmationModal
@@ -114,15 +152,18 @@ const MyListings = () => {
                 <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 border-b border-gray-200 pb-6">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 playfair-display mb-2">My Listings</h1>
-                        <p className="text-gray-500 text-sm">Manage and view all your active listings.</p>
+                        <p className="text-gray-500 text-sm">
+                            Manage and view all your active listings {user?.plan === 'Freemium' && `(${listings.length}/5 used)`}
+                        </p>
                     </div>
 
                     <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider hover:bg-gray-800 transition-all mt-4 md:mt-0"
+                        onClick={handleCreateClick}
+                        disabled={loading}
+                        className={`flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full text-sm font-bold uppercase tracking-wider hover:bg-gray-800 transition-all mt-4 md:mt-0 shadow-lg shadow-black/10 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                         <FiPlus className="text-lg" />
-                        <span>Create Listing</span>
+                        <span>{loading ? 'Syncing...' : 'Create Listing'}</span>
                     </button>
                 </div>
 
@@ -142,24 +183,39 @@ const MyListings = () => {
                         </div>
                         <h3 className="text-xl font-medium text-gray-900 mb-2">No listings found</h3>
                         <p className="text-gray-500 mb-6 text-center max-w-md">You haven't listed any assets yet. Start selling your premium assets today.</p>
-                        <button onClick={() => setIsModalOpen(true)} className="text-[#D90416] font-bold uppercase text-sm tracking-widest hover:underline">
+                        <button onClick={handleCreateClick} className="text-[#D90416] font-bold uppercase text-sm tracking-widest hover:underline">
                             Create your first listing
                         </button>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 pb-20">
                         {listings.map(item => (
-                            <div key={item._id} className="relative group">
+                            <div key={item._id} className="relative group overflow-hidden rounded-2xl">
                                 <AssetCard item={item} />
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        confirmDelete(item._id);
-                                    }}
-                                    className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-20"
-                                >
-                                    Delete
-                                </button>
+
+                                {/* Overlay Controls */}
+                                <div className="absolute top-3 right-3 flex flex-col gap-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleEditClick(item);
+                                        }}
+                                        className="bg-white/90 backdrop-blur-md text-black p-2.5 rounded-full shadow-lg hover:bg-black hover:text-white transition-all transform hover:scale-110"
+                                        title="Edit Listing"
+                                    >
+                                        <FiEdit2 className="text-lg" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            confirmDelete(item._id);
+                                        }}
+                                        className="bg-white/90 backdrop-blur-md text-red-600 p-2.5 rounded-full shadow-lg hover:bg-red-600 hover:text-white transition-all transform hover:scale-110"
+                                        title="Delete Listing"
+                                    >
+                                        <FiTrash2 className="text-lg" />
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>

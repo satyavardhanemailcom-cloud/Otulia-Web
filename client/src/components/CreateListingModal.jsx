@@ -2,19 +2,42 @@ import React, { useState } from 'react';
 import { FiX, FiUploadCloud, FiFileText } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
-const CreateListingModal = ({ isOpen, onClose, onCreated }) => {
+const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
     const { token } = useAuth();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        title: '',
-        price: '',
-        category: 'Car',
-        type: 'Sale',
-        location: '',
-        description: ''
+        title: editData?.title || '',
+        price: editData?.price || '',
+        category: editData?.category || (editData?.itemModel === 'CarAsset' ? 'Car' : editData?.itemModel === 'EstateAsset' ? 'Estate' : editData?.itemModel === 'BikeAsset' ? 'Bike' : editData?.itemModel === 'YachtAsset' ? 'Yacht' : 'Car'),
+        type: editData?.type || 'Sale',
+        location: editData?.location || '',
+        description: editData?.description || ''
     });
     const [images, setImages] = useState([]);
     const [documents, setDocuments] = useState([]);
+
+    // Reset form when editData changes or modal closes/opens
+    React.useEffect(() => {
+        if (editData) {
+            setFormData({
+                title: editData.title || '',
+                price: editData.price || '',
+                category: editData.itemModel === 'CarAsset' ? 'Car' : editData.itemModel === 'EstateAsset' ? 'Estate' : editData.itemModel === 'BikeAsset' ? 'Bike' : editData.itemModel === 'YachtAsset' ? 'Yacht' : 'Car',
+                type: editData.type || 'Sale',
+                location: editData.location || '',
+                description: editData.description || ''
+            });
+        } else {
+            setFormData({
+                title: '',
+                price: '',
+                category: 'Car',
+                type: 'Sale',
+                location: '',
+                description: ''
+            });
+        }
+    }, [editData, isOpen]);
 
     if (!isOpen) return null;
 
@@ -41,8 +64,14 @@ const CreateListingModal = ({ isOpen, onClose, onCreated }) => {
         documents.forEach(file => data.append('documents', file));
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/listings/create', {
-                method: 'POST',
+            const url = editData
+                ? `/api/listings/${editData._id}`
+                : '/api/listings/create';
+
+            const method = editData ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -50,15 +79,16 @@ const CreateListingModal = ({ isOpen, onClose, onCreated }) => {
             });
 
             if (response.ok) {
-                const newListing = await response.json();
-                onCreated(newListing);
+                const result = await response.json();
+                onCreated(result, !!editData);
                 onClose();
             } else {
-                alert('Failed to create listing');
+                const errData = await response.json();
+                alert(errData.error || `Failed to ${editData ? 'update' : 'create'} listing`);
             }
         } catch (error) {
             console.error(error);
-            alert('Error creating listing');
+            alert(`Error ${editData ? 'updating' : 'creating'} listing`);
         } finally {
             setLoading(false);
         }
@@ -68,7 +98,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated }) => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
                 <div className="flex justify-between items-center p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold playfair-display">Create New Listing</h2>
+                    <h2 className="text-xl font-bold playfair-display">{editData ? 'Edit Listing' : 'Create New Listing'}</h2>
                     <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <FiX className="text-xl" />
                     </button>
@@ -78,18 +108,18 @@ const CreateListingModal = ({ isOpen, onClose, onCreated }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Title</label>
-                            <input type="text" name="title" required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
+                            <input type="text" name="title" value={formData.title} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price (£)</label>
-                            <input type="number" name="price" required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price (₹)</label>
+                            <input type="number" name="price" value={formData.price} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Category</label>
-                            <select name="category" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black" onChange={handleInputChange}>
+                            <select name="category" value={formData.category} disabled={!!editData} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black disabled:opacity-50" onChange={handleInputChange}>
                                 <option value="Car">Car</option>
                                 <option value="Bike">Bike</option>
                                 <option value="Yacht">Yacht</option>
@@ -98,7 +128,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated }) => {
                         </div>
                         <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Listing Type</label>
-                            <select name="type" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black" onChange={handleInputChange}>
+                            <select name="type" value={formData.type} className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black" onChange={handleInputChange}>
                                 <option value="Sale">For Sale</option>
                                 <option value="Rent">For Rent</option>
                             </select>
@@ -107,12 +137,12 @@ const CreateListingModal = ({ isOpen, onClose, onCreated }) => {
 
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Location</label>
-                        <input type="text" name="location" required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
+                        <input type="text" name="location" value={formData.location} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                     </div>
 
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Description</label>
-                        <textarea name="description" rows="3" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange}></textarea>
+                        <textarea name="description" value={formData.description} rows="3" className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange}></textarea>
                     </div>
 
                     <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-black/20 transition-colors">
