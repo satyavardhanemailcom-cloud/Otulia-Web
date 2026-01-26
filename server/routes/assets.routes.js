@@ -13,9 +13,13 @@ const router = express.Router();
  * /api/assets/vehicles
  * Supports: ?search=&page=&limit=
  */
+/**
+ * VEHICLE ASSETS
+ * /api/assets/vehicles
+ */
 router.get("/vehicles", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, category, country, sort } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -23,16 +27,26 @@ router.get("/vehicles", async (req, res) => {
 
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };
+    // Country is typically part of location or separate. If separate:
+    if (country) query.location = { $regex: country, $options: "i" };
+    if (brand) query.brand = brand;
+    if (model) query['specification.model'] = { $regex: model, $options: "i" };
+    if (category) query.category = { $regex: category, $options: "i" }; // or specific field
+
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'Low to High') sortOptions = { price: 1 };
+    if (sort === 'High to Low') sortOptions = { price: -1 };
+
     const data = await CarAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     res.json(data);
   } catch (err) {
@@ -43,28 +57,49 @@ router.get("/vehicles", async (req, res) => {
 /**
  * ESTATE ASSETS
  * /api/assets/estates
- * Supports: ?search=&page=&limit=
  */
 router.get("/estates", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, bedrooms, bathrooms, propertyType, sort } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
-    if (type) query.type = type;
+    if (type) query.type = type; // Sale/Rent
     if (location) query.location = { $regex: location, $options: "i" };
+
+    if (propertyType) query['keySpecifications.propertyType'] = propertyType;
+    if (bedrooms) {
+      // Handle "3+" logic or exact match. For simplcity assume exact or gte if string contains +
+      if (bedrooms.includes('+')) {
+        query['specification.bedrooms'] = { $gte: Number(bedrooms.replace('+', '')) };
+      } else if (bedrooms !== 'Any') {
+        query['specification.bedrooms'] = Number(bedrooms);
+      }
+    }
+    if (bathrooms) {
+      if (bathrooms.includes('+')) {
+        query['specification.bathrooms'] = { $gte: Number(bathrooms.replace('+', '')) };
+      } else if (bathrooms !== 'Any') {
+        query['specification.bathrooms'] = Number(bathrooms);
+      }
+    }
+
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'Low to High') sortOptions = { price: 1 };
+    if (sort === 'High to Low') sortOptions = { price: -1 };
+
     const data = await EstateAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     res.json(data);
   } catch (err) {
@@ -75,11 +110,10 @@ router.get("/estates", async (req, res) => {
 /**
  * BIKE ASSETS
  * /api/assets/bikes
- * Supports: ?search=&page=&limit=
  */
 router.get("/bikes", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -87,16 +121,23 @@ router.get("/bikes", async (req, res) => {
 
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };
+    if (brand) query.brand = brand;
+    if (model) query['specification.model'] = { $regex: model, $options: "i" };
+
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'Low to High') sortOptions = { price: 1 };
+    if (sort === 'High to Low') sortOptions = { price: -1 };
+
     const data = await BikeAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     res.json(data);
   } catch (err) {
@@ -107,11 +148,10 @@ router.get("/bikes", async (req, res) => {
 /**
  * YACHT ASSETS
  * /api/assets/yachts
- * Supports: ?search=&page=&limit=
  */
 router.get("/yachts", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -119,16 +159,23 @@ router.get("/yachts", async (req, res) => {
 
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };
+    if (brand) query.brand = brand;
+    if (model) query['specification.model'] = { $regex: model, $options: "i" };
+
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
+    let sortOptions = { createdAt: -1 };
+    if (sort === 'Low to High') sortOptions = { price: 1 };
+    if (sort === 'High to Low') sortOptions = { price: -1 };
+
     const data = await YachtAsset.find(query)
       .skip((page - 1) * limit)
       .limit(Number(limit))
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     res.json(data);
   } catch (err) {

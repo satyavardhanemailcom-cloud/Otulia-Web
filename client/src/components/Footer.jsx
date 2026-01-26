@@ -4,15 +4,15 @@ import { useNavigate } from 'react-router-dom'
 const Footer = () => {
     const navigate = useNavigate()
     const discover = [
-    {
-        name: 'Explore Categories',
-        navigate: '/category/cars'
-    },
-    {
-        name: 'Explore Categories',
-        navigate: '/category/cars'
-    },
-]
+        {
+            name: 'Explore Categories',
+            navigate: '/category/cars'
+        },
+        {
+            name: 'Explore Categories',
+            navigate: '/category/cars'
+        },
+    ]
 
     const company = [
         {
@@ -37,33 +37,33 @@ const Footer = () => {
         }
     ]
 
-        const social = [
-            {
-                id: 1,
-                name: "Facebook",
-                navigate: "#"
-            },
-            {
-                id: 2,
-                name: "Instagram",
-                navigate: "https://www.instagram.com/otulia.in?igsh=enZpemNoNzh0ZmZx"
-            },
-            {
-                id: 3,
-                name: "YouTube",
-                navigate: "https://youtube.com/@otulia.com13?si=1klspMO6eVg1ZgQT"
-            },
-            {
-                id: 4,
-                name: "Twitter",
-                navigate: "https://x.com/OtuliaGlobal?s=20"
-            },
-            {
-                id: 5,
-                name: "LinkedIn",
-                navigate: "https://www.linkedin.com/company/otulia/"
-            }
-        ]
+    const social = [
+        {
+            id: 1,
+            name: "Facebook",
+            navigate: "#"
+        },
+        {
+            id: 2,
+            name: "Instagram",
+            navigate: "https://www.instagram.com/otulia.in?igsh=enZpemNoNzh0ZmZx"
+        },
+        {
+            id: 3,
+            name: "YouTube",
+            navigate: "https://youtube.com/@otulia.com13?si=1klspMO6eVg1ZgQT"
+        },
+        {
+            id: 4,
+            name: "Twitter",
+            navigate: "https://x.com/OtuliaGlobal?s=20"
+        },
+        {
+            id: 5,
+            name: "LinkedIn",
+            navigate: "https://www.linkedin.com/company/otulia/"
+        }
+    ]
 
     return (
         <footer className="w-full bg-[#F8F8F8] pt-20">
@@ -71,7 +71,7 @@ const Footer = () => {
             {/* Top Section */}
             <div className="px-3 md:px-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
                 {/* Logo Column */}
-                <div onClick={()=>{navigate('/')}} className="flex flex-col cursor-pointer">
+                <div onClick={() => { navigate('/') }} className="flex flex-col cursor-pointer">
                     <img className='w-[200px] h-[60px]' alt="logo" src="/logos/logo_inverted.png" title='Otulia' />
                 </div>
 
@@ -121,8 +121,14 @@ const Footer = () => {
 
             {/* Legal Links Section */}
             <div className="px-3 md:px-16 py-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center">
-                {['Terms & Conditions', 'Privacy Policy', 'Shipping Information', 'Returns & Refunds', 'Cookie Policy'].map(item => (
-                    <a key={item} href="#" className="text-sm text-gray-500 hover:text-black text-center">{item}</a>
+                {[
+                    { name: 'Terms & Conditions', path: '/terms' },
+                    { name: 'Privacy Policy', path: '/privacy-policy' },
+                    { name: 'Shipping Information', path: '/shipping' },
+                    { name: 'Returns & Refunds', path: '/returns' },
+                    { name: 'Cookie Policy', path: '/cookie-policy' }
+                ].map(item => (
+                    <a key={item.name} href={item.path} className="text-sm text-gray-500 hover:text-black text-center">{item.name}</a>
                 ))}
             </div>
 
@@ -150,13 +156,7 @@ const Footer = () => {
                 <p className="text-sm text-gray-800 font-medium">© 2023 Otulia. All Rights Reserved.</p>
             </div>
 
-            {/* Extra Bottom Bar matching user image */}
-            <div className="w-full bg-black py-3 px-16 flex justify-between items-center text-[10px] text-white/80 font-medium">
-                <div className="flex gap-8">
-                    <a href="#" className="hover:text-white uppercase tracking-widest">Terms & Support</a>
-                    <a href="#" className="hover:text-white uppercase tracking-widest">Privacy Policy</a>
-                </div>
-            </div>
+
 
             {/* Floating Chat Tool */}
             <div className="fixed bottom-8 right-8 z-50">

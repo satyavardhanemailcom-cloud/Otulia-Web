@@ -9,6 +9,7 @@ const Yacht_Section = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(12);
     const [hasMore, setHasMore] = useState(true);
+    const [filters, setFilters] = useState({});
 
     const brands = [
         { id: 1, name: 'Azimut', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Azimut_Yachts_logo.png/1200px-Azimut_Yachts_logo.png' },
@@ -19,7 +20,15 @@ const Yacht_Section = () => {
     ];
 
     const datafetch = async () => {
-        const url = `/api/assets/yachts?limit=${limit}&page=${page}`;
+        const params = new URLSearchParams({ limit, page });
+
+        if (filters.category) params.append('type', filters.category);
+        if (filters.brand) params.append('brand', filters.brand);
+        if (filters.model) params.append('model', filters.model);
+        if (filters.country) params.append('location', filters.country);
+        if (filters.price) params.append('sort', filters.price);
+
+        const url = `/api/assets/yachts?${params.toString()}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -29,7 +38,11 @@ const Yacht_Section = () => {
             if (result.length < limit) {
                 setHasMore(false);
             }
-            setlist(prevList => [...prevList, ...result]);
+            if (page === 1) {
+                setlist(result);
+            } else {
+                setlist(prevList => [...prevList, ...result]);
+            }
         } catch (error) {
             console.error(error.message);
         }
@@ -37,11 +50,22 @@ const Yacht_Section = () => {
 
     useEffect(() => {
         datafetch();
-    }, [page, limit]);
+    }, [page, limit, filters]);
 
     const loadMore = () => {
         setPage(prevPage => prevPage + 1);
     }
+
+    const handleFilter = (newFilters) => {
+        setFilters(newFilters);
+        setPage(1);
+    }
+
+    // Yacht Specific Options
+    const yachtCategories = ['Motor Yacht', 'Sailing Yacht', 'Superyacht', 'Catamaran'];
+    const yachtBrandsList = [...brands.map(b => b.name), 'Riva', 'Heesen', 'Wally'];
+    const yachtModels = ['Grande 27 Metri', 'Predator 74', 'Oasis 40M', 'Flybridge'];
+    const yachtCountries = ['Italy', 'UK', 'Netherlands', 'USA', 'France'];
 
     return (
         <div className=''>
@@ -71,7 +95,13 @@ const Yacht_Section = () => {
                 <div className="w-[92%] md:w-[70%] h-px bg-gray-200 border-0 justify-self-center"></div>
 
                 <section className="w-full px-3 md:px-16 py-12 bg-white">
-                    <FilterBar />
+                    <FilterBar
+                        onFilter={handleFilter}
+                        categories={yachtCategories}
+                        brands={yachtBrandsList}
+                        models={yachtModels}
+                        countries={yachtCountries}
+                    />
                 </section>
 
                 <section className="w-full px-3 md:px-16 bg-white pb-32">
@@ -96,7 +126,7 @@ const Yacht_Section = () => {
                                 </div>
                             )}
                         </div>
-                        {hasMore && (
+                        {hasMore && list.length > 0 && (
                             <div className="text-center mt-12">
                                 <button
                                     onClick={loadMore}

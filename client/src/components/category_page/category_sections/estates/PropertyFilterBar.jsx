@@ -1,22 +1,44 @@
 import React, { useState } from 'react';
 
-const PropertyFilterBar = () => {
+const PropertyFilterBar = ({ onFilter }) => {
   // State to track which filter is currently open (e.g., 'Price Range')
   const [activeFilter, setActiveFilter] = useState(null);
 
+  // State for selected filters
+  const [selectedFilters, setSelectedFilters] = useState({
+    priceRange: 'Any Price',
+    type: 'Any',
+    bedrooms: 'Any',
+    sizeLand: 'Any SqFt',
+    bathrooms: 'Any',
+    architecture: 'Any',
+    amenities: 'Any'
+  });
+
   const filters = [
-    { label: 'Price Range', options: ['Any Price', '£1M - £5M', '£5M - £10M', '£10M+'] },
-    { label: 'Type', options: ['Villa', 'Penthouse', 'Mansion', 'Estate'] },
-    { label: 'Bedrooms', options: ['Any', '3+', '4+', '5+'] },
-    { label: 'Size & Land', options: ['Any SqFt', '5000+ sqft', '10,000+ sqft'] },
-    { label: 'Bathrooms', options: ['Any', '2+', '3+', '4+'] },
-    { label: 'Architecture', options: ['Modern', 'Classic', 'Mediterranean', 'Colonial'] },
-    { label: 'Amenities', options: ['Pool', 'Gym', 'Helipad', 'Theater'] }
+    { label: 'Price Range', key: 'priceRange', options: ['Any Price', '£1M - £5M', '£5M - £10M', '£10M+'] },
+    { label: 'Type', key: 'type', options: ['Any', 'Villa', 'Penthouse', 'Mansion', 'Estate'] },
+    { label: 'Bedrooms', key: 'bedrooms', options: ['Any', '3+', '4+', '5+'] },
+    { label: 'Size & Land', key: 'sizeLand', options: ['Any SqFt', '5000+ sqft', '10,000+ sqft'] },
+    { label: 'Bathrooms', key: 'bathrooms', options: ['Any', '2+', '3+', '4+'] },
+    { label: 'Architecture', key: 'architecture', options: ['Any', 'Modern', 'Classic', 'Mediterranean', 'Colonial'] },
+    { label: 'Amenities', key: 'amenities', options: ['Any', 'Pool', 'Gym', 'Helipad', 'Theater'] }
   ];
 
   const toggleFilter = (label) => {
     // If clicking the same button, close it. Otherwise, open the new one.
     setActiveFilter(activeFilter === label ? null : label);
+  };
+
+  const handleSelect = (key, value) => {
+    setSelectedFilters(prev => ({ ...prev, [key]: value }));
+    setActiveFilter(null);
+  };
+
+  const handleSearch = () => {
+    if (onFilter) {
+      onFilter(selectedFilters);
+    }
   };
 
   return (
@@ -35,13 +57,15 @@ const PropertyFilterBar = () => {
                 text-sm montserrat md:text-base font-medium
                 transition-all duration-300
                 whitespace-nowrap
-                ${activeFilter === filter.label
+                ${(selectedFilters[filter.key] && selectedFilters[filter.key] !== 'Any' && selectedFilters[filter.key] !== 'Any Price' && selectedFilters[filter.key] !== 'Any SqFt') || activeFilter === filter.label
                   ? 'bg-black text-white border-black' // Active Style
                   : 'bg-white text-black border-gray-300 hover:border-[#B8860B] hover:text-[#B8860B]' // Inactive Style
                 }
               `}
             >
-              {filter.label}
+              {selectedFilters[filter.key] && selectedFilters[filter.key] !== 'Any' && selectedFilters[filter.key] !== 'Any Price' && selectedFilters[filter.key] !== 'Any SqFt'
+                ? selectedFilters[filter.key]
+                : filter.label}
             </button>
 
             {/* THE DROPDOWN MENU (Only shows if active) */}
@@ -58,11 +82,8 @@ const PropertyFilterBar = () => {
                   {filter.options.map((option, idx) => (
                     <div
                       key={idx}
-                      className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#B8860B] cursor-pointer transition-colors"
-                      onClick={() => {
-
-                        setActiveFilter(null); // Close on selection
-                      }}
+                      className={`px-4 py-3 text-sm cursor-pointer transition-colors ${selectedFilters[filter.key] === option ? 'bg-gray-100 text-[#B8860B] font-bold' : 'text-gray-700 hover:bg-gray-50 hover:text-[#B8860B]'}`}
+                      onClick={() => handleSelect(filter.key, option)}
                     >
                       {option}
                     </div>
@@ -73,10 +94,11 @@ const PropertyFilterBar = () => {
           </div>
         ))}
 
-        {/* 'View All...' Button (Static) */}
+        {/* Search Button */}
         <button
+          onClick={handleSearch}
           className="
-            px-6 py-2.5
+            px-8 py-2.5
             bg-[#C5A059] hover:bg-[#9C824A]
             border border-[#C5A059] hover:border-[#9C824A]
             rounded-lg
@@ -86,7 +108,7 @@ const PropertyFilterBar = () => {
             whitespace-nowrap
           "
         >
-          View All...
+          Search
         </button>
 
       </div>

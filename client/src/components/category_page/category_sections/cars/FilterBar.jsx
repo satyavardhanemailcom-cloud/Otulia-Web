@@ -59,7 +59,7 @@ const AutoWidthDropdown = ({ label, value, options, onChange }) => {
           max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-100
         ">
           {/* Header option (Reset) */}
-          <div 
+          <div
             className="px-4 py-2 text-gray-400 text-sm cursor-pointer hover:bg-gray-50"
             onClick={() => handleSelect('')}
           >
@@ -84,7 +84,13 @@ const AutoWidthDropdown = ({ label, value, options, onChange }) => {
   );
 };
 
-const FilterBar = () => {
+const FilterBar = ({
+  onFilter,
+  categories = ['Supercars', 'Luxury Sedans', 'Ultra-Luxury'],
+  brands = ['Ferrari', 'Lamborghini', 'Porsche', 'McLaren', 'Bugatti', 'Rolls-Royce', 'Aston Martin'],
+  models = ['Aventador', 'Huracan', '911 GT3', 'Chiron', 'Phantom', 'DB5'],
+  countries = ['Italy', 'Germany', 'UK', 'USA', 'France']
+}) => {
   const [filters, setFilters] = useState({
     category: '',
     brand: '',
@@ -97,11 +103,17 @@ const FilterBar = () => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
+  const handleSearch = () => {
+    if (onFilter) {
+      onFilter(filters);
+    }
+  };
+
   return (
     <div className="w-full flex justify-center p-4">
-      
+
       {/* MAIN CONTAINER */}
-      <form className="
+      <div className="
         w-full max-w-[1400px]
         bg-white border border-gray-300 
         rounded-2xl xl:rounded-full 
@@ -109,7 +121,7 @@ const FilterBar = () => {
         flex flex-col xl:flex-row items-center justify-between gap-4 xl:gap-2
         shadow-sm transition-all duration-300
       ">
-        
+
         {/* LABEL */}
         <div className="w-full xl:w-auto text-center xl:text-left border-b xl:border-none border-gray-100 pb-2 xl:pb-0">
           <span className="montserrat text-lg xl:text-xl text-black whitespace-nowrap font-medium">
@@ -119,38 +131,38 @@ const FilterBar = () => {
 
         {/* INPUTS GROUP */}
         <div className="w-full grid grid-cols-2 md:grid-cols-3 xl:flex xl:items-center gap-4 xl:gap-0">
-          
-          <AutoWidthDropdown 
-            label="Category" 
-            value={filters.category} 
-            options={['Supercars', 'Luxury Sedans', 'Ultra-Luxury']}
+
+          <AutoWidthDropdown
+            label="Category"
+            value={filters.category}
+            options={categories}
             onChange={(val) => handleFilterChange('category', val)}
           />
 
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          <AutoWidthDropdown 
-            label="Brand" 
-            value={filters.brand} 
-            options={['Ferrari', 'Lamborghini', 'Porsche']}
+          <AutoWidthDropdown
+            label="Brand"
+            value={filters.brand}
+            options={brands}
             onChange={(val) => handleFilterChange('brand', val)}
           />
 
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          <AutoWidthDropdown 
-            label="Model" 
-            value={filters.model} 
-            options={['Aventador', 'Huracan', '911 GT3']}
+          <AutoWidthDropdown
+            label="Model"
+            value={filters.model}
+            options={models}
             onChange={(val) => handleFilterChange('model', val)}
           />
 
           <div className="hidden xl:block h-8 w-px bg-white mx-2"></div>
 
-          <AutoWidthDropdown 
-            label="Country" 
-            value={filters.country} 
-            options={['Italy', 'Germany', 'UK']}
+          <AutoWidthDropdown
+            label="Country"
+            value={filters.country}
+            options={countries}
             onChange={(val) => handleFilterChange('country', val)}
           />
 
@@ -158,9 +170,9 @@ const FilterBar = () => {
 
           {/* Price - Spans 2 cols on mobile */}
           <div className="col-span-2 md:col-span-1 xl:col-span-auto w-full xl:w-auto">
-            <AutoWidthDropdown 
-              label="Price" 
-              value={filters.price} 
+            <AutoWidthDropdown
+              label="Price"
+              value={filters.price}
               options={['Low to High', 'High to Low']}
               onChange={(val) => handleFilterChange('price', val)}
             />
@@ -168,8 +180,9 @@ const FilterBar = () => {
 
           {/* SEARCH BUTTON (Mobile/Tablet) */}
           <div className="xl:hidden w-full col-span-2 md:col-span-1">
-             <button 
+            <button
               type="button"
+              onClick={handleSearch}
               className="w-full bg-[#9C824A] hover:bg-[#856d3a] text-white montserrat font-medium py-2.5 rounded-lg shadow-md transition-all"
             >
               Search
@@ -179,8 +192,9 @@ const FilterBar = () => {
         </div>
 
         {/* SEARCH BUTTON (Desktop) */}
-        <button 
+        <button
           type="button"
+          onClick={handleSearch}
           className="
             hidden xl:block
             w-auto 
@@ -195,7 +209,7 @@ const FilterBar = () => {
           Search
         </button>
 
-      </form>
+      </div>
     </div>
   );
 };

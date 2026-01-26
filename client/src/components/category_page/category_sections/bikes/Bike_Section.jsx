@@ -9,6 +9,7 @@ const Bike_Section = () => {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(12);
     const [hasMore, setHasMore] = useState(true);
+    const [filters, setFilters] = useState({});
 
     const brands = [
         { id: 1, name: 'Ducati', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Ducati_red_logo.PNG' },
@@ -19,7 +20,15 @@ const Bike_Section = () => {
     ];
 
     const datafetch = async () => {
-        const url = `/api/assets/bikes?limit=${limit}&page=${page}`;
+        const params = new URLSearchParams({ limit, page });
+
+        if (filters.category) params.append('type', filters.category); // Map category to type or brand if relevant, but backend has type
+        if (filters.brand) params.append('brand', filters.brand);
+        if (filters.model) params.append('model', filters.model);
+        if (filters.country) params.append('location', filters.country); // Map country to location
+        if (filters.price) params.append('sort', filters.price);
+
+        const url = `/api/assets/bikes?${params.toString()}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -29,7 +38,11 @@ const Bike_Section = () => {
             if (result.length < limit) {
                 setHasMore(false);
             }
-            setlist(prevList => [...prevList, ...result]);
+            if (page === 1) {
+                setlist(result);
+            } else {
+                setlist(prevList => [...prevList, ...result]);
+            }
         } catch (error) {
             console.error(error.message);
         }
@@ -37,11 +50,22 @@ const Bike_Section = () => {
 
     useEffect(() => {
         datafetch();
-    }, [page, limit]);
+    }, [page, limit, filters]);
 
     const loadMore = () => {
         setPage(prevPage => prevPage + 1);
     }
+
+    const handleFilter = (newFilters) => {
+        setFilters(newFilters);
+        setPage(1); // Reset to page 1 on filter change
+    }
+
+    // Bike Specific Options
+    const bikeCategories = ['Sport', 'Cruiser', 'Touring', 'Standard', 'Off-Road'];
+    const bikeBrandsList = brands.map(b => b.name);
+    const bikeModels = ['Panigale', 'Ninja', 'S 1000 RR', 'R1', 'Fat Boy']; // Examples
+    const bikeCountries = ['Italy', 'Japan', 'Germany', 'USA'];
 
     return (
         <div className=''>
@@ -71,7 +95,13 @@ const Bike_Section = () => {
                 <div className="w-[92%] md:w-[70%] h-px bg-gray-200 border-0 justify-self-center"></div>
 
                 <section className="w-full px-3 md:px-16 py-12 bg-white">
-                    <FilterBar />
+                    <FilterBar
+                        onFilter={handleFilter}
+                        categories={bikeCategories}
+                        brands={bikeBrandsList}
+                        models={bikeModels}
+                        countries={bikeCountries}
+                    />
                 </section>
 
                 <section className="w-full px-3 md:px-16 bg-white pb-32">
@@ -96,7 +126,7 @@ const Bike_Section = () => {
                                 </div>
                             )}
                         </div>
-                        {hasMore && (
+                        {hasMore && list.length > 0 && (
                             <div className="text-center mt-12">
                                 <button
                                     onClick={loadMore}

@@ -25,6 +25,13 @@ import Success from "./pages/Success";
 import MyListings from "./pages/MyListings";
 import Inventory from "./pages/Inventory";
 
+// Policy pages
+import Terms from "./pages/policies/Terms";
+import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
+import Shipping from "./pages/policies/Shipping";
+import Returns from "./pages/policies/Returns";
+import CookiePolicy from "./pages/policies/CookiePolicy";
+
 import { Routes, Route } from "react-router-dom";
 
 import PopularLinks from "./components/PopularLinks"
@@ -65,6 +72,13 @@ function App() {
         <Route path="/success" element={<Success />} />
         <Route path="/listings" element={<MyListings />} />
         <Route path="/inventory" element={<Inventory />} />
+
+        {/* Policy Routes */}
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/shipping" element={<Shipping />} />
+        <Route path="/returns" element={<Returns />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
       </Routes>
       <Footer />
     </CartProvider>
