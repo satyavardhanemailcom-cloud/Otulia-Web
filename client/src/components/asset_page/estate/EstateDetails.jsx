@@ -152,7 +152,7 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
         <div className="w-full lg:w-1/3 flex flex-col gap-6">
           <div className="w-full text-left lg:text-right">
             <h2 className="text-3xl md:text-4xl font-bold playfair-display text-black">
-              ₹ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500">/ day</span>}
+              £ {numberWithCommas(price)} {type === 'Rent' && <span className="text-lg font-normal text-gray-500">/ day</span>}
             </h2>
           </div>
 
@@ -192,7 +192,7 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
                   <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
                     <span>Total Rent</span>
                     <span>
-                      ₹ {numberWithCommas(Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * price)}
+                      £ {numberWithCommas(Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * price)}
                     </span>
                   </div>
                 </div>

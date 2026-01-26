@@ -111,7 +111,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                             <input type="text" name="title" value={formData.title} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                         </div>
                         <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price (₹)</label>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price (£)</label>
                             <input type="number" name="price" value={formData.price} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
                         </div>
                     </div>

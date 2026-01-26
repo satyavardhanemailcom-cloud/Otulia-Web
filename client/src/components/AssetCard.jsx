@@ -161,7 +161,7 @@ const AssetCard = ({ item }) => {
           {item.title}
         </h3>
         <p className="text-md font-bold text-black mb-1 font-sans">
-          {typeof item.price === 'number' ? `₹ ${numberWithCommas(item.price)}` : item.price}
+          {typeof item.price === 'number' ? `£ ${numberWithCommas(item.price)}` : item.price}
           {item.type === 'Rent' && <span className="text-[10px] text-gray-500 font-normal"> / day</span>}
         </p>
 

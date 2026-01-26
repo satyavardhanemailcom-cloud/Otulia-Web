@@ -296,7 +296,7 @@ const Inventory = () => {
                                 <AnalyticsCard title="Total Views" value={data.stats.totalViews} growth="+12.5%" icon={<FiEye />} />
                                 <AnalyticsCard title="Total Leads" value={data.stats.totalLeads} growth="+8.2%" icon={<FiUsers />} />
                                 <AnalyticsCard title="Saved / Shortlisted" value="89" growth="+5.1%" icon={<FiHeart />} />
-                                <AnalyticsCard title="Est. Lead Value" value={`₹${numberWithCommas(4250000)}`} growth="+15.3%" icon={<FiTrendingUp />} />
+                                <AnalyticsCard title="Est. Lead Value" value={`£${numberWithCommas(4250000)}`} growth="+15.3%" icon={<FiTrendingUp />} />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -533,7 +533,7 @@ const Inventory = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-4">
-                                                        <span className="text-sm font-semibold text-gray-900">${numberWithCommas(item.price)}</span>
+                                                        <span className="text-sm font-semibold text-gray-900">£{numberWithCommas(item.price)}</span>
                                                     </td>
                                                     <td className="px-4 py-4">
                                                         <span className={`px-3 py-1 rounded-full text-xs font-semibold ${item.status === 'Active' ? 'bg-emerald-50 text-emerald-600' :
@@ -697,7 +697,7 @@ const Inventory = () => {
                                 <AnalyticsCard title="Total Views" value="124,580" growth="+18.2%" icon={<FiEye />} />
                                 <AnalyticsCard title="Total Leads" value="342" growth="+12.5%" icon={<FiUsers />} />
                                 <AnalyticsCard title="Conversion Rate" value="2.74%" growth="+0.3%" icon={<FiTrendingUp />} />
-                                <AnalyticsCard title="Avg Lead Value" value="$12,426" growth="+5.8%" icon={<FiCreditCard />} />
+                                <AnalyticsCard title="Avg Lead Value" value="£12,426" growth="+5.8%" icon={<FiCreditCard />} />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

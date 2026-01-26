@@ -12,7 +12,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
     const plans = [
         {
             name: "Premium Basic",
-            price: "₹ 5,000",
+            price: "£ 5,000",
             period: "per month",
             features: [
                 "List up to 25 luxury assets",
@@ -27,7 +27,7 @@ const UpgradeModal = ({ isOpen, onClose }) => {
         },
         {
             name: "Business VIP",
-            price: "₹ 15,000",
+            price: "£ 15,000",
             period: "per month",
             features: [
                 "Listing capacity: 50 assets",
@@ -149,8 +149,8 @@ const UpgradeModal = ({ isOpen, onClose }) => {
                             <div
                                 key={idx}
                                 className={`group relative p-8 rounded-[2rem] border-2 transition-all duration-500 flex flex-col h-full ${plan.popular
-                                        ? 'border-black bg-gray-50 shadow-2xl scale-[1.02]'
-                                        : 'border-gray-100 bg-white hover:border-gray-300'
+                                    ? 'border-black bg-gray-50 shadow-2xl scale-[1.02]'
+                                    : 'border-gray-100 bg-white hover:border-gray-300'
                                     }`}
                             >
                                 {plan.popular && (
@@ -185,8 +185,8 @@ const UpgradeModal = ({ isOpen, onClose }) => {
                                     disabled={loadingPlan === plan.name}
                                     onClick={() => handleUpgrade(plan.name)}
                                     className={`w-full py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 transition-all ${plan.popular
-                                            ? 'bg-black text-white hover:bg-black/90 shadow-lg shadow-black/20'
-                                            : 'bg-gray-100 text-black hover:bg-black hover:text-white'
+                                        ? 'bg-black text-white hover:bg-black/90 shadow-lg shadow-black/20'
+                                        : 'bg-gray-100 text-black hover:bg-black hover:text-white'
                                         }`}
                                 >
                                     {loadingPlan === plan.name ? (

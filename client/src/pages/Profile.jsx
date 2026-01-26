@@ -244,7 +244,7 @@ const Profile = () => {
                             </div>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="font-bold text-black text-xl font-playfair">₹ {order.price?.toLocaleString()}</span>
+                            <span className="font-bold text-black text-xl font-playfair">£ {order.price?.toLocaleString()}</span>
                             <span className="text-[10px] text-green-600 font-bold uppercase tracking-widest mt-1">Confirmed</span>
                           </div>
                         </div>
@@ -291,7 +291,7 @@ const Profile = () => {
                             </div>
                             <div className="text-right">
                               <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded mb-1 inline-block uppercase tracking-widest">Leased</span>
-                              <p className="text-[10px] text-gray-400">₹ {item.totalPrice?.toLocaleString()}</p>
+                              <p className="text-[10px] text-gray-400">£ {item.totalPrice?.toLocaleString()}</p>
                             </div>
                           </div>
                         ))}

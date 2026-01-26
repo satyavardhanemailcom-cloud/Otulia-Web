@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import freemiumUrl from '../../assets/pricing/freemium.jpg'
 import premiumUrl from '../../assets/pricing/premium.jpg'
 import businessUrl from '../../assets/pricing/business_plan.jpg'
+import { loadRazorpay } from '../../modules/razorpay';
 
 const PricingSection = () => {
   const { user, token, isAuthenticated, refreshUser } = useAuth();
@@ -37,7 +38,7 @@ const PricingSection = () => {
       buttonColor: 'bg-[#D90416]',
       features: [
         'Upto 25 listings',
-        '$25 extra per listing',
+        '£25 extra per listing',
         '5 Days of Featured Placement',
         'Full Inventory Management System',
         'Priority Placement Across Categories',
@@ -53,7 +54,7 @@ const PricingSection = () => {
       buttonColor: 'bg-[#D90416]',
       features: [
         'Upto 50 listings',
-        '$20 per extra listing',
+        '£20 per extra listing',
         '13 Days Of Featured Listing',
         'Advanced Inventory Management System',
         'Priority Placement Across Categories',
@@ -73,10 +74,15 @@ const PricingSection = () => {
       return;
     }
 
-    // DUMMY TESTING: All plans use direct upgrade, skipping Stripe
+    const res = await loadRazorpay();
+    if (!res) {
+      setStatusMessage({ text: 'Razorpay SDK failed to load. Are you online?', type: 'error' });
+      return;
+    }
+
     setLoadingPlanId(plan.id);
     try {
-      const response = await fetch('/api/auth/upgrade-plan', {
+      const response = await fetch('http://127.0.0.1:8000/api/payment/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,13 +91,61 @@ const PricingSection = () => {
         body: JSON.stringify({ plan: plan.name })
       });
 
-      if (response.ok) {
-        setStatusMessage({ text: `Successfully upgraded to ${plan.name}! (TEST MODE)`, type: 'success' });
-        await refreshUser();
-      } else {
-        const err = await response.json();
-        setStatusMessage({ text: err.error || 'Failed to upgrade.', type: 'error' });
+      const data = await response.json();
+
+      if (data.error) {
+        setStatusMessage({ text: data.error, type: 'error' });
+        setLoadingPlanId(null);
+        return;
       }
+
+      const options = {
+        key: data.key_id,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        name: "Otulia",
+        description: `Upgrade to ${plan.name}`,
+        order_id: data.order.id,
+        handler: async function (response) {
+          try {
+            const verifyRes = await fetch('http://127.0.0.1:8000/api/payment/verify-payment', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                plan: data.plan
+              })
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              setStatusMessage({ text: 'Plan upgraded successfully!', type: 'success' });
+              await refreshUser();
+            } else {
+              setStatusMessage({ text: 'Payment verification failed: ' + verifyData.error, type: 'error' });
+            }
+          } catch (err) {
+            setStatusMessage({ text: 'Payment verification error.', type: 'error' });
+          }
+        },
+        prefill: {
+          name: user?.name,
+          email: user?.email,
+          contact: user?.phone || ''
+        },
+        theme: {
+          color: "#D90416"
+        }
+      };
+
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+
     } catch (error) {
       console.error('Plan upgrade error:', error);
       setStatusMessage({ text: 'A connection error occurred.', type: 'error' });

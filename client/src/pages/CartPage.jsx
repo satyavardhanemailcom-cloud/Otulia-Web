@@ -4,10 +4,11 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import numberWithCommas from '../modules/numberwithcomma';
+import { loadRazorpay } from '../modules/razorpay';
 
 const CartPage = () => {
-    const { cart, removeFromCart, cartTotal } = useCart();
-    const { token, isAuthenticated } = useAuth();
+    const { cart, removeFromCart, cartTotal, clearCart } = useCart();
+    const { token, isAuthenticated, user } = useAuth();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -15,6 +16,12 @@ const CartPage = () => {
         if (!isAuthenticated) {
             alert('Please login to checkout.');
             navigate('/login');
+            return;
+        }
+
+        const res = await loadRazorpay();
+        if (!res) {
+            alert('Razorpay SDK failed to load. Are you online?');
             return;
         }
 
@@ -26,17 +33,67 @@ const CartPage = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ cartItems: cart }) // this works for both rent and buy now
+                body: JSON.stringify({ cartItems: cart })
             });
 
             const data = await response.json();
 
-            if (data.url) {
-                // Redirect to Stripe
-                window.location.href = data.url;
-            } else {
-                alert('Checkout failed: ' + (data.error || 'Unknown error'));
+            if (data.error) {
+                alert('Checkout failed: ' + data.error);
+                setLoading(false);
+                return;
             }
+
+            const options = {
+                key: data.key_id,
+                amount: data.order.amount,
+                currency: data.order.currency,
+                name: "Otulia",
+                description: "Cart Checkout",
+                order_id: data.order.id,
+                handler: async function (response) {
+                    try {
+                        const verifyRes = await fetch('http://127.0.0.1:8000/api/payment/verify-payment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature,
+                                cartData: data.cartData
+                            })
+                        });
+
+                        const verifyData = await verifyRes.json();
+                        if (verifyData.success) {
+                            alert("Payment Successful!");
+                            // clearCart(); // create clearCart if not exists or manually clear
+                            // Redirect
+                            navigate('/profile');
+                        } else {
+                            alert("Payment verification failed: " + (verifyData.error || 'Unknown error'));
+                        }
+                    } catch (err) {
+                        console.error("Verification error:", err);
+                        alert("Payment verification error");
+                    }
+                },
+                prefill: {
+                    name: user?.name,
+                    email: user?.email,
+                    contact: user?.phone || ''
+                },
+                theme: {
+                    color: "#000000"
+                }
+            };
+
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.open();
+
         } catch (error) {
             console.error('Checkout error:', error);
             alert('An error occurred during checkout.');
@@ -98,12 +155,12 @@ const CartPage = () => {
                                                     Duration: {item.duration} days
                                                 </div>
                                                 <div className="font-medium">
-                                                    ₹ {numberWithCommas(item.pricePerDay)} x {item.duration} = ₹ {numberWithCommas(item.totalPrice)}
+                                                    £ {numberWithCommas(item.pricePerDay)} x {item.duration} = £ {numberWithCommas(item.totalPrice)}
                                                 </div>
                                             </>
                                         ) : (
                                             <div className="font-medium">
-                                                Price: ₹ {numberWithCommas(item.totalPrice)}
+                                                Price: £ {numberWithCommas(item.totalPrice)}
                                             </div>
                                         )}
                                     </div>
@@ -117,15 +174,15 @@ const CartPage = () => {
                                 <h2 className="text-xl font-bold mb-6 font-playfair">Order Summary</h2>
                                 <div className="flex justify-between mb-4">
                                     <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-medium">₹ {numberWithCommas(cartTotal)}</span>
+                                    <span className="font-medium">£ {numberWithCommas(cartTotal)}</span>
                                 </div>
                                 <div className="flex justify-between mb-6">
                                     <span className="text-gray-600">Service Fee</span>
-                                    <span className="font-medium">₹ 0</span>
+                                    <span className="font-medium">£ 0</span>
                                 </div>
                                 <div className="border-t pt-4 flex justify-between mb-8">
                                     <span className="font-bold text-lg">Total</span>
-                                    <span className="font-bold text-lg">₹ {numberWithCommas(cartTotal)}</span>
+                                    <span className="font-bold text-lg">£ {numberWithCommas(cartTotal)}</span>
                                 </div>
                                 <button
                                     onClick={handleCheckout}
