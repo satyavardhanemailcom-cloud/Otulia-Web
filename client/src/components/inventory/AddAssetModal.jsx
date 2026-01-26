@@ -6,7 +6,7 @@ import {
 } from 'react-icons/fi';
 import { useAuth } from '../../contexts/AuthContext';
 
-const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
+const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const { token, user } = useAuth();
 
     // Step State: 0 (Type Select), 1 (Form Details)
@@ -18,7 +18,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
     const initialFormState = {
         // Common
         make: '', model: '', variant: '', year: new Date().getFullYear(),
-        price: '', location: '', description: '', highlights: [''],
+        price: '', type: 'Sale', location: '', description: '', highlights: [''],
         videoUrl: '', isPublic: true,
 
         // Car Specific
@@ -62,8 +62,57 @@ const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
             setGalleryImages([]);
             setDocuments([]);
             setFormData(initialFormState);
+        } else if (editData) {
+            setStep(1);
+            setAssetType(editData.category?.replace('Asset', ''));
+            const spec = editData.specification || {};
+            const keySpec = editData.keySpecifications || {};
+
+            // Map incoming data to form structure
+            setFormData({
+                ...initialFormState,
+                // Common
+                price: editData.price || '',
+                type: editData.type || 'Sale',
+                location: editData.location || '',
+                description: editData.description || '',
+                highlights: editData.highlights || [''],
+                videoUrl: editData.videoUrl || '',
+                isPublic: editData.status === 'Active',
+
+                // Specifications - try to match as many overlapping fields as possible
+                // Car
+                make: editData.brand || '',
+                model: spec.model || '',
+                variant: spec.variant || '',
+                year: spec.year || '',
+                mileage: spec.mileage || '',
+                fuelType: spec.fuelType || '',
+                transmission: spec.transmission || '',
+                exteriorColor: spec.exteriorColor || '',
+                interiorColor: spec.interiorColor || '',
+                condition: spec.condition || '',
+
+                // Yacht
+                yachtName: spec.yachtName || '',
+                builder: spec.builder || '',
+                length: spec.length || '',
+                beam: spec.beam || '',
+
+                // Real Estate
+                propertyName: editData.title || '',
+                propertyType: keySpec.propertyType || '',
+                builtUpArea: spec.builtUpArea || '',
+                landArea: spec.landArea || '',
+                bedrooms: spec.bedrooms || '',
+                bathrooms: spec.bathrooms || '',
+
+                // Bike
+                brand: editData.brand || '',
+                engineCapacity: spec.engineCapacity || '',
+            });
         }
-    }, [isOpen]);
+    }, [isOpen, editData]);
 
     if (!isOpen) return null;
 
@@ -122,8 +171,14 @@ const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
         documents.forEach(doc => data.append('documents', doc));
 
         try {
-            const response = await fetch('/api/listings/create', {
-                method: 'POST',
+            const url = editData
+                ? `/api/listings/${editData.id || editData._id}`
+                : '/api/listings/create';
+
+            const method = editData ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: data
             });
@@ -223,7 +278,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
                                         <InputField label="Model" name="model" value={formData.model} placeholder="e.g., SF90 Stradale" onChange={handleInputChange} />
                                         <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., Assetto Fiorano" onChange={handleInputChange} />
                                         <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                        <InputField label="Price ($)" name="price" type="number" value={formData.price} placeholder="625000" onChange={handleInputChange} />
+                                        <InputField label={formData.type === 'Rent' ? "Price per Day (£)" : "Price (£)"} name="price" type="number" value={formData.price} placeholder="625000" onChange={handleInputChange} />
+                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
                                         <InputField label="Location" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} />
                                         <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} placeholder="1500" onChange={handleInputChange} />
                                         <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} />
@@ -242,7 +298,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
                                         <InputField label="Builder" name="builder" value={formData.builder} placeholder="e.g., Azimut" onChange={handleInputChange} />
                                         <InputField label="Model" name="model" value={formData.model} placeholder="e.g., Grande 32 Metri" onChange={handleInputChange} />
                                         <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                        <InputField label="Price ($)" name="price" type="number" value={formData.price} placeholder="8500000" onChange={handleInputChange} />
+                                        <InputField label={formData.type === 'Rent' ? "Price per Day (£)" : "Price (£)"} name="price" type="number" value={formData.price} placeholder="8500000" onChange={handleInputChange} />
+                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
                                         <InputField label="Location / Marina" name="location" value={formData.location} placeholder="e.g., Monaco, Port Hercules" onChange={handleInputChange} />
                                         <InputField label="Length (m)" name="length" type="number" value={formData.length} placeholder="32" onChange={handleInputChange} />
                                         <InputField label="Beam (m)" name="beam" type="number" value={formData.beam} placeholder="7.5" onChange={handleInputChange} />
@@ -257,7 +314,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
                                     <>
                                         <InputField label="Property Name" name="propertyName" value={formData.propertyName} placeholder="e.g., Monaco Penthouse Suite" onChange={handleInputChange} />
                                         <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} />
-                                        <InputField label="Price ($)" name="price" type="number" value={formData.price} placeholder="28000000" onChange={handleInputChange} />
+                                        <InputField label={formData.type === 'Rent' ? "Price per Day (£)" : "Price (£)"} name="price" type="number" value={formData.price} placeholder="28000000" onChange={handleInputChange} />
+                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
                                         <InputField label="Country" name="country" value={formData.country} placeholder="e.g., Monaco" onChange={handleInputChange} />
                                         <InputField label="City" name="city" value={formData.city} placeholder="e.g., Monte Carlo" onChange={handleInputChange} />
                                         <InputField label="Address (Optional)" name="address" value={formData.address} placeholder="e.g., Avenue Princess Grace" onChange={handleInputChange} />
@@ -275,7 +333,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated }) => {
                                         <InputField label="Model" name="model" value={formData.model} placeholder="e.g., Panigale V4" onChange={handleInputChange} />
                                         <InputField label="Variant" name="variant" value={formData.variant} placeholder="e.g., S" onChange={handleInputChange} />
                                         <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
-                                        <InputField label="Price ($)" name="price" type="number" value={formData.price} placeholder="28000" onChange={handleInputChange} />
+                                        <InputField label={formData.type === 'Rent' ? "Price per Day (£)" : "Price (£)"} name="price" type="number" value={formData.price} placeholder="28000" onChange={handleInputChange} />
+                                        <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
                                         <InputField label="Location" name="location" value={formData.location} placeholder="e.g., Miami, FL" onChange={handleInputChange} />
                                     </>
                                 )}

@@ -26,6 +26,7 @@ const Inventory = () => {
     const [loading, setLoading] = useState(true);
     const [updatingId, setUpdatingId] = useState(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
     const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const [leadStatusFilter, setLeadStatusFilter] = useState('All Status');
@@ -487,6 +488,7 @@ const Inventory = () => {
                                         <tr className="bg-gray-50 border-b border-gray-100">
                                             <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Asset</th>
                                             <th className="px-4 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
+                                            <th className="px-4 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
                                             <th className="px-4 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
                                             <th className="px-4 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
                                             <th className="px-4 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Performance</th>
@@ -533,6 +535,11 @@ const Inventory = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-4 py-4">
+                                                        <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${item.type === 'Rent' ? 'bg-black text-white' : 'bg-gray-200 text-gray-600'}`}>
+                                                            {item.type || 'Sale'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-4">
                                                         <span className="text-sm font-semibold text-gray-900">£{numberWithCommas(item.price)}</span>
                                                     </td>
                                                     <td className="px-4 py-4">
@@ -567,7 +574,13 @@ const Inventory = () => {
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
                                                         <div className="flex items-center justify-end gap-2">
-                                                            <button className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all">
+                                                            <button
+                                                                onClick={() => {
+                                                                    setEditingItem(item);
+                                                                    setIsAddModalOpen(true);
+                                                                }}
+                                                                className="p-2 text-gray-400 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+                                                            >
                                                                 <FiEdit2 className="text-base" />
                                                             </button>
                                                             <button className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
@@ -1251,10 +1264,15 @@ const Inventory = () => {
 
             <AddAssetModal
                 isOpen={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
+                editData={editingItem}
+                onClose={() => {
+                    setIsAddModalOpen(false);
+                    setEditingItem(null);
+                }}
                 onCreated={() => {
                     fetchDashboard();
                     setIsAddModalOpen(false);
+                    setEditingItem(null);
                 }}
             />
 

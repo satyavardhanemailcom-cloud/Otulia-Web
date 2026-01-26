@@ -295,7 +295,8 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
 router.put('/:id', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 }, { name: 'documents', maxCount: 3 }]), async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, price, location, description, type } = req.body;
+        // Common fields
+        const { title, price, location, description, type, isPublic, videoUrl } = req.body;
         const user = await User.findById(req.user.id);
 
         const listingEntry = user.myListings.find(entry => entry.item && entry.item.toString() === id);
@@ -316,16 +317,222 @@ router.put('/:id', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 
         const listing = await Model.findById(id);
         if (!listing) return res.status(404).json({ error: "Listing not found." });
 
-        // Update fields
-        listing.title = title || listing.title;
-        listing.price = price ? Number(price) : listing.price;
-        listing.location = location || listing.location;
-        listing.description = description || listing.description;
-        listing.type = type || listing.type;
+        // Update Common Fields
+        if (title) listing.title = title;
+        if (price) listing.price = Number(price);
+        if (location) listing.location = location;
+        if (description) listing.description = description;
+        if (type) listing.type = type;
+        if (videoUrl !== undefined) listing.videoUrl = videoUrl;
+
+        // Update Status/Visibility
+        if (isPublic !== undefined) {
+            listing.status = (isPublic === 'true' || isPublic === true) ? 'Active' : 'Draft';
+        }
+
+        // Update Highlights
+        if (req.body.highlights) {
+            try {
+                listing.highlights = JSON.parse(req.body.highlights);
+            } catch (e) {
+                // If not JSON, maybe array or string?
+                if (Array.isArray(req.body.highlights)) listing.highlights = req.body.highlights;
+            }
+        }
+
+        // --- TYPE SPECIFIC UPDATES ---
+
+        if (modelName === 'CarAsset') {
+            // Update Top Level
+            if (req.body.make) listing.brand = req.body.make;
+            if (req.body.variant) listing.variant = req.body.variant;
+
+            // Prepare Specs
+            const spec = listing.specification || {};
+            const keySpec = listing.keySpecifications || {};
+
+            // Map Body -> Spec
+            if (req.body.year) spec.yearOfConstruction = req.body.year;
+            if (req.body.model) spec.model = req.body.model;
+            if (req.body.variant) spec.variant = req.body.variant;
+            if (req.body.bodyType) spec.body = req.body.bodyType;
+            if (req.body.series) spec.series = req.body.series;
+            if (req.body.mileage) {
+                spec.mileage = req.body.mileage;
+                keySpec.mileage = req.body.mileage;
+            }
+            if (req.body.horsepower) {
+                spec.power = req.body.horsepower;
+                keySpec.power = req.body.horsepower;
+            }
+            if (req.body.cylinderCapacity) {
+                spec.cylinderCapacity = req.body.cylinderCapacity;
+                keySpec.cylinderCapacity = req.body.cylinderCapacity;
+            }
+            if (req.body.topSpeed) {
+                spec.topSpeed = req.body.topSpeed;
+                keySpec.topSpeed = req.body.topSpeed;
+            }
+            if (req.body.steering) spec.steering = req.body.steering;
+            if (req.body.transmission) spec.transmission = req.body.transmission;
+            if (req.body.driveType) spec.drive = req.body.driveType;
+            if (req.body.fuelType) spec.fuel = req.body.fuelType;
+            if (req.body.interiorMaterial) spec.interiorMaterial = req.body.interiorMaterial;
+            if (req.body.interiorColor) spec.interiorColor = req.body.interiorColor;
+            if (req.body.exteriorColor) spec.exteriorColor = req.body.exteriorColor;
+            if (req.body.manufacturerColorCode) spec.manufacturerColorCode = req.body.manufacturerColorCode;
+            if (req.body.matchingNumbers) spec.matchingNumbers = req.body.matchingNumbers;
+            if (req.body.condition) spec.condition = req.body.condition;
+            if (req.body.accidentFree) spec.accidentFree = req.body.accidentFree;
+            if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
+            if (req.body.countryOfFirstDelivery) spec.countryOfFirstDelivery = req.body.countryOfFirstDelivery;
+            if (req.body.numberOfOwners) spec.numberOfOwners = req.body.numberOfOwners;
+            if (req.body.currentCarLocation || location) spec.carLocation = req.body.currentCarLocation || location;
+
+            listing.specification = spec;
+            listing.keySpecifications = keySpec;
+
+        } else if (modelName === 'BikeAsset') {
+            if (req.body.brand) listing.brand = req.body.brand;
+
+            const spec = listing.specification || {};
+            const keySpec = listing.keySpecifications || {};
+
+            if (req.body.year) spec.yearOfConstruction = req.body.year;
+            if (req.body.brand) spec.brand = req.body.brand;
+            if (req.body.model) spec.model = req.body.model;
+            if (req.body.variant) spec.variant = req.body.variant;
+            if (req.body.engineCapacity) {
+                spec.engineCapacityCC = req.body.engineCapacity;
+                keySpec.engineCapacity = req.body.engineCapacity;
+            }
+            if (req.body.mileage) {
+                spec.mileageKM = req.body.mileage;
+                keySpec.mileage = req.body.mileage;
+            }
+            if (req.body.fuelType) {
+                spec.fuelType = req.body.fuelType;
+                keySpec.fuelType = req.body.fuelType;
+            }
+            if (req.body.transmission) {
+                spec.transmission = req.body.transmission;
+                keySpec.transmission = req.body.transmission;
+            }
+            if (req.body.color) {
+                spec.color = req.body.color;
+                keySpec.color = req.body.color;
+            }
+            if (req.body.condition) spec.condition = req.body.condition;
+            if (req.body.ownershipCount) spec.ownershipCount = req.body.ownershipCount;
+            if (req.body.accidentHistory) spec.accidentHistory = req.body.accidentHistory;
+
+            listing.specification = spec;
+            listing.keySpecifications = keySpec;
+
+        } else if (modelName === 'YachtAsset') {
+            if (req.body.builder) listing.builder = req.body.builder;
+
+            const spec = listing.specification || {};
+            const keySpec = listing.keySpecifications || {};
+
+            if (req.body.year) spec.yearOfConstruction = req.body.year;
+            if (req.body.builder) spec.builder = req.body.builder;
+            if (req.body.model) spec.model = req.body.model;
+            if (req.body.length) {
+                spec.length = req.body.length;
+                keySpec.length = req.body.length;
+            }
+            if (req.body.beam) {
+                spec.beam = req.body.beam;
+                keySpec.beam = req.body.beam;
+            }
+            if (req.body.draft) {
+                spec.draft = req.body.draft;
+                keySpec.draft = req.body.draft;
+            }
+            if (req.body.engineType) {
+                spec.engineType = req.body.engineType;
+                keySpec.engineType = req.body.engineType;
+            }
+            if (req.body.cruisingSpeed) {
+                spec.cruisingSpeed = req.body.cruisingSpeed;
+                keySpec.cruisingSpeed = req.body.cruisingSpeed;
+            }
+            if (req.body.guestCapacity) {
+                spec.guestCapacity = req.body.guestCapacity;
+                keySpec.guestCapacity = req.body.guestCapacity;
+            }
+            if (req.body.crewCapacity) {
+                spec.crewCapacity = req.body.crewCapacity;
+                keySpec.crewCapacity = req.body.crewCapacity;
+            }
+            if (location) spec.yachtLocation = location;
+
+            listing.specification = spec;
+            listing.keySpecifications = keySpec;
+
+        } else if (modelName === 'EstateAsset') {
+            if (req.body.propertyName) listing.propertyName = req.body.propertyName;
+
+            // Amenities / Arrays
+            if (req.body.amenities) listing.amenities = JSON.parse(req.body.amenities);
+            if (req.body.smartHomeSystems) listing.smartHomeSystems = JSON.parse(req.body.smartHomeSystems);
+            if (req.body.viewTypes) listing.viewTypes = JSON.parse(req.body.viewTypes);
+
+            const spec = listing.specification || {};
+            const keySpec = listing.keySpecifications || {};
+
+            if (req.body.year) spec.yearOfConstruction = req.body.year;
+            if (req.body.propertyType) {
+                spec.propertyType = req.body.propertyType;
+                keySpec.propertyType = req.body.propertyType;
+            }
+            if (req.body.builtUpArea) {
+                spec.builtUpArea = req.body.builtUpArea;
+                keySpec.builtUpArea = req.body.builtUpArea;
+            }
+            if (req.body.landArea) {
+                spec.landArea = req.body.landArea;
+                keySpec.landArea = req.body.landArea;
+            }
+            if (req.body.floors) {
+                spec.floors = req.body.floors;
+                keySpec.floors = req.body.floors;
+            }
+            if (req.body.bedrooms) {
+                spec.bedrooms = req.body.bedrooms;
+                keySpec.bedrooms = req.body.bedrooms;
+            }
+            if (req.body.bathrooms) {
+                spec.bathrooms = req.body.bathrooms;
+                keySpec.bathrooms = req.body.bathrooms;
+            }
+
+            if (req.body.architectureStyle) spec.architectureStyle = req.body.architectureStyle;
+            if (req.body.furnishingStatus) spec.furnishingStatus = req.body.furnishingStatus;
+            if (req.body.configuration) spec.configuration = req.body.configuration;
+            if (req.body.interiorMaterial) spec.interiorMaterial = req.body.interiorMaterial;
+            if (req.body.interiorColorTheme) spec.interiorColorTheme = req.body.interiorColorTheme;
+            if (req.body.exteriorFinish) spec.exteriorFinish = req.body.exteriorFinish;
+            if (req.body.climateControl) spec.climateControl = req.body.climateControl;
+            if (req.body.condition) spec.condition = req.body.condition;
+            if (req.body.usageStatus) spec.usageStatus = req.body.usageStatus;
+            if (req.body.country) spec.country = req.body.country;
+            if (req.body.city) spec.city = req.body.city;
+            if (req.body.address) spec.address = req.body.address;
+            if (req.body.areaNeighborhood) spec.areaNeighborhood = req.body.areaNeighborhood;
+            if (req.body.latitude) spec.latitude = req.body.latitude;
+            if (req.body.longitude) spec.longitude = req.body.longitude;
+
+
+            listing.specification = spec;
+            listing.keySpecifications = keySpec;
+        }
 
         // Handle new files if any
         if (req.files['images']) {
             const newImages = req.files['images'].map(file => `/uploads/${file.filename}`);
+            // Append or Replace? Usually users want to append in edit, but let's just append for now with limit
             listing.images = [...listing.images, ...newImages].slice(0, 5);
         }
         if (req.files['documents']) {
@@ -337,7 +544,7 @@ router.put('/:id', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 
         res.json(updatedListing);
     } catch (error) {
         console.error("Update Listing Error:", error);
-        res.status(500).json({ error: "Failed to update listing" });
+        res.status(500).json({ error: "Failed to update listing: " + error.message });
     }
 });
 

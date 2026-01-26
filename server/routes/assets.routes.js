@@ -25,6 +25,9 @@ router.get("/vehicles", async (req, res) => {
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
+    // Filter only Active (Public) assets
+    query.status = 'Active';
+
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };
     // Country is typically part of location or separate. If separate:
@@ -65,6 +68,9 @@ router.get("/estates", async (req, res) => {
     const query = search
       ? { title: { $regex: search, $options: "i" } }
       : {};
+
+    // Filter only Active (Public) assets
+    query.status = 'Active';
 
     if (type) query.type = type; // Sale/Rent
     if (location) query.location = { $regex: location, $options: "i" };
@@ -119,6 +125,9 @@ router.get("/bikes", async (req, res) => {
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
+    // Filter only Active (Public) assets
+    query.status = 'Active';
+
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };
     if (brand) query.brand = brand;
@@ -157,6 +166,9 @@ router.get("/yachts", async (req, res) => {
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
+    // Filter only Active (Public) assets
+    query.status = 'Active';
+
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };
     if (brand) query.brand = brand;
@@ -189,7 +201,7 @@ router.get("/yachts", async (req, res) => {
  */
 router.get("/all/cars", async (req, res) => {
   try {
-    const data = await CarAsset.find().sort({ createdAt: -1 });
+    const data = await CarAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all car assets" });
@@ -202,7 +214,7 @@ router.get("/all/cars", async (req, res) => {
  */
 router.get("/all/estates", async (req, res) => {
   try {
-    const data = await EstateAsset.find().sort({ createdAt: -1 });
+    const data = await EstateAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });
@@ -215,7 +227,7 @@ router.get("/all/estates", async (req, res) => {
  */
 router.get("/all/bikes", async (req, res) => {
   try {
-    const data = await BikeAsset.find().sort({ createdAt: -1 });
+    const data = await BikeAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all bike assets" });
@@ -228,7 +240,7 @@ router.get("/all/bikes", async (req, res) => {
  */
 router.get("/all/yachts", async (req, res) => {
   try {
-    const data = await YachtAsset.find().sort({ createdAt: -1 });
+    const data = await YachtAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all yacht assets" });
@@ -426,6 +438,9 @@ router.get("/combined", async (req, res) => {
       ? { title: { $regex: search, $options: "i" } }
       : {};
 
+    // Filter only Active (Public) assets
+    query.status = 'Active';
+
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };
     if (minPrice || maxPrice) {
@@ -477,7 +492,7 @@ router.get("/combined", async (req, res) => {
 router.get("/car", async (req, res) => {
   try {
     const { limit = 15 } = req.query;
-    const data = await CarAsset.find()
+    const data = await CarAsset.find({ status: 'Active' })
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);
@@ -493,7 +508,7 @@ router.get("/car", async (req, res) => {
 router.get("/estate", async (req, res) => {
   try {
     const { limit = 15 } = req.query;
-    const data = await EstateAsset.find()
+    const data = await EstateAsset.find({ status: 'Active' })
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);
@@ -509,7 +524,7 @@ router.get("/estate", async (req, res) => {
 router.get("/bike", async (req, res) => {
   try {
     const { limit = 15 } = req.query;
-    const data = await BikeAsset.find()
+    const data = await BikeAsset.find({ status: 'Active' })
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);
@@ -525,7 +540,7 @@ router.get("/bike", async (req, res) => {
 router.get("/yacht", async (req, res) => {
   try {
     const { limit = 15 } = req.query;
-    const data = await YachtAsset.find()
+    const data = await YachtAsset.find({ status: 'Active' })
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);
