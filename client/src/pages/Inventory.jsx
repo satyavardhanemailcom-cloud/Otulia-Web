@@ -1137,9 +1137,10 @@ const Inventory = () => {
                                             </div>
                                             <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Premium Basic</h4>
                                             <div className="flex items-baseline justify-center gap-1">
-                                                <span className="text-5xl font-black text-gray-900">$199</span>
+                                                <span className="text-5xl font-black text-gray-900">£99</span>
                                                 <span className="text-gray-400 font-medium">/month</span>
                                             </div>
+
                                         </div>
 
                                         <ul className="space-y-3 mb-8">
@@ -1190,7 +1191,7 @@ const Inventory = () => {
                                             </div>
                                             <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Business VIP</h4>
                                             <div className="flex items-baseline justify-center gap-1">
-                                                <span className="text-5xl font-black text-gray-900">$399</span>
+                                                <span className="text-5xl font-black text-gray-900">£299</span>
                                                 <span className="text-gray-400 font-medium">/month</span>
                                             </div>
                                         </div>
