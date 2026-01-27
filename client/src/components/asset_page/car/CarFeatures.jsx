@@ -24,7 +24,7 @@ const CarFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 bg-white font-sans">
+    <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 bg-white montserrat">
       
       {/* Container - Stacks on mobile, 2 columns on Desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-0">

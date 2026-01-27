@@ -22,6 +22,7 @@ const Bike_Section = () => {
                 throw new Error(`Response status: ${response.status}`);
             }
             const result = await response.json();
+            console.log(result)
             setInfo(result);
         } catch (error) {
             console.error("Error fetching bike info:", error.message);

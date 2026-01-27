@@ -16,31 +16,43 @@ const yachtAssetSchema = new mongoose.Schema(
     highlights: [{ type: String }],
     videoUrl: { type: String },
 
+    // Modified based on the 6 icons in the image header
     keySpecifications: {
-      length: String,
-      beam: String,
-      draft: String,
-      cruisingSpeed: String,
-      guestCapacity: String,
-      crewCapacity: String,
-      engineType: String
+      length: String,           // e.g. "27 M length"
+      bathrooms: String,        // e.g. "6"
+      fuelCapacity: String,     // e.g. "9,500 L fuel capacity"
+      totalPower: String,       // e.g. "3,800 HP total"
+      bedrooms: String,         // e.g. "7"
+      topSpeed: String          // e.g. "28 knots"
     },
 
+    // Detailed fields from the "General" and "Fuel" columns in the image table
     specification: {
-      yearOfConstruction: String,
-      builder: String,
-      model: String,
-      length: String,
-      beam: String,
-      draft: String,
-      engineType: String,
-      cruisingSpeed: String,
-      guestCapacity: String,
-      crewCapacity: String,
-      yachtLocation: String,
-      fuelType: String,
-      hullMaterial: String,
-      condition: String,
+      // General Column
+      yearOfConstruction: String, //
+      brandBuilder: String,       //
+      model: String,              //
+      yachtType: String,          //
+      usageHours: String,         //
+      topSpeed: String,           //
+      enginePower: String,        //
+      cruisingSpeed: String,      //
+      fuelConsumption: String,    //
+      transmission: String,       //
+      hullMaterial: String,       //
+
+      // Fuel / Right Column
+      fuelType: String,           //
+      configuration: String,      //
+      interiorMaterial: String,   //
+      interiorColor: String,      //
+      exteriorColor: String,      //
+      manufacturerColorCode: String, //
+      matchingNumbers: String,    //
+      condition: String,          //
+      usageStatus: String,        // (New / Used)
+      countryOfFirstDelivery: String, //
+      numberOfOwners: String,     //
     },
 
     agent: {

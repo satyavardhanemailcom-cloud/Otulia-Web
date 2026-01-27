@@ -24,17 +24,45 @@ const bikeAssetSchema = new mongoose.Schema(
       color: String
     },
 
+    // Modified based on the image sections: General, Engine, Chassis, Safety, Wheels
     specification: {
-      yearOfConstruction: String,
-      brand: String,
-      model: String,
+      // General
+      yearOfConstruction: String,  //
+      brand: String,               //
+      model: String,               //
       variant: String,
-      engineCapacityCC: Number,
-      mileageKM: Number,
-      fuelType: String,
-      transmission: String,
+      year: String,                //
+      condition: String,           //
+      
+      // Engine & Performance
+      engineType: String,          //
+      engineCapacityCC: Number,    // (Mapped from "803 cc")
+      maxPower: String,            //
+      maxTorque: String,           //
+      transmission: String,        //
+      fuelSystem: String,          //
+      mileageKM: Number,           // (Mapped from "18-20 km/l")
+      fuelType: String,            //
+      
+      // Chassis & Suspension
+      frame: String,               //
+      frontSuspension: String,     //
+      frontBrake: String,          //
+      rearBrake: String,           //
+      
+      // Safety & Electronics
+      abs: String,                 //
+      tractionControl: String,     //
+      rideModes: String,           //
+      immobilizer: String,         //
+      
+      // Wheels & Tyres
+      frontWheel: String,          //
+      rearWheel: String,           //
+      tyreType: String,            //
+
+      // Additional fields from your previous schema
       color: String,
-      condition: String,
       ownershipCount: Number,
       accidentHistory: String,
     },
