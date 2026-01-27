@@ -255,7 +255,7 @@ const EstateDetails = ({ item, modelName = 'EstateAsset' }) => {
                 <p className="text-xs font-bold text-black uppercase tracking-wide mb-2">{agent.company}</p>
                 <p className="text-xs text-gray-400 decoration-gray-300 cursor-pointer">{type === 'Rent' ? 'View Lease Fleet' : 'Collection'}</p>
               </div>
-              <img src={agent.companyLogo} alt="Company Logo" className="h-8 w-auto object-contain bg-black p-1" />
+              <img src={agent.companyLogo} alt="Company Logo" className="h-10 lg:h-[50px] w-auto object-contain bg-black p-1" />
             </div>
           </div>
         </div>

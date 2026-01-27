@@ -289,7 +289,7 @@ const BikeDetails = ({ item, modelName = 'CarAsset' }) => {
               <img
                 src={agent.companyLogo}
                 alt="Company Logo"
-                className="h-8 w-auto object-contain bg-black p-1"
+                className="h-10 lg:h-[50px] w-auto object-contain bg-black p-1"
               />
             </div>
 

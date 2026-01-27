@@ -38,7 +38,7 @@ const YachtKeyFeatures = ({ item }) => {
       {/* Header Section */}
       <div className="flex justify-center mb-10">
         <h2 className="text-2xl md:text-3xl font-bold playfair-display text-[#8b7355] border border-[#8b7355] px-8 py-2 rounded-md inline-block">
-          Key Features of Property
+          Key Features
         </h2>
       </div>
 

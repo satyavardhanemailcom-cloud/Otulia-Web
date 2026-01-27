@@ -81,7 +81,7 @@ const Car_Section = () => {
       {/* This works if your CarDetails expects ({ item }) props */}
       <CarDetails item={info} modelName="CarAsset" />
 
-      <div className="w-[92%] md:w-[70%] h-px bg-ray-300 border-0 self-center my-5"></div>
+      <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
       {/* 4. Pass 'item' to features components */}
       <CarKeyFeatures item={info} />

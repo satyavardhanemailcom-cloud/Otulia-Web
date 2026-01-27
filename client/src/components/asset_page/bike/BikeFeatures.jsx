@@ -30,7 +30,7 @@ const BikeFeatures = ({ item }) => {
 
   const SpecSection = ({ title, children }) => (
     <div className="mb-8 break-inside-avoid">
-      <h3 className="text-lg font-bold text-black mb-4 border-l-4 border-gray-800 pl-3">
+      <h3 className="text-lg font-bold text-black mb-4 border-l-4 border-gray-800 pl-3 montserrat">
         {title}
       </h3>
       <div className="bg-white rounded-lg p-0">
@@ -40,7 +40,7 @@ const BikeFeatures = ({ item }) => {
   );
 
   return (
-    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white font-sans">
+    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-0 items-start">
         
         {/* LEFT COLUMN */}

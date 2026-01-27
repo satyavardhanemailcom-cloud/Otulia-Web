@@ -80,7 +80,7 @@ const Estate_Section = () => {
       
       <EstateDetails item={info} />
       
-      <div className="w-[92%] md:w-[80%] h-px bg-ray-300 border-0 self-center my-5"></div>
+      <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
       
       
       <EstateKeyFeatures item={info} />
