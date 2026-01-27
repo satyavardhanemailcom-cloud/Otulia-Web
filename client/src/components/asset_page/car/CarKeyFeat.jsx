@@ -9,7 +9,7 @@ const CarKeyFeatures = ({ item }) => {
   };
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-6 bg-white">
+    <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-6 bg-white">
       
       <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6 lg:gap-12">
         

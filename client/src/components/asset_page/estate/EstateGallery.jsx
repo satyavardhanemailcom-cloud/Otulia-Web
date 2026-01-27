@@ -47,7 +47,7 @@ const EstateGallery = ({ images }) => {
   }
 
   return (
-    <div className="w-full max-w-[1000px] mx-auto p-4 bg-white">
+    <div className="w-full max-w-[1700px] mx-auto p-4 bg-white">
       
       {/* 1. MAIN IMAGE CONTAINER */}
       <div className="relative w-full aspect-[16/9] md:aspect-[2/1] bg-gray-100 overflow-hidden mb-4 rounded-sm shadow-sm group">

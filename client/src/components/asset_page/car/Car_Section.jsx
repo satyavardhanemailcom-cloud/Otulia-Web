@@ -5,6 +5,7 @@ import CarDetails from "../car/CarDetails";
 import CarKeyFeatures from "../car/CarKeyFeat";
 import CarFeatures from "../car/CarFeatures";
 import AssetCard from "../../AssetCard";
+import LocationMap from "../LocationMap";
 
 const Car_Section = () => {
   const [info, setInfo] = useState(null); // Initialize as null to track loading state
@@ -74,7 +75,7 @@ const Car_Section = () => {
       {/* Pass images array safely */}
       <CarGallery images={info.images} />
 
-      <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
       {/* 3. Pass the whole 'item' object (info) to children */}
       {/* This works if your CarDetails expects ({ item }) props */}
@@ -87,9 +88,9 @@ const Car_Section = () => {
 
       <CarFeatures item={info} />
 
-      <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
-      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 bg-white">
+      <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white">
         <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
           More From This Dealer
         </h1>
@@ -102,9 +103,9 @@ const Car_Section = () => {
         </div>
       </div>
 
-      <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
+      <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
-      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-8 bg-white">
+      <div className="w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8 bg-white">
         <h1 className="text-3xl md:text-5xl font-bold playfair-display text-black">
           Similar Listings
         </h1>
@@ -116,6 +117,12 @@ const Car_Section = () => {
           ))}
         </div>
       </div>
+
+      <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
+
+      <div className="flex items-center justify-center mb-4">
+            <LocationMap locationName={info.location} />
+            </div>
     </div>
   );
 };

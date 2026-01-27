@@ -1,7 +1,10 @@
 import React from 'react';
 import sqrtFt from '../../../assets/productpage/sqft.png'
-import bathRoom from '../../../assets/productpage/bathroom.svg'
+import bathRoom from '../../../assets/productpage/bathroom.png'
 import fuelCapacity from '../../../assets/productpage/fuelcapacity.png'
+import power from '../../../assets/productpage/power.png'
+import bedRoom from '../../../assets/productpage/bedroom.png'
+import speed from '../../../assets/productpage/speed.png'
 
 const YachtKeyFeatures = ({ item }) => {
   // Fallback data matching your screenshot
@@ -55,7 +58,7 @@ const YachtKeyFeatures = ({ item }) => {
           label="Bathrooms"
           value={specs.bathrooms}
           icon={
-            <img className='w-10 h-10' src={bathRoom} alt='' />
+            <img className='w-17 h-15' src={bathRoom} alt='' />
           }
         />
 
@@ -71,10 +74,7 @@ const YachtKeyFeatures = ({ item }) => {
         <FeatureCard 
           value={specs.power}
           icon={
-             <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              <path d="M19 5h2M2 19h2" /> {/* Adding motion lines for engine power */}
-             </svg>
+              <img className='w-19 h-15' src={power} alt='' />
           }
         />
 
@@ -83,9 +83,7 @@ const YachtKeyFeatures = ({ item }) => {
           label="Bedrooms"
           value={specs.bedrooms}
           icon={
-             <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-               <path d="M20 10V7a2 2 0 00-2-2H6a2 2 0 00-2 2v3a2 2 0 00-2 2v7h2v-2h16v2h2v-7a2 2 0 00-2-2zM4 12v-2h16v2H4z"/>
-             </svg>
+             <img className='w-16 h-15' src={bedRoom} alt='' />
           }
         />
 
@@ -94,10 +92,7 @@ const YachtKeyFeatures = ({ item }) => {
           label="TopSpeed"
           value={specs.speed}
           icon={
-             <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-               <path d="M22 12h-2" strokeWidth="3" /> {/* Speed motion lines */}
-             </svg>
+             <img className='w-17 h-15' src={speed} alt='' />
           }
         />
 
