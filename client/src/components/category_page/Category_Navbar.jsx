@@ -74,10 +74,10 @@ const Category_Navbar = () => {
                         <>
                             {isAuthenticated ? (
                                 <>
-                                    <Profile_dropdown />
+                                    <Profile_dropdown text={'text-white'} />
                                     {/* Removed 'text-white' wrapper so Cart takes nav color */}
                                     <div className='text-inherit'> 
-                                        <Cart />
+                                        <Cart text={'text-white'}/>
                                     </div>
                                 </>
                             ) : (

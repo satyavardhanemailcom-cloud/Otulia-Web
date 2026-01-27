@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserURL from '../../assets/user.png'
 import { FiUser, FiCreditCard, FiGrid, FiLogOut, FiActivity } from 'react-icons/fi';
 
-const ProfileDropdown = () => {
+const ProfileDropdown = ({text}) => {
     const { user, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -33,7 +33,7 @@ const ProfileDropdown = () => {
             {/* TRIGGER */}
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 p-1.5 rounded-full transition-all duration-300"
+                className={`flex items-center gap-3 cursor-pointer group p-1.5 rounded-full transition-all duration-300 ${text} hover:bg-gray-500/50`}
             >
                 <div className="relative">
                     <img

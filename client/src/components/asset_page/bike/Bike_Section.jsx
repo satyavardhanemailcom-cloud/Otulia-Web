@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import CarGallery from "../car/CarGallery";
-import CarDetails from "../car/CarDetails";
-import CarKeyFeatures from "../car/CarKeyFeat";
-import CarFeatures from "../car/CarFeatures";
+import BikeGallery from "./BikeGallery";
+import BikeDetails from "./BikeDetails";
+import BikeKeyFeatures from "./BikeKeyFeat";
+import BikeFeatures from "./BikeFeatures";
 import AssetCard from "../../AssetCard";
 
 const Bike_Section = () => {
@@ -62,17 +62,17 @@ const Bike_Section = () => {
         <div className="flex flex-col">
             <div className="w-[92%] md:w-[96%] h-px bg-black border-0 self-center my-10"></div>
 
-            <CarGallery images={info.images} />
+            <BikeGallery images={info.images} />
 
             <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
-            <CarDetails item={info} modelName="BikeAsset" />
+            <BikeDetails item={info} modelName="BikeAsset" />
 
             <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
-            <CarKeyFeatures item={info} />
+            <BikeKeyFeatures item={info} />
 
-            <CarFeatures item={info} />
+            <BikeFeatures item={info} />
 
             <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 self-center my-5"></div>
 

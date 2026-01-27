@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../../contexts/CartContext'
 
-const Cart = () => {
+const Cart = ({text}) => {
   const { cart } = useCart();
   const navigate = useNavigate();
 
@@ -11,7 +11,7 @@ const Cart = () => {
       <button
         type="button"
         onClick={() => navigate('/cart')}
-        className="relative flex items-center justify-center transition-colors duration-300 focus:outline-none cursor-pointer"
+        className={`relative flex items-center justify-center transition-colors duration-300 focus:outline-none cursor-pointer ${text}`}
         aria-label="View Shopping Bag"
       >
         {/* Shopping Bag Icon */}

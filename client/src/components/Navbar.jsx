@@ -108,8 +108,8 @@ const Navbar = () => {
             {isAuthenticated && (
               // Added text-inherit to ensure it follows the navbar color logic
               <li className="flex gap-3 items-center justify-center text-inherit">
-                <ProfileDropdown />
-                <Cart />
+                <ProfileDropdown text={'text-black'} />
+                <Cart text={'text-black'}/>
               </li>
             )}
           </>
