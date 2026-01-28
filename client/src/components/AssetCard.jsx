@@ -19,7 +19,9 @@ const AssetCard = ({ item }) => {
 
   useEffect(() => {
     if (user && user.favorites) {
-      const isFav = user.favorites.some(fav => fav.assetId === item._id);
+      const isFav = user.favorites.some(fav =>
+        fav.assetId && (fav.assetId === item._id || fav.assetId.toString() === item._id)
+      );
       setIsLiked(isFav);
     }
   }, [user, item._id]);
@@ -57,7 +59,12 @@ const AssetCard = ({ item }) => {
   let exactModel = item.itemModel || 'Listing';
 
   if (item.category) {
-    category = item.category.toLowerCase();
+    const cat = item.category.toLowerCase();
+    if (cat === 'vehicles' || cat === 'car') category = 'car';
+    else if (cat === 'bikes' || cat === 'bike') category = 'bike';
+    else if (cat === 'yachts' || cat === 'yacht') category = 'yacht';
+    else if (cat === 'estates' || cat === 'estate' || cat === 'real estate') category = 'estate';
+    else category = cat;
   } else if (item.itemModel) {
     const model = item.itemModel.toLowerCase();
     if (model.includes('car')) category = 'car';

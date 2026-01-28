@@ -6,7 +6,7 @@ import { FiHeart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 
 const Favorites = () => {
-    const { token, isAuthenticated } = useAuth();
+    const { token, isAuthenticated, user } = useAuth();
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -37,7 +37,7 @@ const Favorites = () => {
         };
 
         fetchFavorites();
-    }, [isAuthenticated, token]);
+    }, [isAuthenticated, token, user]);
 
     if (!isAuthenticated) {
         return (

@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema(
     favorites: [
       {
         assetId: { type: mongoose.Schema.Types.ObjectId, refPath: "favorites.assetModel" },
-        assetModel: { type: String, enum: ["CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"] },
+        assetModel: { type: String, enum: ["Listing", "CarAsset", "EstateAsset", "YachtAsset", "BikeAsset"] },
         addedAt: { type: Date, default: Date.now }
       }
     ],
