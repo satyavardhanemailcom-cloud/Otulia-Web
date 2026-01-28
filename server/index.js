@@ -27,7 +27,7 @@ connectDB();
 
 app.use(express.json());
 app.use(corsMiddleware);
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // routes register
