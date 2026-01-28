@@ -108,11 +108,11 @@ const Search = () => {
         </div>
       </form>
       {suggestions.length > 0 && (
-        <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg">
+        <ul className="absolute z-10 w-full bg-[#F8F8F8] border border-gray-300 rounded-md mt-1 shadow-lg text-black">
           {suggestions.map((suggestion, index) => (
             <li 
               key={index}
-              className={`p-2 cursor-pointer hover:bg-gray-100 ${index === activeSuggestion ? 'bg-gray-100' : ''}`}
+              className={`p-2 cursor-pointer hover:bg-gray-200 ${index === activeSuggestion ? 'bg-gray-200' : ''}`}
               onClick={() => {
                 setQuery(suggestion);
                 setSuggestions([]);

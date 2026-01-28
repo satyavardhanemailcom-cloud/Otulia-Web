@@ -594,9 +594,9 @@ router.get("/suggestions", async (req, res) => {
       return res.json([]);
     }
 
-    const searchRegex = { $regex: `^${q}`, $options: "i" };
+    const searchRegex = { $regex: q, $options: "i" };
 
-    const [carTitles, estateTitles, bikeTitles, yachtTitles, carBrands, bikeBrands, yachtBrands, categories] = await Promise.all([
+    const [carTitles, estateTitles, bikeTitles, yachtTitles, carBrands, bikeBrands, yachtBrands, categories, locations] = await Promise.all([
       CarAsset.distinct("title", { title: searchRegex }),
       EstateAsset.distinct("title", { title: searchRegex }),
       BikeAsset.distinct("title", { title: searchRegex }),
@@ -605,6 +605,7 @@ router.get("/suggestions", async (req, res) => {
       BikeAsset.distinct("brand", { brand: searchRegex }),
       YachtAsset.distinct("brand", { brand: searchRegex }),
       CarAsset.distinct("category", { category: searchRegex }),
+      EstateAsset.distinct("location", { location: searchRegex }),
     ]);
 
     const suggestions = [
@@ -616,6 +617,7 @@ router.get("/suggestions", async (req, res) => {
       ...bikeBrands,
       ...yachtBrands,
       ...categories,
+      ...locations,
     ];
 
     const uniqueSuggestions = [...new Set(suggestions)];
