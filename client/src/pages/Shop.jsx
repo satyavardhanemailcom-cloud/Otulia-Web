@@ -39,7 +39,6 @@ const Shop = () => {
       const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
-      console.log(data);
       setListings(data);
     } catch (error) {
       console.error("Failed to fetch listings", error);

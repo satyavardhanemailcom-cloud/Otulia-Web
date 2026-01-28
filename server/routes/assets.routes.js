@@ -436,33 +436,40 @@ router.get("/combined", async (req, res) => {
 
     let searchQuery = {};
     if (q) {
-      const searchRegex = { $regex: q, $options: "i" };
-      searchQuery = {
-        $or: [
-          { title: searchRegex },
-          { description: searchRegex },
-          { location: searchRegex },
-          { brand: searchRegex },
-          { 'highlights': searchRegex },
-          { 'keywords': searchRegex },
-          { category: searchRegex },
-          { type: searchRegex },
-          { 'specification.model': searchRegex },
-          { 'keySpecifications.propertyType': searchRegex },
-          { 'specification.propertyType': searchRegex },
-          { 'specification.architectureStyle': searchRegex },
-          { 'specification.country': searchRegex },
-          { 'specification.city': searchRegex },
-          { 'specification.body': searchRegex },
-          { 'specification.fuelType': searchRegex },
-          { 'specification.transmission': searchRegex },
-          { 'specification.exteriorColor': searchRegex },
-          { 'specification.engineType': searchRegex },
-          { 'specification.yachtType': searchRegex },
-          { builder: searchRegex },
-          { 'amenities': searchRegex },
-        ],
-      };
+      const words = q.split(' ').filter(word => word.length > 0);
+
+      const andQuery = words.map(word => {
+        const processedWord = word.toLowerCase().endsWith('s') ? word.slice(0, -1) : word;
+        const searchRegex = { $regex: processedWord, $options: "i" };
+        return {
+          $or: [
+            { title: searchRegex },
+            { description: searchRegex },
+            { location: searchRegex },
+            { brand: searchRegex },
+            { 'highlights': searchRegex },
+            { 'keywords': searchRegex },
+            { category: searchRegex },
+            { type: searchRegex },
+            { 'specification.model': searchRegex },
+            { 'keySpecifications.propertyType': searchRegex },
+            { 'specification.propertyType': searchRegex },
+            { 'specification.architectureStyle': searchRegex },
+            { 'specification.country': searchRegex },
+            { 'specification.city': searchRegex },
+            { 'specification.body': searchRegex },
+            { 'specification.fuelType': searchRegex },
+            { 'specification.transmission': searchRegex },
+            { 'specification.exteriorColor': searchRegex },
+            { 'specification.engineType': searchRegex },
+            { 'specification.yachtType': searchRegex },
+            { builder: searchRegex },
+            { 'amenities': searchRegex },
+          ]
+        };
+      });
+
+      searchQuery = { $and: andQuery };
     }
 
     const query = { ...searchQuery, status: 'Active' };
@@ -572,6 +579,50 @@ router.get("/yacht", async (req, res) => {
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch all yacht assets" });
+  }
+});
+
+/**
+ * SEARCH SUGGESTIONS
+ * /api/assets/suggestions
+ */
+router.get("/suggestions", async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q) {
+      return res.json([]);
+    }
+
+    const searchRegex = { $regex: `^${q}`, $options: "i" };
+
+    const [carTitles, estateTitles, bikeTitles, yachtTitles, carBrands, bikeBrands, yachtBrands, categories] = await Promise.all([
+      CarAsset.distinct("title", { title: searchRegex }),
+      EstateAsset.distinct("title", { title: searchRegex }),
+      BikeAsset.distinct("title", { title: searchRegex }),
+      YachtAsset.distinct("title", { title: searchRegex }),
+      CarAsset.distinct("brand", { brand: searchRegex }),
+      BikeAsset.distinct("brand", { brand: searchRegex }),
+      YachtAsset.distinct("brand", { brand: searchRegex }),
+      CarAsset.distinct("category", { category: searchRegex }),
+    ]);
+
+    const suggestions = [
+      ...carTitles,
+      ...estateTitles,
+      ...bikeTitles,
+      ...yachtTitles,
+      ...carBrands,
+      ...bikeBrands,
+      ...yachtBrands,
+      ...categories,
+    ];
+
+    const uniqueSuggestions = [...new Set(suggestions)];
+
+    res.json(uniqueSuggestions.slice(0, 10));
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch suggestions" });
   }
 });
 

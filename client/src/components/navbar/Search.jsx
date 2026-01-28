@@ -1,20 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
   const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const navigate = useNavigate();
+  const searchContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (query.length > 0) {
+        try {
+          const response = await fetch(`/api/assets/suggestions?q=${query}`);
+          const data = await response.json();
+          setSuggestions(data);
+        } catch (error) {
+          console.error("Failed to fetch suggestions", error);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(handler);
+  }, [query]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setSuggestions([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
       navigate(`/shop?q=${query.trim()}`);
+      setSuggestions([]);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      setActiveSuggestion(prev => (prev < suggestions.length - 1 ? prev + 1 : prev));
+    } else if (e.key === 'ArrowUp') {
+      setActiveSuggestion(prev => (prev > 0 ? prev - 1 : 0));
+    } else if (e.key === 'Enter') {
+      if (activeSuggestion > -1 && suggestions[activeSuggestion]) {
+        setQuery(suggestions[activeSuggestion]);
+        handleSearch(e);
+      }
     }
   };
 
   return (
-    <>
-      <form className="max-w-md mx-auto" onSubmit={handleSearch}>
+    <div className="relative max-w-md mx-auto" ref={searchContainerRef}>
+      <form onSubmit={handleSearch}>
         <label htmlFor="search" className="block mb-2.5 text-sm font-medium sr-only">Search</label>
         
         <div className="relative">
@@ -50,10 +95,6 @@ const Search = () => {
               focus:ring-1 
               focus:ring-black
               
-              /* THE FIX: TARGETING THE CROSS BUTTON */
-              /* 1. cursor-pointer: Makes it look clickable */
-              /* 2. brightness-0: Turns the default grey icon purely black */
-              /* 3. grayscale: Removes any other color artifacts */
               [&::-webkit-search-cancel-button]:cursor-pointer
               [&::-webkit-search-cancel-button]:brightness-0
               [&::-webkit-search-cancel-button]:grayscale
@@ -61,12 +102,30 @@ const Search = () => {
             placeholder="Search" 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoComplete="off"
           />
         </div>
       </form>
-
-    </>
+      {suggestions.length > 0 && (
+        <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg">
+          {suggestions.map((suggestion, index) => (
+            <li 
+              key={index}
+              className={`p-2 cursor-pointer hover:bg-gray-100 ${index === activeSuggestion ? 'bg-gray-100' : ''}`}
+              onClick={() => {
+                setQuery(suggestion);
+                setSuggestions([]);
+                navigate(`/shop?q=${suggestion}`);
+              }}
+            >
+              {suggestion}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }
 
-export default Search
+export default Search;
