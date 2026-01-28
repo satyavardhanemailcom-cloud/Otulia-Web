@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import UserURL from '../../assets/user.png'
-import { FiUser, FiCreditCard, FiGrid, FiLogOut, FiActivity } from 'react-icons/fi';
+import { FiUser, FiCreditCard, FiGrid, FiLogOut, FiActivity, FiHeart } from 'react-icons/fi';
 
 const ProfileDropdown = ({text}) => {
     const { user, logout } = useAuth();
@@ -83,6 +83,15 @@ const ProfileDropdown = ({text}) => {
                                 <span>Membership Plan</span>
                                 <span className="text-[10px] text-gray-400">Current: {user.plan}</span>
                             </div>
+                        </Link>
+
+                        <Link
+                            to="/favorites"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                        >
+                            <FiHeart className="text-lg" />
+                            <span>My Favorites</span>
                         </Link>
 
                         <Link

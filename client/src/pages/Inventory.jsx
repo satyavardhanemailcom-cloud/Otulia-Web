@@ -8,7 +8,7 @@ import {
     FiMail, FiPhone, FiShield, FiLock, FiKey,
     FiBriefcase, FiCheckCircle, FiUpload, FiCalendar, FiMapPin,
     FiSearch, FiFilter, FiPlus, FiChevronDown, FiHeart, FiEdit2, FiTrash2, FiEye,
-    FiUser, FiLogOut
+    FiUser, FiLogOut, FiClock, FiLoader
 } from 'react-icons/fi';
 import Navbar from '../components/Navbar';
 import AddAssetModal from '../components/inventory/AddAssetModal';
@@ -33,7 +33,14 @@ const Inventory = () => {
     const [leadCategoryFilter, setLeadCategoryFilter] = useState('All Categories');
     const [inventoryStatusFilter, setInventoryStatusFilter] = useState('All Status');
     const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('All Categories');
-    const [isVerifiedDealer, setIsVerifiedDealer] = useState(false); // Set to true to show verified state
+    const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
+
+    useEffect(() => {
+        if (user) {
+            setIsVerifiedDealer(user.isVerified);
+            // If verification is pending, we can optionally show a banner or status
+        }
+    }, [user]);
     const [companyInfo, setCompanyInfo] = useState({
         name: 'Prestige Motors & Yachts',
         email: 'contact@prestigemotors.com',
@@ -59,6 +66,16 @@ const Inventory = () => {
             if (response.ok) {
                 const resData = await response.json();
                 setData(resData);
+                if (resData.userProfile) {
+                    setCompanyInfo({
+                        name: resData.userProfile.name || companyInfo.name,
+                        email: resData.userProfile.email || companyInfo.email,
+                        phone: resData.userProfile.phone || companyInfo.phone,
+                        address: companyInfo.address, // Address not in user profile yet
+                        website: companyInfo.website,
+                        logo: resData.userProfile.profilePicture
+                    });
+                }
             }
         } catch (error) {
             console.error("Fetch Error:", error);
@@ -94,17 +111,34 @@ const Inventory = () => {
     };
 
     const handleVerificationSubmit = async (documents) => {
-        console.log('Verification documents submitted:', documents);
-        // TODO: Send documents to backend API
-        // For now, just close the modal and show success message
-        alert('Verification documents submitted successfully! We will review and get back to you within 2-3 business days.');
-        setIsVerificationModalOpen(false);
-        // Optionally: You can call an API here to submit the documents
-        // const formData = new FormData();
-        // Object.keys(documents).forEach(key => {
-        //     if (documents[key]) formData.append(key, documents[key]);
-        // });
-        // await fetch('/api/dealer/verify', { method: 'POST', body: formData, headers: { 'Authorization': `Bearer ${token}` } });
+        try {
+            const formData = new FormData();
+            Object.keys(documents).forEach(key => {
+                if (documents[key]) formData.append(key, documents[key]); // field name -> file
+            });
+
+            const response = await fetch('/api/auth/submit-verification', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                alert('Verification documents submitted successfully! Status updated to Pending.');
+
+                // Update local context
+                if (login) login(token, updatedUser);
+
+                setIsVerificationModalOpen(false);
+                setActiveTab('settings'); // Redirect to settings to see status
+            } else {
+                alert('Failed to submit verification documents. Please try again.');
+            }
+        } catch (error) {
+            console.error("Verification Submit Error:", error);
+            alert('An error occurred. Please check your connection.');
+        }
     };
 
     const handlePlanChange = async (newPlan) => {
@@ -174,7 +208,7 @@ const Inventory = () => {
 
                 <div className="p-8 border-t border-gray-50">
                     <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-loose">
-                        © 2024 Otulia <br /> Luxury Asset Platform
+                        © 2026 Otulia <br /> Luxury Asset Platform
                     </p>
                 </div>
             </div>
@@ -255,6 +289,14 @@ const Inventory = () => {
                                         >
                                             <FiUser className="text-lg" /> My Profile
                                         </button>
+                                        {user?.role === 'admin' && (
+                                            <button
+                                                onClick={() => navigate('/admin')}
+                                                className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
+                                            >
+                                                <FiShield className="text-lg" /> Admin Dashboard
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => setActiveTab('subscription')}
                                             className="w-full text-left px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors"
@@ -474,10 +516,26 @@ const Inventory = () => {
                                 </div>
 
                                 <button
-                                    onClick={() => setIsAddModalOpen(true)}
-                                    className="bg-[#D48D2A] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 font-bold text-sm shadow-md hover:bg-[#B5751C] transition-all"
+                                    onClick={() => {
+                                        if (isVerifiedDealer) {
+                                            setIsAddModalOpen(true);
+                                        } else {
+                                            if (user?.verificationStatus === 'Pending') {
+                                                alert("Your dealer verification is currently pending approval. You will be notified once approved.");
+                                            } else {
+                                                alert("Please complete dealer verification to start listing assets.");
+                                                setActiveTab('settings');
+                                                // setIsVerificationModalOpen(true); // Or navigate to settings
+                                            }
+                                        }
+                                    }}
+                                    className={`px-5 py-2.5 rounded-lg flex items-center gap-2 font-bold text-sm shadow-md transition-all ${isVerifiedDealer
+                                        ? 'bg-[#D48D2A] text-white hover:bg-[#B5751C]'
+                                        : 'bg-gray-200 text-gray-500 cursor-not-allowed hover:bg-gray-300'
+                                        }`}
                                 >
                                     <FiPlus className="text-base" /> Add New Asset
+                                    {!isVerifiedDealer && <FiLock className="text-xs ml-1" />}
                                 </button>
                             </div>
 
@@ -707,9 +765,9 @@ const Inventory = () => {
 
                             {/* Analytics KPI Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                                <AnalyticsCard title="Total Views" value="124,580" growth="+18.2%" icon={<FiEye />} />
-                                <AnalyticsCard title="Total Leads" value="342" growth="+12.5%" icon={<FiUsers />} />
-                                <AnalyticsCard title="Conversion Rate" value="2.74%" growth="+0.3%" icon={<FiTrendingUp />} />
+                                <AnalyticsCard title="Total Views" value={numberWithCommas(data.stats.totalViews)} growth="+18.2%" icon={<FiEye />} />
+                                <AnalyticsCard title="Total Leads" value={data.stats.totalLeads} growth="+12.5%" icon={<FiUsers />} />
+                                <AnalyticsCard title="Conversion Rate" value={`${data.stats.avgConversion}%`} growth="+0.3%" icon={<FiTrendingUp />} />
                                 <AnalyticsCard title="Avg Lead Value" value="£12,426" growth="+5.8%" icon={<FiCreditCard />} />
                             </div>
 
@@ -728,20 +786,42 @@ const Inventory = () => {
                                         </div>
 
                                         {/* SVG Chart */}
+                                        {/* SVG Chart */}
                                         <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                            {/* Views Line (Orange) */}
-                                            <path d="M0,50 L33,45 L66,35 L100,20" fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinecap="round" />
-                                            <circle cx="0" cy="50" r="1.5" fill="#D48D2A" />
-                                            <circle cx="33" cy="45" r="1.5" fill="#D48D2A" />
-                                            <circle cx="66" cy="35" r="1.5" fill="#D48D2A" />
-                                            <circle cx="100" cy="20" r="1.5" fill="#D48D2A" />
+                                            {(() => {
+                                                const trend = data.analytics?.performanceTrend || [];
+                                                const maxVal = Math.max(...trend.map(t => Math.max(t.views, t.leads)), 100);
 
-                                            {/* Leads Line (Blue) */}
-                                            <path d="M0,60 L33,55 L66,45 L100,30" fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" />
-                                            <circle cx="0" cy="60" r="1.5" fill="#3B82F6" />
-                                            <circle cx="33" cy="55" r="1.5" fill="#3B82F6" />
-                                            <circle cx="66" cy="45" r="1.5" fill="#3B82F6" />
-                                            <circle cx="100" cy="30" r="1.5" fill="#3B82F6" />
+                                                // Calculate points
+                                                const getPoints = (key) => trend.map((t, i) => {
+                                                    const x = i * 33.33;
+                                                    const y = 100 - ((t[key] / maxVal) * 80); // Leave some headroom
+                                                    return `${x},${y}`;
+                                                });
+
+                                                const viewsPoints = getPoints('views');
+                                                const leadsPoints = getPoints('leads');
+                                                const viewsPath = `M${viewsPoints.join(' L')}`;
+                                                const leadsPath = `M${leadsPoints.join(' L')}`;
+
+                                                return (
+                                                    <>
+                                                        {/* Views Line (Orange) */}
+                                                        <path d={viewsPath} fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinecap="round" />
+                                                        {viewsPoints.map((p, i) => {
+                                                            const [cx, cy] = p.split(',');
+                                                            return <circle key={`v-${i}`} cx={cx} cy={cy} r="1.5" fill="#D48D2A" />;
+                                                        })}
+
+                                                        {/* Leads Line (Blue) */}
+                                                        <path d={leadsPath} fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" />
+                                                        {leadsPoints.map((p, i) => {
+                                                            const [cx, cy] = p.split(',');
+                                                            return <circle key={`l-${i}`} cx={cx} cy={cy} r="1.5" fill="#3B82F6" />;
+                                                        })}
+                                                    </>
+                                                );
+                                            })()}
                                         </svg>
                                     </div>
                                     <div className="flex justify-between px-2 text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-10">
@@ -812,18 +892,12 @@ const Inventory = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-50">
-                                        {[
-                                            { name: '2024 Lamborghini Revuelto', views: '12,450', leads: '34', trend: 'Up', color: 'text-emerald-500' },
-                                            { name: 'Monaco Penthouse Suite', views: '6,780', leads: '18', trend: 'Up', color: 'text-emerald-500' },
-                                            { name: 'Azimut Grande 32 Metri', views: '4,560', leads: '12', trend: 'Stable', color: 'text-gray-400' },
-                                            { name: '2024 Ferrari SF90 Stradale', views: '8,420', leads: '24', trend: 'Down', color: 'text-rose-500' },
-                                            { name: 'Vintage 1965 Aston Martin DB5', views: '890', leads: '2', trend: 'Down', color: 'text-rose-500' }
-                                        ].map((asset, i) => (
+                                        {(data.topAssets || []).map((asset, i) => (
                                             <tr key={i} className="hover:bg-gray-50/30 transition-colors">
                                                 <td className="px-10 py-6 text-sm font-bold text-gray-800">{asset.name}</td>
-                                                <td className="px-4 py-6 text-sm font-medium text-gray-600">{asset.views}</td>
+                                                <td className="px-4 py-6 text-sm font-medium text-gray-600">{numberWithCommas(asset.views)}</td>
                                                 <td className="px-4 py-6 text-sm font-medium text-gray-600">{asset.leads}</td>
-                                                <td className={`px-10 py-6 text-xs font-bold ${asset.color} flex items-center gap-1.5`}>
+                                                <td className={`px-10 py-6 text-xs font-bold ${asset.color || 'text-gray-400'} flex items-center gap-1.5`}>
                                                     {asset.trend === 'Up' ? '↑ Up' : asset.trend === 'Down' ? '↓ Down' : '— Stable'}
                                                 </td>
                                             </tr>
@@ -998,6 +1072,7 @@ const Inventory = () => {
                             {/* Dealer Verification Section */}
                             <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10">
                                 <h3 className="text-xl font-bold text-gray-900 font-playfair mb-8">Dealer Verification</h3>
+
                                 {isVerifiedDealer ? (
                                     <div className="bg-[#F0FDF4] border border-[#DCFCE7] rounded-[2rem] p-10 flex items-start gap-8">
                                         <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-emerald-500 shadow-sm border border-[#DCFCE7]">
@@ -1009,8 +1084,23 @@ const Inventory = () => {
                                                 Your company has been verified and is eligible for enhanced visibility and trust badges on all listings.
                                             </p>
                                             <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest pt-2">
-                                                <FiCalendar /> Member since June 2022
+                                                <FiCalendar /> Verified Partner
                                             </div>
+                                        </div>
+                                    </div>
+                                ) : user?.verificationStatus === 'Pending' ? (
+                                    <div className="bg-[#EFF6FF] border border-[#DBEAFE] rounded-[2rem] p-10 flex items-start gap-8">
+                                        <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-blue-500 shadow-sm border border-[#DBEAFE]">
+                                            <FiClock className="text-3xl" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <h4 className="text-xl font-bold text-gray-900 font-playfair">Verification Pending</h4>
+                                            <p className="text-sm text-gray-500 leading-relaxed max-w-2xl">
+                                                Your documents have been submitted and are currently under review by our team. This process typically takes 24-48 hours. You will be notified once approved.
+                                            </p>
+                                            <button disabled className="mt-2 px-6 py-3 bg-white border border-blue-200 text-blue-600 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 cursor-wait opacity-75">
+                                                <FiLoader className="animate-spin" /> In Review
+                                            </button>
                                         </div>
                                     </div>
                                 ) : (
@@ -1019,15 +1109,20 @@ const Inventory = () => {
                                             <FiShield className="text-3xl" />
                                         </div>
                                         <div className="space-y-4">
-                                            <h4 className="text-xl font-bold text-gray-900 font-playfair">Verification Not Completed</h4>
+                                            <h4 className="text-xl font-bold text-gray-900 font-playfair">
+                                                {user?.verificationStatus === 'Rejected' ? 'Verification Rejected' : 'Verification Not Completed'}
+                                            </h4>
                                             <p className="text-sm text-gray-500 leading-relaxed max-w-2xl">
-                                                Complete your dealer verification to unlock enhanced visibility, trust badges, and access to premium features on the Otulia marketplace.
+                                                {user?.verificationStatus === 'Rejected'
+                                                    ? "Your previous verification attempt was not approved. Please review your documents and try again."
+                                                    : "Complete your dealer verification to unlock enhanced visibility, trust badges, and access to premium features on the Otulia marketplace."
+                                                }
                                             </p>
                                             <button
                                                 onClick={() => setIsVerificationModalOpen(true)}
                                                 className="mt-4 bg-[#D48D2A] text-white px-6 py-3 rounded-xl text-xs font-bold shadow-lg shadow-[#D48D2A]/20 hover:bg-[#B5751C] transition-all flex items-center gap-2"
                                             >
-                                                <FiUpload /> Start Verification Process
+                                                <FiUpload /> {user?.verificationStatus === 'Rejected' ? 'Resubmit Documents' : 'Start Verification Process'}
                                             </button>
                                         </div>
                                     </div>
@@ -1084,7 +1179,12 @@ const Inventory = () => {
                                     </div>
                                     <div className="text-right">
                                         <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Renewal Date</p>
-                                        <p className="text-sm font-black text-gray-900">Feb 15, 2024</p>
+                                        <p className="text-sm font-black text-gray-900">
+                                            {companyInfo.planExpiresAt
+                                                ? new Date(companyInfo.planExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                                : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                            }
+                                        </p>
                                     </div>
                                 </div>
 
@@ -1101,7 +1201,7 @@ const Inventory = () => {
                                             <div className="flex justify-between items-center mb-2">
                                                 <p className="text-sm font-bold opacity-90">Listing Usage</p>
                                                 <p className="text-sm font-black">
-                                                    {data?.inventory?.length || 8} of {user?.plan === 'Business VIP' ? '50' : '25'} listings
+                                                    {data?.inventory?.length || 0} of {user?.plan === 'Business VIP' ? '50' : '25'} listings
                                                 </p>
                                             </div>
                                             <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
@@ -1175,12 +1275,16 @@ const Inventory = () => {
                                             <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed">
                                                 Current Plan
                                             </button>
+                                        ) : user?.plan === 'Business VIP' ? (
+                                            <button disabled className="w-full py-4 bg-gray-50 text-gray-300 rounded-xl font-bold text-sm cursor-not-allowed hidden">
+                                                Downgrade Unavailable
+                                            </button>
                                         ) : (
                                             <button
                                                 onClick={() => handlePlanChange('Premium Basic')}
                                                 className="w-full py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20"
                                             >
-                                                {user?.plan === 'Business VIP' ? 'Downgrade' : 'Upgrade to Premium Basic'}
+                                                Upgrade to Premium Basic
                                             </button>
                                         )}
                                     </div>

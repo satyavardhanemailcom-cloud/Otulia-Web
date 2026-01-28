@@ -18,8 +18,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
     const initialFormState = {
         // Common
         make: '', model: '', variant: '', year: new Date().getFullYear(),
-        price: '', type: 'Sale', location: '', description: '', highlights: [''],
+        price: '', type: 'Sale', location: '', description: '',
         videoUrl: '', isPublic: true,
+
+        // Fixed Highlights Keys
+        highlight_hp: '', highlight_km: '', highlight_cc: '',
+        highlight_length: '', highlight_baths: '', highlight_beds: '',
+        highlight_area: '', highlight_kml: '', highlight_fuel: '',
 
         // Car Specific
         mileage: '', fuelType: '', transmission: '',
@@ -68,7 +73,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             const spec = editData.specification || {};
             const keySpec = editData.keySpecifications || {};
 
-            // Map incoming data to form structure
+            // Extract existing highlights if available to populate fields (best effort)
+            // This part is tricky if we don't know which index maps to which field. 
+            // For now, we might leave them empty or user has to re-enter if editing old data that didn't have this structure.
+
             setFormData({
                 ...initialFormState,
                 // Common
@@ -76,12 +84,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 type: editData.type || 'Sale',
                 location: editData.location || '',
                 description: editData.description || '',
-                highlights: editData.highlights || [''],
                 videoUrl: editData.videoUrl || '',
                 isPublic: editData.status === 'Active',
 
-                // Specifications - try to match as many overlapping fields as possible
-                // Car
+                // Specifics mapping (same as before)
                 make: editData.brand || '',
                 model: spec.model || '',
                 variant: spec.variant || '',
@@ -92,22 +98,16 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 exteriorColor: spec.exteriorColor || '',
                 interiorColor: spec.interiorColor || '',
                 condition: spec.condition || '',
-
-                // Yacht
                 yachtName: spec.yachtName || '',
                 builder: spec.builder || '',
                 length: spec.length || '',
                 beam: spec.beam || '',
-
-                // Real Estate
                 propertyName: editData.title || '',
                 propertyType: keySpec.propertyType || '',
                 builtUpArea: spec.builtUpArea || '',
                 landArea: spec.landArea || '',
                 bedrooms: spec.bedrooms || '',
                 bathrooms: spec.bathrooms || '',
-
-                // Bike
                 brand: editData.brand || '',
                 engineCapacity: spec.engineCapacity || '',
             });
@@ -141,29 +141,56 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         else if (type === 'document') setDocuments([...documents, ...Array.from(e.target.files)]);
     };
 
-    const handleAddHighlight = () => {
-        if (formData.highlights.length < 8) {
-            setFormData(prev => ({ ...prev, highlights: [...prev.highlights, ''] }));
-        }
-    };
-
-    const handleHighlightChange = (val, idx) => {
-        const newH = [...formData.highlights];
-        newH[idx] = val;
-        setFormData(prev => ({ ...prev, highlights: newH }));
-    };
-
     const handleSubmit = async () => {
         setLoading(true);
         const data = new FormData();
 
-        Object.keys(formData).forEach(key => {
-            if (['highlights', 'amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
-                data.append(key, JSON.stringify(formData[key].filter(h => typeof h === 'string' ? h.trim() !== '' : h)));
-            } else {
-                data.append(key, formData[key]);
+        // Construct Fixed Highlights based on Asset Type
+        let constructedHighlights = [];
+        if (assetType === 'Car') {
+            if (!formData.highlight_hp || !formData.highlight_km || !formData.highlight_cc) {
+                alert('Please fill in all Car Highlights (HP, Mileage, Engine)');
+                setLoading(false);
+                return;
             }
+            constructedHighlights = [`${formData.highlight_hp} hp`, `${formData.highlight_km} km`, `${formData.highlight_cc} cc`];
+        } else if (assetType === 'Yacht') {
+            if (!formData.highlight_length || !formData.highlight_baths || !formData.highlight_beds) {
+                alert('Please fill in all Yacht Highlights (Length, Baths, Beds)');
+                setLoading(false);
+                return;
+            }
+            constructedHighlights = [`${formData.highlight_length} M length`, `Bathrooms: ${formData.highlight_baths}`, `Bedrooms: ${formData.highlight_beds}`];
+        } else if (assetType === 'Estate') {
+            if (!formData.highlight_area || !formData.highlight_baths || !formData.highlight_beds) {
+                alert('Please fill in all Real Estate Highlights (Area, Baths, Beds)');
+                setLoading(false);
+                return;
+            }
+            constructedHighlights = [`Land Area: ${formData.highlight_area} Acres`, `Bathrooms: ${formData.highlight_baths}`, `Bedrooms: ${formData.highlight_beds}`];
+        } else if (assetType === 'Bike') {
+            if (!formData.highlight_cc || !formData.highlight_kml || !formData.highlight_fuel) {
+                alert('Please fill in all Bike Highlights (Engine, Mileage, Fuel)');
+                setLoading(false);
+                return;
+            }
+            constructedHighlights = [`${formData.highlight_cc} cc`, `${formData.highlight_kml} km/l`, `${formData.highlight_fuel} liters`];
+        }
+
+        // Append to FormData
+        Object.keys(formData).forEach(key => {
+            // Skip separate highlight keys and internal lists, handle them explicitly
+            if (key.startsWith('highlight_') || ['highlights', 'amenities', 'smartHomeSystems', 'viewTypes'].includes(key)) {
+                return;
+            }
+            data.append(key, formData[key]);
         });
+
+        // Append constructed highlights and arrays
+        data.append('highlights', JSON.stringify(constructedHighlights));
+        if (formData.amenities) data.append('amenities', JSON.stringify(formData.amenities));
+        if (formData.smartHomeSystems) data.append('smartHomeSystems', JSON.stringify(formData.smartHomeSystems));
+        if (formData.viewTypes) data.append('viewTypes', JSON.stringify(formData.viewTypes));
 
         data.append('category', assetType);
         if (coverImage) data.append('images', coverImage);
@@ -358,7 +385,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 </div>
                             )}
 
-                            {/* Description & Highlights Section - Common to all */}
+                            {/* Key Highlights Section - Fixed Fields Only */}
                             <section className="bg-[#FAFBFB] p-10 rounded-[2.5rem] border border-gray-100">
                                 <div className="max-w-4xl mx-auto space-y-10">
                                     <div>
@@ -371,6 +398,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             onChange={handleInputChange}
                                             className="w-full bg-white border border-gray-200 rounded-[1.5rem] p-8 text-sm focus:outline-none focus:border-[#D48D2A] transition-all min-h-[200px] shadow-sm"
                                             placeholder="Provide a detailed description of your asset..."
+                                            required
                                         ></textarea>
                                         <div className="flex justify-between mt-3 px-2">
                                             <p className="text-[10px] text-gray-400 font-bold">Minimum 150 characters</p>
@@ -383,32 +411,40 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             <span className="text-orange-400 text-xl font-bold">✨</span>
                                             <div>
                                                 <h4 className="text-lg font-bold text-gray-900 font-playfair">Key Highlights</h4>
-                                                <p className="text-xs text-gray-400 italic">Displayed above the specifications table</p>
+                                                <p className="text-xs text-gray-400 italic">These specific details will be highlighted on your listing</p>
                                             </div>
                                         </div>
-                                        <div className="space-y-4">
-                                            {formData.highlights.map((h, i) => (
-                                                <div key={i} className="flex gap-4 items-center animate-in fade-in slide-in-from-left-2 transition-all">
-                                                    <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 text-xs font-black text-[#D48D2A]">{i + 1}</div>
-                                                    <input
-                                                        value={h}
-                                                        onChange={(e) => handleHighlightChange(e.target.value, i)}
-                                                        className="flex-1 bg-white border border-gray-200 rounded-xl px-6 py-3.5 text-sm font-medium focus:outline-none focus:border-[#D48D2A] shadow-sm"
-                                                        placeholder="Highlight (e.g., 'Fully serviced with complete history')"
-                                                    />
-                                                    {formData.highlights.length > 1 && (
-                                                        <button onClick={() => setFormData(prev => ({ ...prev, highlights: prev.highlights.filter((_, idx) => idx !== i) }))} className="text-gray-300 hover:text-red-500 p-2 transition-colors">
-                                                            <FiTrash2 />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
-                                            <button
-                                                onClick={handleAddHighlight}
-                                                className="w-full py-5 bg-white border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center gap-3 text-xs font-black text-gray-400 hover:border-[#D48D2A] hover:text-[#D48D2A] transition-all hover:bg-gray-50"
-                                            >
-                                                <FiPlus className="text-lg" /> ADD HIGHLIGHT
-                                            </button>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            {/* Render Fixed Highlights based on Asset Type */}
+                                            {assetType === 'Car' && (
+                                                <>
+                                                    <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 986" onChange={handleInputChange} />
+                                                    <InputField label="Mileage (km) *" name="highlight_km" value={formData.highlight_km || ''} placeholder="e.g. 1,200" onChange={handleInputChange} />
+                                                    <InputField label="Engine (cc) *" name="highlight_cc" value={formData.highlight_cc || ''} placeholder="e.g. 3990" onChange={handleInputChange} />
+                                                </>
+                                            )}
+                                            {assetType === 'Yacht' && (
+                                                <>
+                                                    <InputField label="Length (M) *" name="highlight_length" value={formData.highlight_length || ''} placeholder="e.g. 27" onChange={handleInputChange} />
+                                                    <InputField label="Bathrooms *" name="highlight_baths" value={formData.highlight_baths || ''} placeholder="e.g. 6" onChange={handleInputChange} />
+                                                    <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds || ''} placeholder="e.g. 5" onChange={handleInputChange} />
+                                                </>
+                                            )}
+                                            {assetType === 'Estate' && (
+                                                <>
+                                                    <InputField label="Land Area (Acres) *" name="highlight_area" value={formData.highlight_area || ''} placeholder="e.g. 2" onChange={handleInputChange} />
+                                                    <InputField label="Bathrooms *" name="highlight_baths" value={formData.highlight_baths || ''} placeholder="e.g. 8" onChange={handleInputChange} />
+                                                    <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds || ''} placeholder="e.g. 6" onChange={handleInputChange} />
+                                                </>
+                                            )}
+                                            {assetType === 'Bike' && (
+                                                <>
+                                                    <InputField label="Engine (cc) *" name="highlight_cc" value={formData.highlight_cc || ''} placeholder="e.g. 803" onChange={handleInputChange} />
+                                                    <InputField label="Mileage (km/l) *" name="highlight_kml" value={formData.highlight_kml || ''} placeholder="e.g. 20" onChange={handleInputChange} />
+                                                    <InputField label="Fuel Capacity (L) *" name="highlight_fuel" value={formData.highlight_fuel || ''} placeholder="e.g. 13.5" onChange={handleInputChange} />
+                                                </>
+                                            )}
                                         </div>
                                     </div>
 

@@ -24,6 +24,8 @@ import Profile from "./pages/Profile";
 import Success from "./pages/Success";
 import MyListings from "./pages/MyListings";
 import Inventory from "./pages/Inventory";
+import Favorites from "./pages/Favorites";
+import AdminDashboard from "./pages/AdminDashboard";
 
 // Policy pages
 import Terms from "./pages/policies/Terms";
@@ -71,6 +73,9 @@ function App() {
         <Route path="/success" element={<Success />} />
         <Route path="/listings" element={<MyListings />} />
         <Route path="/inventory" element={<Inventory />} />
+        <Route path="/inventory" element={<Inventory />} />
+        <Route path="/favorites" element={<Favorites />} />
+        <Route path="/admin" element={<AdminDashboard />} />
 
         {/* Policy Routes */}
         <Route path="/terms" element={<Terms />} />

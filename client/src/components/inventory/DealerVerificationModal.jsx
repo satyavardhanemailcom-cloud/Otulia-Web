@@ -142,8 +142,8 @@ const DealerVerificationModal = ({ isOpen, onClose, onSubmit }) => {
                                         className="hidden"
                                     />
                                     <div className={`border-2 border-dashed rounded-xl p-6 cursor-pointer transition-all hover:border-[#D48D2A] hover:bg-white group ${uploadedFiles[field.id]
-                                            ? 'border-emerald-300 bg-emerald-50'
-                                            : 'border-gray-200 bg-white'
+                                        ? 'border-emerald-300 bg-emerald-50'
+                                        : 'border-gray-200 bg-white'
                                         }`}>
                                         {uploadedFiles[field.id] ? (
                                             <div className="flex items-center gap-3">

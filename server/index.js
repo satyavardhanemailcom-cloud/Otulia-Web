@@ -43,6 +43,7 @@ app.use("/api/seller", sellerRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/inventory", inventoryRoutes);
+app.use("/api/admin", require("./routes/admin.routes.js"));
 
 
 

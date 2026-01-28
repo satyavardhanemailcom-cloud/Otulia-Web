@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import numberWithCommas from '../modules/numberwithcomma'
+import { useAuth } from '../contexts/AuthContext'
 
 const AssetCard = ({ item }) => {
   const navigate = useNavigate()
+  const { user, token, isAuthenticated, refreshUser } = useAuth();
 
   const pathname = useLocation()
   // Correctly checking if it is the homepage
@@ -14,6 +16,13 @@ const AssetCard = ({ item }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   let category = '.'
+
+  useEffect(() => {
+    if (user && user.favorites) {
+      const isFav = user.favorites.some(fav => fav.assetId === item._id);
+      setIsLiked(isFav);
+    }
+  }, [user, item._id]);
 
   // 1. GET TOP 3 IMAGES ONLY
   const validImages = (() => {
@@ -44,6 +53,9 @@ const AssetCard = ({ item }) => {
   let displayDetails = item.details;
 
   // Set category based on explicit field or infer from specs
+  // Also determine exact Model for API
+  let exactModel = item.itemModel || 'Listing';
+
   if (item.category) {
     category = item.category.toLowerCase();
   } else if (item.itemModel) {
@@ -69,10 +81,51 @@ const AssetCard = ({ item }) => {
     }
   }
 
+  // Derive Model Name if still generic
+  if (exactModel === 'Listing' || !exactModel) {
+    if (category === 'car') exactModel = 'CarAsset';
+    else if (category === 'estate') exactModel = 'EstateAsset';
+    else if (category === 'yacht') exactModel = 'YachtAsset';
+    else if (category === 'bike') exactModel = 'BikeAsset';
+  }
+
+
   // HANDLERS
-  const handleHeartClick = (e) => {
+  const handleHeartClick = async (e) => {
     e.stopPropagation();
+
+    if (!isAuthenticated) {
+      alert("Please log in to save favorites.");
+      navigate('/login');
+      return;
+    }
+
+    // Optimistic UI update
+    const previousState = isLiked;
     setIsLiked(!isLiked);
+
+    try {
+      const response = await fetch('/api/auth/toggle-favorite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          assetId: item._id,
+          assetModel: exactModel
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to toggle favorite');
+      }
+
+      refreshUser();
+    } catch (error) {
+      console.error(error);
+      setIsLiked(previousState); // Revert on error
+    }
   };
 
   const handleDotClick = (e, index) => {

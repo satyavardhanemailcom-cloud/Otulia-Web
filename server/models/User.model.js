@@ -41,6 +41,22 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    verificationStatus: {
+      type: String,
+      enum: ["Pending", "Verified", "Rejected", "None"],
+      default: "None",
+    },
+
+    verificationDocuments: {
+      type: Map,
+      of: String // Document type -> URL
+    },
+
     plan: {
       type: String,
       enum: ["Freemium", "Premium Basic", "Business VIP"],

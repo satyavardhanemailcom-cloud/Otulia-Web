@@ -5,6 +5,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User.model");
 const { OAuth2Client } = require("google-auth-library");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const router = express.Router();
@@ -202,6 +205,41 @@ router.get("/me", authMiddleware, async (req, res) => {
 });
 
 /**
+ * TOGGLE FAVORITE
+ */
+router.post("/toggle-favorite", authMiddleware, async (req, res) => {
+  try {
+    const { assetId, assetModel } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "USER_NOT_FOUND" });
+    }
+
+    const existingIndex = user.favorites.findIndex(
+      (fav) => fav.assetId && fav.assetId.toString() === assetId
+    );
+
+    let action;
+    if (existingIndex > -1) {
+      // Remove
+      user.favorites.splice(existingIndex, 1);
+      action = 'removed';
+    } else {
+      // Add
+      user.favorites.push({ assetId, assetModel });
+      action = 'added';
+    }
+
+    await user.save();
+    res.json({ action, favorites: user.favorites });
+  } catch (error) {
+    console.error("Toggle Favorite Error:", error);
+    res.status(500).json({ error: "TOGGLE_FAILED" });
+  }
+});
+
+/**
  * GET MY LISTINGS
  */
 router.get("/my-listings", authMiddleware, async (req, res) => {
@@ -226,6 +264,33 @@ router.get("/my-listings", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error("Fetch My Listings Error:", err);
     res.status(500).json({ error: "FETCH_LISTINGS_FAILED" });
+  }
+});
+
+/**
+ * GET FAVORITES
+ */
+router.get("/favorites", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate("favorites.assetId");
+    if (!user) {
+      return res.status(404).json({ error: "USER_NOT_FOUND" });
+    }
+
+    const favorites = user.favorites
+      .filter(entry => entry.assetId) // Filter out nulls
+      .map(entry => {
+        const item = entry.assetId.toObject();
+        return {
+          ...item,
+          category: entry.assetModel // Ensure category is available
+        };
+      });
+
+    res.json(favorites);
+  } catch (err) {
+    console.error("Fetch Favorites Error:", err);
+    res.status(500).json({ error: "FETCH_FAVORITES_FAILED" });
   }
 });
 
@@ -272,6 +337,57 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     res.json({ message: "PROFILE_UPDATED_SUCCESSFULLY", user });
   } catch (err) {
     res.status(500).json({ error: "UPDATE_FAILED" });
+  }
+});
+
+/**
+ * SUBMIT VERIFICATION DOCUMENTS
+ */
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = path.join(process.cwd(), 'uploads/verification');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+router.post("/submit-verification", authMiddleware, upload.any(), async (req, res) => {
+  try {
+    const files = req.files;
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: "NO_FILES_UPLOADED" });
+    }
+
+    const verificationDocuments = {};
+
+    files.forEach(file => {
+      // Public URL assuming 'uploads' static serve
+      const publicUrl = `/uploads/verification/${file.filename}`;
+      verificationDocuments[file.fieldname] = publicUrl;
+    });
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        verificationStatus: "Pending",
+        verificationDocuments: verificationDocuments
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json(user);
+  } catch (err) {
+    console.error("Verification Submit Error:", err);
+    res.status(500).json({ error: "SUBMISSION_FAILED" });
   }
 });
 

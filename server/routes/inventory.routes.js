@@ -78,26 +78,74 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             customerContact: user.plan === 'Business VIP' ? act.userId?.email : 'Upgrade to VIP to view email'
         }));
 
-        // 4. Analytics Data (Mocked for Chart stability)
-        const performanceHistory = [
-            { week: 'Week 1', views: 8200, leads: 42 },
-            { week: 'Week 2', views: 9500, leads: 58 },
-            { week: 'Week 3', views: 11200, leads: 64 },
-            { week: 'Week 4', views: stats.totalViews, leads: stats.totalLeads }
-        ];
+        // 4. Analytics Data aggregation
+        const now = new Date();
+        const fourWeeksAgo = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);
+
+        const leadsLast4Weeks = await UserActivity.aggregate([
+            {
+                $match: {
+                    assetId: { $in: assetIds },
+                    activityType: { $in: ['CALL_AGENT', 'INQUIRY', 'RENT_REQUEST', 'BUY_REQUEST'] },
+                    createdAt: { $gte: fourWeeksAgo }
+                }
+            },
+            {
+                $group: {
+                    _id: { $week: "$createdAt" },
+                    count: { $sum: 1 },
+                    date: { $first: "$createdAt" }
+                }
+            },
+            { $sort: { "_id": 1 } }
+        ]);
+
+        // Map aggregation to performanceHistory format
+        const performanceHistory = [1, 2, 3, 4].map(idx => {
+            const weekDate = new Date(now.getTime() - (4 - idx) * 7 * 24 * 60 * 60 * 1000);
+            // Simple logic to map aggregated weeks to our 4 buckets (approximate)
+            const foundWeek = leadsLast4Weeks.find(w => {
+                const diff = Math.abs(new Date(w.date) - weekDate);
+                return diff < 604800000; // within a week
+            });
+            return {
+                week: `Week ${idx}`,
+                views: Math.floor(stats.totalViews / 4) + (Math.random() * 10), // Mock views distribution for now as we track total views only on item level
+                leads: foundWeek ? foundWeek.count : 0
+            };
+        });
+
+        // Top Performing Assets
+        const topAssets = [...detailedItems].sort((a, b) => b.views - a.views).slice(0, 5).map(item => ({
+            name: item.title,
+            views: item.views,
+            leads: activities.filter(a => a.assetId.toString() === item.id.toString()).length,
+            trend: item.views > 50 ? 'Up' : 'Stable', // Simple logic
+            color: item.views > 50 ? 'text-emerald-500' : 'text-gray-400'
+        }));
 
         res.json({
             plan: user.plan,
+            userProfile: {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                plan: user.plan,
+                profilePicture: user.profilePicture,
+                planExpiresAt: user.planExpiresAt,
+                memberSince: user.createdAt
+            },
             stats,
             inventory: detailedItems,
             leads: leadsTable,
+            topAssets,
             analytics: {
                 performanceTrend: performanceHistory,
-                leadsByLocation: [
-                    { country: 'United States', count: 120 },
-                    { country: 'United Kingdom', count: 85 },
-                    { country: 'UAE', count: 64 },
-                    { country: 'France', count: 42 }
+                leadsByLocation: [ // Placeholder as we don't have location data yet
+                    { country: 'United States', count: Math.floor(stats.totalLeads * 0.4) },
+                    { country: 'United Kingdom', count: Math.floor(stats.totalLeads * 0.3) },
+                    { country: 'UAE', count: Math.floor(stats.totalLeads * 0.2) },
+                    { country: 'Other', count: Math.floor(stats.totalLeads * 0.1) }
                 ]
             }
         });
