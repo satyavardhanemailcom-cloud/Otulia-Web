@@ -353,7 +353,7 @@ router.get("/:type/:id", async (req, res) => {
 
     let asset;
 
-    if (type === "vehicles") {
+    if (type === "cars") {
       asset = await CarAsset.findById(id);
     } else if (type === "estates") {
       asset = await EstateAsset.findById(id);
@@ -389,7 +389,7 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
 
     let asset;
 
-    if (type === "vehicles") {
+    if (type === "cars") {
       asset = await CarAsset.findById(id);
     } else if (type === "estates") {
       asset = await EstateAsset.findById(id);
@@ -524,8 +524,17 @@ router.get("/combined", async (req, res) => {
  */
 router.get("/car", async (req, res) => {
   try {
-    const { limit = 15 } = req.query;
-    const data = await CarAsset.find({ status: 'Active' })
+    const { limit = 15, location, acquisition } = req.query;
+    const query = { status: 'Active' };
+
+    if (location) {
+      query.location = { $regex: location, $options: "i" };
+    }
+    if (acquisition) {
+      query.acquisition = { $in: acquisition.toLowerCase().split(',') };
+    }
+
+    const data = await CarAsset.find(query)
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json(data);

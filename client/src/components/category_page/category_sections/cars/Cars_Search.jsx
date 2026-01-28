@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Cars_Search = () => {
   const [activeType, setActiveType] = useState('Buy'); // State for Buy/Rent toggle
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    const acquisition = activeType.toLowerCase();
+    navigate(`/category/cars?location=${query}&acquisition=${acquisition}`);
+  };
 
   return (
     <div className="w-full flex justify-center p-4">
@@ -75,7 +82,9 @@ const Cars_Search = () => {
         </div>
 
         {/* 3. SEARCH BUTTON */}
-        <button className="
+        <button
+          onClick={handleSearch}
+          className="
           w-full md:w-auto 
           h-14 md:h-16 
           px-10 md:px-12 
