@@ -22,6 +22,7 @@ const seedListings = async () => {
         isFeatured: true,
         views: 120,
         bookings: 5,
+        acquisition: 'buy',
       },
       {
         title: "Lamborghini Urus",
@@ -34,6 +35,7 @@ const seedListings = async () => {
         },
         views: 300,
         bookings: 12,
+        acquisition: 'buy',
       },
       {
         title: "Luxury Beach Villa",
@@ -47,6 +49,7 @@ const seedListings = async () => {
         isFeatured: true,
         views: 180,
         bookings: 9,
+        acquisition: 'rent',
       },
     ]);
 

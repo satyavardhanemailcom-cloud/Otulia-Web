@@ -29,6 +29,7 @@ const seedCarAssets = async () => {
         popularity: isTrending ? 8 + (i % 3) : 4 + (i % 3),
         likes: isTrending ? 100 + i * 10 : 15 + i * 2,
         views: isTrending ? 800 + i * 100 : 100 + i * 20,
+        acquisition: 'buy',
       });
     }
 

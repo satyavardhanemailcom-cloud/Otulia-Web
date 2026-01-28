@@ -67,6 +67,11 @@ const listingSchema = new mongoose.Schema(
             type: String,
             enum: ['Sale', 'Rent'],
             default: 'Sale'
+        },
+        acquisition: {
+            type: String,
+            enum: ['rent', 'buy', 'rent/buy'],
+            required: true
         }
     },
     { timestamps: true }

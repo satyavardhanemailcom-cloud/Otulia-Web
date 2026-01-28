@@ -166,7 +166,8 @@ function yachtWithDefaults() {
             model: y.title,
             length: y.keySpecifications.mileage,
             condition: "New"
-        }
+        },
+        acquisition: 'buy',
     }))
 }
 
@@ -182,7 +183,8 @@ function bikeWithDefaults() {
             model: b.title,
             power: b.keySpecifications.power,
             condition: "New"
-        }
+        },
+        acquisition: 'buy',
     }))
 }
 

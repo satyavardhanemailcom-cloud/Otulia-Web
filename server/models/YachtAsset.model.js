@@ -70,6 +70,11 @@ const yachtAssetSchema = new mongoose.Schema(
     status: { type: String, enum: ['Active', 'Sold', 'Rented', 'Draft'], default: 'Active' },
     category: { type: String, default: 'yachts' },
     type: { type: String, enum: ['Sale', 'Rent'], default: 'Sale' },
+    acquisition: {
+      type: String,
+      enum: ['rent', 'buy', 'rent/buy'],
+      required: true
+    },
 
     isTrending: { type: Boolean, default: false },
 

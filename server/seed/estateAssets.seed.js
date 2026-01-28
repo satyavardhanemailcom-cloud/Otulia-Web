@@ -28,6 +28,7 @@ const seedEstateAssets = async () => {
         popularity: isTrending ? 7 + (i % 3) : 3 + (i % 3),
         likes: isTrending ? 80 + i * 8 : 10 + i * 2,
         views: isTrending ? 600 + i * 120 : 80 + i * 25,
+        acquisition: 'buy',
       });
     }
 
