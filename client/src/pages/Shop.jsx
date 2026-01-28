@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import Navbar from '../components/Navbar'
-import AssetCard from '../components/AssetCard'
-import SharedFilterBar from '../components/SharedFilterBar'
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import AssetCard from '../components/AssetCard';
+import SharedFilterBar from '../components/SharedFilterBar';
 
 const Shop = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ location: '', minPrice: '', maxPrice: '' });
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q');
 
   const categories = [
     { name: 'All', endpoint: 'combined' },
@@ -19,7 +22,7 @@ const Shop = () => {
 
   useEffect(() => {
     fetchListings();
-  }, [activeCategory, filters]);
+  }, [activeCategory, filters, query]);
 
   const fetchListings = async () => {
     setLoading(true);
@@ -31,10 +34,12 @@ const Shop = () => {
       if (filters.location) params.append('location', filters.location);
       if (filters.minPrice) params.append('minPrice', filters.minPrice);
       if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+      if (query) params.append('q', query);
 
       const response = await fetch(`/api/assets/${endpoint}?${params.toString()}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
+      console.log(data);
       setListings(data);
     } catch (error) {
       console.error("Failed to fetch listings", error);
@@ -52,8 +57,12 @@ const Shop = () => {
       <Navbar />
       {/* Simple Hero */}
       <div className="bg-white text-black py-16 px-4 text-center border-b border-gray-100">
-        <h1 className="text-4xl md:text-5xl font-playfair mb-4 font-serif">Luxury Collection</h1>
-        <p className="text-gray-500 max-w-2xl mx-auto font-sans">Discover the world's most prestigious assets across all categories.</p>
+        <h1 className="text-4xl md:text-5xl font-playfair mb-4 font-serif">
+          {query ? `Search Results for "${query}"` : 'Luxury Collection'}
+        </h1>
+        <p className="text-gray-500 max-w-2xl mx-auto font-sans">
+          {query ? `Showing results for your search query.` : 'Discover the world\'s most prestigious assets across all categories.'}
+        </p>
       </div>
 
       {/* Filter Bar */}
@@ -84,7 +93,7 @@ const Shop = () => {
         ) : listings.length === 0 ? (
           <div className="text-center py-20 text-gray-500">No assets found matching your criteria.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {listings.map((item, idx) => (
               <AssetCard key={item._id} item={item} />
             ))}

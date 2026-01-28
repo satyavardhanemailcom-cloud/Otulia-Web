@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { XCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'; // Optional: npm install @heroicons/react
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   const handleClear = () => {
     setQuery('');
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/shop?q=${query.trim()}`);
+    }
+  };
+
   return (
-    <div className="relative w-full max-w-md mx-auto">
+    <form className="relative w-full max-w-md mx-auto" onSubmit={handleSearch}>
       {/* Search Icon (Left) */}
       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
         <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
@@ -31,12 +40,11 @@ const SearchBar = () => {
           className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-</svg>
-
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
         </button>
       )}
-    </div>
+    </form>
   );
 };
 

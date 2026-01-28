@@ -432,14 +432,40 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
  */
 router.get("/combined", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
+    const { q, page = 1, limit = 12, type, minPrice, maxPrice, location } = req.query;
 
-    const query = search
-      ? { title: { $regex: search, $options: "i" } }
-      : {};
+    let searchQuery = {};
+    if (q) {
+      const searchRegex = { $regex: q, $options: "i" };
+      searchQuery = {
+        $or: [
+          { title: searchRegex },
+          { description: searchRegex },
+          { location: searchRegex },
+          { brand: searchRegex },
+          { 'highlights': searchRegex },
+          { 'keywords': searchRegex },
+          { category: searchRegex },
+          { type: searchRegex },
+          { 'specification.model': searchRegex },
+          { 'keySpecifications.propertyType': searchRegex },
+          { 'specification.propertyType': searchRegex },
+          { 'specification.architectureStyle': searchRegex },
+          { 'specification.country': searchRegex },
+          { 'specification.city': searchRegex },
+          { 'specification.body': searchRegex },
+          { 'specification.fuelType': searchRegex },
+          { 'specification.transmission': searchRegex },
+          { 'specification.exteriorColor': searchRegex },
+          { 'specification.engineType': searchRegex },
+          { 'specification.yachtType': searchRegex },
+          { builder: searchRegex },
+          { 'amenities': searchRegex },
+        ],
+      };
+    }
 
-    // Filter only Active (Public) assets
-    query.status = 'Active';
+    const query = { ...searchQuery, status: 'Active' };
 
     if (type) query.type = type;
     if (location) query.location = { $regex: location, $options: "i" };

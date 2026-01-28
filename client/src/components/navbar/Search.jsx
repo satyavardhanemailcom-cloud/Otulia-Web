@@ -1,9 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/shop?q=${query.trim()}`);
+    }
+  };
+
   return (
     <>
-      <form className="max-w-md mx-auto">
+      <form className="max-w-md mx-auto" onSubmit={handleSearch}>
         <label htmlFor="search" className="block mb-2.5 text-sm font-medium sr-only">Search</label>
         
         <div className="relative">
@@ -24,31 +35,33 @@ const Search = () => {
 
           {/* Input Field */}
           <input 
-  type="search" 
-  id="search" 
-  className="
-    block w-full p-2 ps-9 text-sm rounded-md
-    bg-transparent 
-    text-black 
-    border border-black
-    placeholder-[#2C2C2C]
-    
-    /* Focus State */
-    focus:outline-none 
-    focus:border-black 
-    focus:ring-1 
-    focus:ring-black
-    
-    /* THE FIX: TARGETING THE CROSS BUTTON */
-    /* 1. cursor-pointer: Makes it look clickable */
-    /* 2. brightness-0: Turns the default grey icon purely black */
-    /* 3. grayscale: Removes any other color artifacts */
-    [&::-webkit-search-cancel-button]:cursor-pointer
-    [&::-webkit-search-cancel-button]:brightness-0
-    [&::-webkit-search-cancel-button]:grayscale
-  " 
-  placeholder="Search" 
-/>
+            type="search" 
+            id="search" 
+            className="
+              block w-full p-2 ps-9 text-sm rounded-md
+              bg-transparent 
+              text-black 
+              border border-black
+              placeholder-[#2C2C2C]
+              
+              /* Focus State */
+              focus:outline-none 
+              focus:border-black 
+              focus:ring-1 
+              focus:ring-black
+              
+              /* THE FIX: TARGETING THE CROSS BUTTON */
+              /* 1. cursor-pointer: Makes it look clickable */
+              /* 2. brightness-0: Turns the default grey icon purely black */
+              /* 3. grayscale: Removes any other color artifacts */
+              [&::-webkit-search-cancel-button]:cursor-pointer
+              [&::-webkit-search-cancel-button]:brightness-0
+              [&::-webkit-search-cancel-button]:grayscale
+            " 
+            placeholder="Search" 
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </div>
       </form>
 
