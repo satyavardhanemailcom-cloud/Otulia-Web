@@ -33,7 +33,7 @@ const bikeAssetSchema = new mongoose.Schema(
       variant: String,
       year: String,                //
       condition: String,           //
-      
+
       // Engine & Performance
       engineType: String,          //
       engineCapacityCC: Number,    // (Mapped from "803 cc")
@@ -43,19 +43,19 @@ const bikeAssetSchema = new mongoose.Schema(
       fuelSystem: String,          //
       mileageKM: Number,           // (Mapped from "18-20 km/l")
       fuelType: String,            //
-      
+
       // Chassis & Suspension
       frame: String,               //
       frontSuspension: String,     //
       frontBrake: String,          //
       rearBrake: String,           //
-      
+
       // Safety & Electronics
       abs: String,                 //
       tractionControl: String,     //
       rideModes: String,           //
       immobilizer: String,         //
-      
+
       // Wheels & Tyres
       frontWheel: String,          //
       rearWheel: String,           //

@@ -13,19 +13,19 @@ const Asset_Section = () => {
   return (
     <>
       {(cat === 'car' || cat === 'vehicles') && (
-        <Car_Section />
+        <Car_Section key={path.pathname} />
       )}
 
       {(cat === 'estate' || cat === 'estates') && (
-        <Estate_Section />
+        <Estate_Section key={path.pathname} />
       )}
 
       {(cat === 'yacht' || cat === 'yachts') && (
-        <YachtDetail_Section />
+        <YachtDetail_Section key={path.pathname} />
       )}
 
       {(cat === 'bike' || cat === 'bikes') && (
-        <BikeDetail_Section />
+        <BikeDetail_Section key={path.pathname} />
       )}
     </>
   );

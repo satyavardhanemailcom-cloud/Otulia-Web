@@ -19,9 +19,19 @@ const AdminDashboard = () => {
     const [payouts, setPayouts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(null);
+    const [savingSettings, setSavingSettings] = useState(false);
     const [selectedPartnerDocs, setSelectedPartnerDocs] = useState(null);
 
     // ... existing ...
+
+    const handleSaveSettings = () => {
+        setSavingSettings(true);
+        // Simulate API call
+        setTimeout(() => {
+            setSavingSettings(false);
+            alert('Settings saved successfully!');
+        }, 1500);
+    };
 
     const viewDocs = (partner) => {
         setSelectedPartnerDocs(partner);
@@ -315,8 +325,8 @@ const AdminDashboard = () => {
                                             </td>
                                             <td className="px-6 py-5">
                                                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${partner.verificationStatus === 'Verified' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                                        partner.verificationStatus === 'Pending' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                                                            'bg-red-50 text-red-600 border border-red-100'
+                                                    partner.verificationStatus === 'Pending' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
+                                                        'bg-red-50 text-red-600 border border-red-100'
                                                     }`}>
                                                     <span className={`w-1.5 h-1.5 rounded-full ${partner.verificationStatus === 'Verified' ? 'bg-emerald-500' : partner.verificationStatus === 'Pending' ? 'bg-blue-500' : 'bg-red-500'}`}></span>
                                                     {partner.verificationStatus || 'Unknown'}
@@ -330,16 +340,14 @@ const AdminDashboard = () => {
                                                 <span className="text-sm text-gray-500 font-medium">{partner.location}</span>
                                             </td>
                                             <td className="px-8 py-5 text-right">
-                                                {partner.verificationStatus === 'Pending' || partner.verificationStatus === 'None' ? (
+                                                {['Pending', 'None', 'Rejected'].includes(partner.verificationStatus) ? (
                                                     <div className="flex justify-end gap-2">
-                                                        {partner.verificationStatus === 'Pending' && (
-                                                            <button
-                                                                onClick={() => viewDocs(partner)}
-                                                                className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all text-xs font-bold uppercase border border-blue-100"
-                                                            >
-                                                                View
-                                                            </button>
-                                                        )}
+                                                        <button
+                                                            onClick={() => viewDocs(partner)}
+                                                            className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all text-xs font-bold uppercase border border-blue-100"
+                                                        >
+                                                            View Docs
+                                                        </button>
                                                         <button
                                                             onClick={() => handleVerification(partner.id, 'approve')}
                                                             disabled={actionLoading === partner.id}
@@ -356,9 +364,14 @@ const AdminDashboard = () => {
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <button className="text-gray-300 hover:text-gray-900 transition-colors">
-                                                        <FiMoreVertical className="text-lg" />
-                                                    </button>
+                                                    <div className="flex justify-end gap-2">
+                                                        <button
+                                                            onClick={() => viewDocs(partner)}
+                                                            className="px-3 py-1.5 bg-gray-50 text-gray-400 rounded-lg hover:bg-gray-200 hover:text-gray-600 transition-all text-xs font-bold uppercase border border-gray-100"
+                                                        >
+                                                            View Docs
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </td>
                                         </tr>
@@ -475,8 +488,8 @@ const AdminDashboard = () => {
                                             <td className="px-6 py-5 text-sm text-gray-500">{new Date(payout.date).toLocaleDateString()}</td>
                                             <td className="px-6 py-5">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${payout.status === 'Completed' ? 'bg-emerald-50 text-emerald-600' :
-                                                        payout.status === 'Pending' ? 'bg-amber-50 text-amber-600' :
-                                                            'bg-blue-50 text-blue-600'
+                                                    payout.status === 'Pending' ? 'bg-amber-50 text-amber-600' :
+                                                        'bg-blue-50 text-blue-600'
                                                     }`}>
                                                     {payout.status}
                                                 </span>
@@ -506,7 +519,7 @@ const AdminDashboard = () => {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Support Email</label>
-                                        <input type="email" defaultValue="admin@otulia.com" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#D48D2A]" />
+                                        <input type="email" defaultValue="support@otulia.com" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#D48D2A]" />
                                     </div>
                                 </div>
                                 <div className="space-y-6">
@@ -515,8 +528,17 @@ const AdminDashboard = () => {
                                         <input type="number" defaultValue="5" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-[#D48D2A]" />
                                     </div>
                                     <div className="pt-6">
-                                        <button className="px-6 py-3 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] shadow-lg shadow-[#D48D2A]/20 transition-all w-full">
-                                            Save Changes
+                                        <button
+                                            onClick={handleSaveSettings}
+                                            disabled={savingSettings}
+                                            className="px-6 py-3 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] shadow-lg shadow-[#D48D2A]/20 transition-all w-full disabled:opacity-70 flex justify-center items-center gap-2"
+                                        >
+                                            {savingSettings ? (
+                                                <>
+                                                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    Saving...
+                                                </>
+                                            ) : 'Save Changes'}
                                         </button>
                                     </div>
                                 </div>
@@ -559,7 +581,7 @@ const AdminDashboard = () => {
                                                 </div>
                                             </div>
                                             <a
-                                                href={url}
+                                                href={url.startsWith('http') ? url : `/${url.replace(/^server\//, '').replace(/^\//, '')}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="px-6 py-2.5 bg-gray-900 text-white text-xs font-bold rounded-lg hover:bg-black transition-colors"
@@ -574,6 +596,15 @@ const AdminDashboard = () => {
                         <div className="p-8 border-t border-gray-100 bg-gray-50/50 flex justify-end gap-3">
                             <button onClick={closeDocsModal} className="px-6 py-3 bg-white border border-gray-200 text-gray-600 font-bold text-sm rounded-xl hover:bg-gray-50">
                                 Close
+                            </button>
+                            <button
+                                onClick={() => {
+                                    handleVerification(selectedPartnerDocs.id, 'reject');
+                                    closeDocsModal();
+                                }}
+                                className="px-6 py-3 bg-red-50 text-red-600 border border-red-100 font-bold text-sm rounded-xl hover:bg-red-600 hover:text-white transition-all"
+                            >
+                                Reject Partner
                             </button>
                             <button
                                 onClick={() => {

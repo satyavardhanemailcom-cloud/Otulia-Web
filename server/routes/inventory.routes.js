@@ -133,7 +133,9 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
                 plan: user.plan,
                 profilePicture: user.profilePicture,
                 planExpiresAt: user.planExpiresAt,
-                memberSince: user.createdAt
+                memberSince: user.createdAt,
+                verificationStatus: user.verificationStatus,
+                isVerified: user.isVerified
             },
             stats,
             inventory: detailedItems,
