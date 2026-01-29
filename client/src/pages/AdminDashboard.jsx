@@ -131,7 +131,7 @@ const AdminDashboard = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#F9FAFB] flex font-sans">
+        <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
             {/* SIDEBAR */}
             <aside className="w-72 border-r flex flex-col fixed inset-y-0 z-50 bg-white border-gray-100">
                 <div className="p-8 pb-12">
