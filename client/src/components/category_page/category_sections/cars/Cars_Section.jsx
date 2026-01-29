@@ -27,6 +27,13 @@ const Cars_Section = () => {
         searchParams.delete('price');
     }
 
+    if (searchParams.has('country')) {
+        const country = searchParams.get('country');
+        const existingLocation = searchParams.get('location') || '';
+        searchParams.set('location', (existingLocation + ' ' + country).trim());
+        searchParams.delete('country');
+    }
+
     const url = `/api/assets/cars?${searchParams.toString()}`;
     try {
       const response = await fetch(url);
