@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import Yacht_Hero from './Yacht_Hero'
-import FilterBar from '../cars/FilterBar'
-import AssetCard from '../../../AssetCard'
-import SortDropdown from '../SortDropdown'
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Yacht_Hero from './Yacht_Hero';
+import FilterBar from '../cars/FilterBar';
+import AssetCard from '../../../AssetCard';
+import SortDropdown from '../SortDropdown';
 
 const Yacht_Section = () => {
     const [list, setlist] = useState([]);
@@ -10,6 +11,10 @@ const Yacht_Section = () => {
     const [limit, setLimit] = useState(12);
     const [hasMore, setHasMore] = useState(true);
     const [filters, setFilters] = useState({});
+    const [filterBarKey, setFilterBarKey] = useState(0);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const featuredListRef = useRef(null);
 
     const brands = [
         { id: 1, name: 'Azimut', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Azimut_Yachts_logo.png/1200px-Azimut_Yachts_logo.png' },
@@ -19,16 +24,25 @@ const Yacht_Section = () => {
         { id: 5, name: 'Benetti', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Azimut_Benetti_Group_logo.svg/1200px-Azimut_Benetti_Group_logo.svg.png' },
     ];
 
-    const datafetch = async () => {
-        const params = new URLSearchParams({ limit, page });
+    const datafetch = async (reset = false) => {
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.set('limit', limit);
+        searchParams.set('page', reset ? 1 : page);
 
-        if (filters.category) params.append('type', filters.category);
-        if (filters.brand) params.append('brand', filters.brand);
-        if (filters.model) params.append('model', filters.model);
-        if (filters.country) params.append('location', filters.country);
-        if (filters.price) params.append('sort', filters.price);
+        if (searchParams.has('price')) {
+            searchParams.set('sort', searchParams.get('price'));
+            searchParams.delete('price');
+        }
+        if (searchParams.has('country')) {
+            searchParams.set('location', searchParams.get('country'));
+            searchParams.delete('country');
+        }
+        if (searchParams.has('category')) {
+            searchParams.set('type', searchParams.get('category'));
+            searchParams.delete('category');
+        }
 
-        const url = `/api/assets/yachts?${params.toString()}`;
+        const url = `/api/assets/yachts?${searchParams.toString()}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -38,7 +52,7 @@ const Yacht_Section = () => {
             if (result.length < limit) {
                 setHasMore(false);
             }
-            if (page === 1) {
+            if (reset || page === 1) {
                 setlist(result);
             } else {
                 setlist(prevList => [...prevList, ...result]);
@@ -50,15 +64,32 @@ const Yacht_Section = () => {
 
     useEffect(() => {
         datafetch();
-    }, [page, limit, filters]);
+    }, [page, limit]);
+
+    useEffect(() => {
+        setPage(1);
+        datafetch(true);
+        const searchParams = new URLSearchParams(location.search);
+        if (searchParams.has('location') || searchParams.has('acquisition')) {
+            if (featuredListRef.current) {
+                featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+            setFilterBarKey(prevKey => prevKey + 1);
+        }
+    }, [location.search]);
 
     const loadMore = () => {
         setPage(prevPage => prevPage + 1);
     }
 
     const handleFilter = (newFilters) => {
-        setFilters(newFilters);
-        setPage(1);
+        const searchParams = new URLSearchParams();
+        for (const key in newFilters) {
+            if (newFilters[key]) {
+                searchParams.set(key, newFilters[key]);
+            }
+        }
+        navigate(`?${searchParams.toString()}`, { replace: true });
     }
 
     // Yacht Specific Options
@@ -101,10 +132,11 @@ const Yacht_Section = () => {
                         brands={yachtBrandsList}
                         models={yachtModels}
                         countries={yachtCountries}
+                        key={filterBarKey}
                     />
                 </section>
 
-                <section className="w-full px-3 md:px-16 bg-white pb-32">
+                <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white pb-32">
                     <h2 className="text-3xl md:text-4xl playfair-display text-black mb-8 flex justify-between items-center px-4">
                         <span className='font-light tracking-tight'>Featured Yacht Listings</span>
                         <SortDropdown />
@@ -122,7 +154,7 @@ const Yacht_Section = () => {
                                 ))
                             ) : (
                                 <div className="col-span-full py-40 text-center">
-                                    <p className="text-2xl text-gray-300 playfair-display italic font-light">Navigating the digital seas for the finest yachts...</p>
+                                    <p className="text-2xl text-gray-300 playfair-display italic font-light">No yachts found matching your criteria. Try adjusting your search!</p>
                                 </div>
                             )}
                         </div>

@@ -1,28 +1,22 @@
 import React from 'react'
+import heroUrl from '../../../../assets/hero_banners/hero_yachts.jpg'
 import Yacht_Search from './Yacht_Search'
 
 const Yacht_Hero = () => {
-    // A more "proper" high-end luxury yacht image
-    const heroUrl = 'https://images.unsplash.com/photo-1540946485063-a40da27545f8?auto=format&fit=crop&q=80&w=2070'
-
-    return (
-        <div>
-            <div className='relative flex flex-col hero-banner h-[500px] md:h-[750px] w-full pt-24'>
-                <img className='absolute top-0 left-0 -z-10 h-full w-full object-cover' src={heroUrl} alt='hero_yacht' />
-                <div className='relative flex flex-col items-center justify-center h-full p-3 gap-5 z-10'>
-                    <h1 className='text-white playfair-display text-4xl md:text-6xl text-center drop-shadow-2xl font-light uppercase tracking-widest'>
-                        The Pinnacle of Maritime Luxury
-                    </h1>
-                    <p className='text-white/90 montserrat italic text-md md:text-2xl text-center drop-shadow-lg max-w-3xl'>
-                        Curating the world’s most extraordinary yachts for those who demand nothing less than perfection.
-                    </p>
-                    <div className='md:mt-16 w-full flex flex-col items-center'>
-                        <Yacht_Search />
-                    </div>
-                </div>
-            </div>
+  return (
+    <div>
+      <div className='relative flex flex-col hero-banner h-[500px] md:h-[700px] w-full pt-24'>
+        <img className='absolute top-0 left-0 -z-10 h-full w-full object-cover' src={heroUrl} alt='hero_yacht' />
+        <div className='relative flex flex-col items-center justify-center h-full p-3 gap-3 z-10'>
+          <h1 className='text-white playfair-display text-3xl md:text-5xl text-center drop-shadow-lg'>Your Gateway to the Open Sea</h1>
+          <p className='text-white/90 montserrat italic text-md md:text-2xl text-center drop-shadow-md'>Unrivaled luxury, boundless freedom.</p>
+          <div className='md:mt-12 w-full flex flex-col items-center'>
+            <Yacht_Search />
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  )
 }
 
 export default Yacht_Hero

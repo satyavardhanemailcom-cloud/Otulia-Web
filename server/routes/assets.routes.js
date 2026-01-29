@@ -36,9 +36,10 @@ router.get("/cars", async (req, res) => {
             query.acquisition = {$in: ['rent', 'rent/buy']};
         }
     }
-    if (location) query.location = { $regex: location, $options: "i" };
-    // Country is typically part of location or separate. If separate:
-    if (country) query.location = { $regex: country, $options: "i" };
+    if (location || country) {
+      const locations = location.split(',').map(l => l.trim());
+      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+    }
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
     if (category) query.category = { $regex: category, $options: "i" }; // or specific field
@@ -70,7 +71,7 @@ router.get("/cars", async (req, res) => {
  */
 router.get("/estates", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, bedrooms, bathrooms, propertyType, sort, acquisition } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, bedrooms, bathrooms, propertyType, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -79,7 +80,6 @@ router.get("/estates", async (req, res) => {
     // Filter only Active (Public) assets
     query.status = 'Active';
 
-    if (type) query.type = type; // Sale/Rent
     if (acquisition) {
         if (acquisition === 'buy') {
             query.acquisition = {$in: ['buy', 'rent/buy']};
@@ -87,7 +87,10 @@ router.get("/estates", async (req, res) => {
             query.acquisition = {$in: ['rent', 'rent/buy']};
         }
     }
-    if (location) query.location = { $regex: location, $options: "i" };
+    if (location || country) {
+      const locations = location.split(',').map(l => l.trim());
+      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+    }
 
     if (propertyType) query['keySpecifications.propertyType'] = propertyType;
     if (bedrooms) {
@@ -133,7 +136,7 @@ router.get("/estates", async (req, res) => {
  */
 router.get("/bikes", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -143,7 +146,17 @@ router.get("/bikes", async (req, res) => {
     query.status = 'Active';
 
     if (type) query.type = type;
-    if (location) query.location = { $regex: location, $options: "i" };
+    if (acquisition) {
+        if (acquisition === 'buy') {
+            query.acquisition = {$in: ['buy', 'rent/buy']};
+        } else if (acquisition === 'rent') {
+            query.acquisition = {$in: ['rent', 'rent/buy']};
+        }
+    }
+    if (location || country) {
+      const locations = location.split(',').map(l => l.trim());
+      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+    }
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
@@ -174,7 +187,7 @@ router.get("/bikes", async (req, res) => {
  */
 router.get("/yachts", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, sort, acquisition, country } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -184,7 +197,17 @@ router.get("/yachts", async (req, res) => {
     query.status = 'Active';
 
     if (type) query.type = type;
-    if (location) query.location = { $regex: location, $options: "i" };
+    if (acquisition) {
+        if (acquisition === 'buy') {
+            query.acquisition = {$in: ['buy', 'rent/buy']};
+        } else if (acquisition === 'rent') {
+            query.acquisition = {$in: ['rent', 'rent/buy']};
+        }
+    }
+    if (location || country) {
+      const locations = location.split(',').map(l => l.trim());
+      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+    }
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
 
