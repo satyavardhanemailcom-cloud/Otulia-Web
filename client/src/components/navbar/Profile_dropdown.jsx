@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import UserURL from '../../assets/user.png'
-import { FiUser, FiCreditCard, FiGrid, FiLogOut, FiActivity, FiHeart } from 'react-icons/fi';
+import { FiUser, FiCreditCard, FiGrid, FiLogOut, FiActivity, FiHeart, FiSettings } from 'react-icons/fi';
 
 const ProfileDropdown = ({text}) => {
     const { user, logout } = useAuth();
@@ -29,7 +29,7 @@ const ProfileDropdown = ({text}) => {
     };
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative montserrat" ref={dropdownRef}>
             {/* TRIGGER */}
             <div
                 onClick={() => setIsOpen(!isOpen)}
@@ -55,7 +55,7 @@ const ProfileDropdown = ({text}) => {
 
             {/* DROPDOWN MENU */}
             {isOpen && (
-                <div className="absolute right-0 mt-4 w-64 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 py-3 z-[100] animate-fade-in">
+                <div className="absolute right-0 mt-4 w-64 bg-white rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 py-3 z-[100] animate-fade-in montserrat">
 
                     {/* Header Info */}
                     <div className="px-5 py-3 border-b border-gray-50 mb-2">
@@ -102,6 +102,17 @@ const ProfileDropdown = ({text}) => {
                             <FiGrid className="text-lg" />
                             <span>My Listings</span>
                         </Link>
+
+                        {user.role === 'admin' && (
+                            <Link
+                                to="/admin"
+                                onClick={() => setIsOpen(false)}
+                                className="flex items-center gap-3 px-5 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                                <FiSettings className="text-lg" />
+                                <span>Admin Dashboard</span>
+                            </Link>
+                        )}
 
                         {(user.plan === 'Premium Basic' || user.plan === 'Business VIP') && (
                             <Link

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
-import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, FiClock, FiActivity, FiXCircle } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiCreditCard, FiCalendar, FiLogOut, FiShoppingBag, FiClock, FiActivity, FiXCircle, FiSettings } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import UserPlaceholder from '../assets/user.png';
 
@@ -75,6 +75,10 @@ const Profile = () => {
     { id: 'history', label: 'History', icon: FiClock },
   ];
 
+  if (user.role === 'admin') {
+    tabs.push({ id: 'admin', label: 'Admin Dashboard', icon: FiSettings });
+  }
+
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <Navbar />
@@ -97,23 +101,29 @@ const Profile = () => {
           <div className="pt-16 pb-8 px-8 md:px-12 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 playfair-display mb-1">{user.name}</h1>
-              <p className="text-gray-500 text-sm font-medium">Member since {new Date(user.createdAt || Date.now()).getFullYear()}</p>
+              <p className="text-gray-500 text-sm font-medium montserrat">Member since {new Date(user.createdAt || Date.now()).getFullYear()}</p>
             </div>
             <button onClick={handleLogout} className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all text-sm font-bold">
               <FiLogOut />
-              <span>Sign Out</span>
+              <span className='montserrat'>Sign Out</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 montserrat">
           {/* Sidebar Tabs */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 space-y-2">
               {tabs.map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    if (tab.id === 'admin') {
+                      navigate('/admin');
+                    } else {
+                      setActiveTab(tab.id);
+                    }
+                  }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold transition-colors ${activeTab === tab.id ? 'bg-black text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'}`}
                 >
                   <tab.icon className="text-lg" />
@@ -124,7 +134,7 @@ const Profile = () => {
           </div>
 
           {/* Content Area */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 montserrat">
 
             {/* OVERVIEW TAB */}
             {activeTab === 'overview' && (
@@ -200,7 +210,7 @@ const Profile = () => {
 
             {/* ORDERS (Unified Buy & Rent) */}
             {activeTab === 'orders' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[400px]">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[400px] montserrat">
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Order History</h3>
 
                 {(!user.boughtHistory || user.boughtHistory.length === 0) && (!user.rentedHistory || user.rentedHistory.length === 0) ? (
@@ -256,7 +266,7 @@ const Profile = () => {
 
             {/* HISTORY TAB */}
             {activeTab === 'history' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[400px]">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 min-h-[400px] montserrat">
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Activity History</h3>
                 <div className="space-y-8">
 
@@ -280,7 +290,7 @@ const Profile = () => {
 
                   {/* RENTED ITEMS */}
                   <div>
-                    <h4 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-tighter">Rental History</h4>
+                    <h4 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-tighter montserrat">Rental History</h4>
                     {user.rentedHistory && user.rentedHistory.length > 0 ? (
                       <div className="space-y-3">
                         {user.rentedHistory.map((item, idx) => (
