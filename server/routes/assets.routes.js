@@ -19,7 +19,7 @@ const router = express.Router();
  */
 router.get("/cars", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, category, country, sort } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, category, country, sort, acquisition } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -29,6 +29,13 @@ router.get("/cars", async (req, res) => {
     query.status = 'Active';
 
     if (type) query.type = type;
+    if (acquisition) {
+        if (acquisition === 'buy') {
+            query.acquisition = {$in: ['buy', 'rent/buy']};
+        } else if (acquisition === 'rent') {
+            query.acquisition = {$in: ['rent', 'rent/buy']};
+        }
+    }
     if (location) query.location = { $regex: location, $options: "i" };
     // Country is typically part of location or separate. If separate:
     if (country) query.location = { $regex: country, $options: "i" };
@@ -63,7 +70,7 @@ router.get("/cars", async (req, res) => {
  */
 router.get("/estates", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, bedrooms, bathrooms, propertyType, sort } = req.query;
+    const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, bedrooms, bathrooms, propertyType, sort, acquisition } = req.query;
 
     const query = search
       ? { title: { $regex: search, $options: "i" } }
@@ -73,6 +80,13 @@ router.get("/estates", async (req, res) => {
     query.status = 'Active';
 
     if (type) query.type = type; // Sale/Rent
+    if (acquisition) {
+        if (acquisition === 'buy') {
+            query.acquisition = {$in: ['buy', 'rent/buy']};
+        } else if (acquisition === 'rent') {
+            query.acquisition = {$in: ['rent', 'rent/buy']};
+        }
+    }
     if (location) query.location = { $regex: location, $options: "i" };
 
     if (propertyType) query['keySpecifications.propertyType'] = propertyType;

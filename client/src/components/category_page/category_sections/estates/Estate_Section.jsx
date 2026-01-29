@@ -1,58 +1,103 @@
-import React, { useEffect, useState } from 'react'
-import PropertyFilterBar from './PropertyFilterBar'
-import AssetCard from '../../../AssetCard'
-import SortDropdown from '../SortDropdown'
-import Estate_Hero from './Estate_Hero'
-import numberWithCommas from '../../../../modules/numberwithcomma'
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import PropertyFilterBar from './PropertyFilterBar';
+import AssetCard from '../../../AssetCard';
+import SortDropdown from '../SortDropdown';
+import Estate_Hero from './Estate_Hero';
+import numberWithCommas from '../../../../modules/numberwithcomma';
 
 const Estate_Section = () => {
-
   const [list, setlist] = useState([]);
   const [limit, setLimit] = useState(10);
   const [filters, setFilters] = useState({});
+  const [filterBarKey, setFilterBarKey] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const featuredListRef = useRef(null);
 
   // Fetch data
   const datafetch = async () => {
-    const params = new URLSearchParams({ limit });
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('limit', limit);
 
-    if (filters.priceRange && filters.priceRange !== 'Any Price') {
-      if (filters.priceRange === '£10M+') {
-        params.append('minPrice', '10000000');
-      } else if (filters.priceRange.includes('-')) {
-        const [minStr, maxStr] = filters.priceRange.split(' - ');
-        // Convert £1M to 1000000
-        const parseVal = (str) => {
-          return str.replace(/£/g, '').replace(/M/g, '000000').trim();
-        };
-        params.append('minPrice', parseVal(minStr));
-        params.append('maxPrice', parseVal(maxStr));
+    const priceRange = searchParams.get('priceRange');
+    if (priceRange && !priceRange.startsWith('Any')) {
+      if (priceRange === '£10M+') {
+        searchParams.set('minPrice', '10000000');
+      } else if (priceRange.includes('-')) {
+        const [minStr, maxStr] = priceRange.split(' - ');
+        const parseVal = (str) => str.replace(/£/g, '').replace(/M/g, '000000').trim();
+        searchParams.set('minPrice', parseVal(minStr));
+        searchParams.set('maxPrice', parseVal(maxStr));
       }
     }
-    if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type); // Maps to keySpecifications.propertyType
-    if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
-    if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
-    if (filters.architecture && filters.architecture !== 'Any') params.append('search', filters.architecture); // Using search for architecture/amenities as they might be in descriptioon or keywords
-    // if (filters.sizeLand) ... handle if needed
+    searchParams.delete('priceRange');
 
-    const url = `/api/assets/estates?${params.toString()}`;
+    const type = searchParams.get('type');
+    if (type && !type.startsWith('Any')) {
+      searchParams.set('propertyType', type);
+    }
+    searchParams.delete('type');
+
+    const bedrooms = searchParams.get('bedrooms');
+    if (bedrooms && bedrooms.startsWith('Any')) {
+        searchParams.delete('bedrooms');
+    }
+
+    const bathrooms = searchParams.get('bathrooms');
+    if (bathrooms && bathrooms.startsWith('Any')) {
+        searchParams.delete('bathrooms');
+    }
+
+    const architecture = searchParams.get('architecture');
+    if (architecture && !architecture.startsWith('Any')) {
+      searchParams.set('search', architecture);
+    }
+    searchParams.delete('architecture');
+
+    const amenities = searchParams.get('amenities');
+    if (amenities && !amenities.startsWith('Any')) {
+      const existingSearch = searchParams.get('search') || '';
+      searchParams.set('search', (existingSearch + ' ' + amenities).trim());
+    }
+    searchParams.delete('amenities');
+    
+    searchParams.delete('sizeLand'); // a filter that is not supported by backend
+
+    const url = `/api/assets/estates?${searchParams.toString()}`;
     try {
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
       const result = await response.json();
-      setlist(result)
+      setlist(result);
     } catch (error) {
       console.error(error.message);
     }
-  }
+  };
+
   useEffect(() => {
-    datafetch()
-  }, [limit, filters]);
+    datafetch();
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.has('location') || searchParams.has('acquisition')) {
+      if (featuredListRef.current) {
+        featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+      setFilters({});
+      setFilterBarKey(prevKey => prevKey + 1);
+    }
+  }, [location.search, limit]);
 
   const handleFilter = (newFilters) => {
-    setFilters(newFilters);
-  }
+    const searchParams = new URLSearchParams();
+    for (const key in newFilters) {
+      if (newFilters[key]) {
+        searchParams.set(key, newFilters[key]);
+      }
+    }
+    navigate(`?${searchParams.toString()}`, { replace: true });
+  };
 
   const locations = [
     {
@@ -176,10 +221,10 @@ const Estate_Section = () => {
           <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
             <span>Filter Properties</span>
           </h2>
-          <PropertyFilterBar onFilter={handleFilter} />
+          <PropertyFilterBar onFilter={handleFilter} key={filterBarKey} />
         </section>
 
-        <section className="w-full px-3 md:px-16 bg-white">
+        <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">
           <h2 className="text-3xl md:text-4xl playfair-display text-black mb-7 text-center flex justify-between">
             <span>Featured List</span>
             <span>
@@ -191,11 +236,17 @@ const Estate_Section = () => {
 
           <div className='w-full max-w-[1700px] mx-auto px-4 md:px-8 py-8'>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-7">
-              {list.map((item, idx) => (
-                <div key={item._id}>
-                  <AssetCard item={item} idx={idx} />
+              {list.length > 0 ? (
+                list.map((item, idx) => (
+                  <div key={item._id}>
+                    <AssetCard item={item} idx={idx} />
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full py-40 text-center">
+                  <p className="text-2xl text-gray-300 playfair-display italic font-light">No estates found matching your criteria. Try adjusting your search!</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 

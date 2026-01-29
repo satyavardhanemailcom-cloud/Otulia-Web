@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Cars_Hero from './Cars_Hero';
 import FilterBar from './FilterBar';
 import AssetCard from '../../../AssetCard';
@@ -11,29 +11,23 @@ const Cars_Section = () => {
   const [list, setlist] = useState([]);
   const [limit, setLimit] = useState(10);
   const [filters, setFilters] = useState({});
+  const [filterBarKey, setFilterBarKey] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
   const featuredListRef = useRef(null);
 
   // Fetch data
   const datafetch = async () => {
     const searchParams = new URLSearchParams(location.search);
-    const locationParam = searchParams.get('location');
-    const acquisitionParam = searchParams.get('acquisition');
+    searchParams.set('limit', limit);
 
-    const params = new URLSearchParams({ limit });
+    // The 'price' filter from FilterBar is used for sorting as 'sort'
+    if (searchParams.has('price')) {
+        searchParams.set('sort', searchParams.get('price'));
+        searchParams.delete('price');
+    }
 
-    // Add filters to params
-    if (filters.category) params.append('category', filters.category);
-    if (filters.brand) params.append('brand', filters.brand);
-    if (filters.model) params.append('model', filters.model);
-    if (filters.country) params.append('country', filters.country);
-    if (filters.price) params.append('sort', filters.price);
-
-    // Add search filters to params
-    if (locationParam) params.append('location', locationParam);
-    if (acquisitionParam) params.append('acquisition', acquisitionParam);
-
-    const url = `/api/assets/cars?${params.toString()}`;
+    const url = `/api/assets/cars?${searchParams.toString()}`;
     try {
       const response = await fetch(url);
       
@@ -50,13 +44,23 @@ const Cars_Section = () => {
   useEffect(() => {
     datafetch();
     const searchParams = new URLSearchParams(location.search);
-    if (searchParams.get('location') || searchParams.get('acquisition')) {
-      featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (searchParams.has('location') || searchParams.has('acquisition')) {
+      if (featuredListRef.current) {
+        featuredListRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+      setFilters({});
+      setFilterBarKey(prevKey => prevKey + 1);
     }
-  }, [location.search, limit, filters]);
+  }, [location.search, limit]);
 
   const handleFilter = (newFilters) => {
-    setFilters(newFilters);
+    const searchParams = new URLSearchParams();
+    for (const key in newFilters) {
+      if (newFilters[key]) {
+        searchParams.set(key, newFilters[key]);
+      }
+    }
+    navigate(`?${searchParams.toString()}`, { replace: true });
   };
 
   const brands = [
@@ -115,7 +119,7 @@ const Cars_Section = () => {
         <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 justify-self-center"></div>
 
         <section className="w-full px-3 md:px-16 py-12 bg-white">
-          <FilterBar onFilter={handleFilter} />
+          <FilterBar onFilter={handleFilter} key={filterBarKey} />
         </section>
 
         <section ref={featuredListRef} className="w-full px-3 md:px-16 bg-white">
