@@ -1,14 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Cars_Search = () => {
   const [activeType, setActiveType] = useState('Buy'); // State for Buy/Rent toggle
   const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const navigate = useNavigate();
+  const searchContainerRef = useRef(null);
 
-  const handleSearch = () => {
-    const acquisition = activeType.toLowerCase();
-    navigate(`/category/cars?location=${query}&acquisition=${acquisition}`);
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      if (query.length > 0) {
+        try {
+          const response = await fetch(`/api/assets/location-suggestions?q=${query}`);
+          const data = await response.json();
+          // Assuming data is an array of strings (locations)
+          setSuggestions(data);
+        } catch (error) {
+          console.error("Failed to fetch location suggestions", error);
+        }
+      } else {
+        setSuggestions([]);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(handler);
+  }, [query]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setSuggestions([]);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault(); // Prevent default form submission if this is called from a form
+    let searchLocation = query;
+    if (activeSuggestion > -1 && suggestions[activeSuggestion]) {
+      searchLocation = suggestions[activeSuggestion];
+    }
+
+    if (searchLocation.trim()) {
+      const acquisition = activeType.toLowerCase();
+      navigate(`/category/cars?location=${searchLocation.trim()}&acquisition=${acquisition}`);
+      setSuggestions([]); // Clear suggestions after search
+      setQuery(searchLocation.trim()); // Update query to the selected suggestion
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      setActiveSuggestion(prev => (prev < suggestions.length - 1 ? prev + 1 : prev));
+      e.preventDefault(); // Prevent cursor movement in input
+    } else if (e.key === 'ArrowUp') {
+      setActiveSuggestion(prev => (prev > 0 ? prev - 1 : 0));
+      e.preventDefault(); // Prevent cursor movement in input
+    } else if (e.key === 'Enter') {
+      handleSearch(e); // Trigger search
+    }
   };
 
   return (
@@ -21,9 +75,8 @@ const Cars_Search = () => {
         border border-[#B8860B] /* Gold Border */
         rounded-2xl md:rounded-full 
         flex flex-col md:flex-row items-center 
-        overflow-hidden 
         shadow-sm
-      ">
+      " ref={searchContainerRef}>
 
         {/* 1. INPUT SECTION */}
         <div className="w-full md:flex-1 relative">
@@ -31,6 +84,8 @@ const Cars_Search = () => {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={() => setActiveSuggestion(-1)}
             placeholder="Search By Model, Brand or Location"
             className="
               w-full h-14 md:h-16 
@@ -41,6 +96,29 @@ const Cars_Search = () => {
               bg-transparent
             "
           />
+          {suggestions.length > 0 && query.length > 0 && (
+            <ul className="absolute z-10 w-full bg-[#F8F8F8] border border-gray-300 rounded-b-md shadow-lg text-black top-full left-0">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className={`p-2 cursor-pointer hover:bg-gray-200 ${index === activeSuggestion ? 'bg-gray-200' : ''}`}
+                  onMouseDown={(e) => { // Use onMouseDown to prevent onBlur from firing before onClick
+                    e.preventDefault();
+                    setQuery(suggestion);
+                    setSuggestions([]);
+                    navigate(`/category/cars?location=${suggestion}&acquisition=${activeType.toLowerCase()}`);
+                  }}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
+          {suggestions.length === 0 && query.length > 0 && (
+            <ul className="absolute z-10 w-full bg-[#F8F8F8] border border-gray-300 rounded-b-md shadow-lg text-black top-full left-0">
+              <li className="p-2 text-gray-500">No location found</li>
+            </ul>
+          )}
         </div>
 
         {/* DIVIDER (Desktop Only) */}
@@ -93,6 +171,7 @@ const Cars_Search = () => {
           montserrat text-xl md:text-2xl 
           flex items-center justify-center
           transition-colors duration-300
+          rounded-r-full
         ">
           Search
         </button>

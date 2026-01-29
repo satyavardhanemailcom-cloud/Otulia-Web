@@ -637,4 +637,40 @@ router.get("/suggestions", async (req, res) => {
   }
 });
 
+/**
+ * LOCATION SUGGESTIONS
+ * /api/assets/location-suggestions
+ */
+router.get("/location-suggestions", async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q) {
+      return res.json([]);
+    }
+
+    const searchRegex = { $regex: q, $options: "i" };
+
+    const [carLocations, estateLocations, bikeLocations, yachtLocations] = await Promise.all([
+      CarAsset.distinct("location", { location: searchRegex }),
+      EstateAsset.distinct("location", { location: searchRegex }),
+      BikeAsset.distinct("location", { location: searchRegex }),
+      YachtAsset.distinct("location", { location: searchRegex }),
+    ]);
+
+    const combinedLocations = [
+      ...carLocations,
+      ...estateLocations,
+      ...bikeLocations,
+      ...yachtLocations,
+    ];
+
+    const uniqueLocations = [...new Set(combinedLocations)];
+
+    res.json(uniqueLocations.slice(0, 10)); // Limit to 10 suggestions
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch location suggestions" });
+  }
+});
+
 module.exports = router;
