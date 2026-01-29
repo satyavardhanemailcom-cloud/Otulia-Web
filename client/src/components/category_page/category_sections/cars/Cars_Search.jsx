@@ -86,7 +86,7 @@ const Cars_Search = () => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={() => setActiveSuggestion(-1)}
-            placeholder="Search By Model, Brand or Location"
+            placeholder="Search By Location"
             className="
               w-full h-14 md:h-16 
               px-6 
