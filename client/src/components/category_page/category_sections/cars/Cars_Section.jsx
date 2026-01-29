@@ -33,7 +33,7 @@ const Cars_Section = () => {
     if (locationParam) params.append('location', locationParam);
     if (acquisitionParam) params.append('acquisition', acquisitionParam);
 
-    const url = `/api/assets/vehicles?${params.toString()}`;
+    const url = `/api/assets/cars?${params.toString()}`;
     try {
       const response = await fetch(url);
       

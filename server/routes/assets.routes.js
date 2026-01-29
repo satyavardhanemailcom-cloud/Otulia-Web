@@ -15,9 +15,9 @@ const router = express.Router();
  */
 /**
  * VEHICLE ASSETS
- * /api/assets/vehicles
+ * /api/assets/cars
  */
-router.get("/vehicles", async (req, res) => {
+router.get("/cars", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 12, type, minPrice, maxPrice, location, brand, model, category, country, sort } = req.query;
 
