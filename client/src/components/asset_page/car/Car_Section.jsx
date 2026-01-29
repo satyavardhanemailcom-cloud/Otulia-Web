@@ -38,7 +38,7 @@ const Car_Section = () => {
   // Fetch data when ID changes
   useEffect(() => {
     infoFetch();
-  }, []);
+  }, [id]);
 
   // Fetch sidebar list
   const dataFetch = async () => {
@@ -121,8 +121,8 @@ const Car_Section = () => {
       <div className="w-[92%] md:w-[80%] h-px bg-gray-300 border-0 self-center my-5"></div>
 
       <div className="flex items-center justify-center mb-4">
-            <LocationMap locationName={info.location} />
-            </div>
+        <LocationMap locationName={info.location} />
+      </div>
     </div>
   );
 };

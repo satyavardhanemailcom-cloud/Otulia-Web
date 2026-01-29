@@ -291,15 +291,11 @@ router.get("/all/yachts", async (req, res) => {
 router.get("/car/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    let asset = await CarAsset.findById(id);
+    const asset = await CarAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Car asset not found" });
     }
-
-    // Increment views, similar to the existing /:type/:id route
-    asset.views += 1;
-    await asset.save();
 
     res.json(asset);
   } catch (error) {
@@ -315,15 +311,11 @@ router.get("/car/:id", async (req, res) => {
 router.get("/estate/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    let asset = await EstateAsset.findById(id);
+    const asset = await EstateAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Estate asset not found" });
     }
-
-    // Increment views
-    asset.views += 1;
-    await asset.save();
 
     res.json(asset);
   } catch (error) {
@@ -339,15 +331,11 @@ router.get("/estate/:id", async (req, res) => {
 router.get("/bike/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    let asset = await BikeAsset.findById(id);
+    const asset = await BikeAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Bike asset not found" });
     }
-
-    // Increment views
-    asset.views += 1;
-    await asset.save();
 
     res.json(asset);
   } catch (error) {
@@ -363,15 +351,11 @@ router.get("/bike/:id", async (req, res) => {
 router.get("/yacht/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    let asset = await YachtAsset.findById(id);
+    const asset = await YachtAsset.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
     if (!asset) {
       return res.status(404).json({ message: "Yacht asset not found" });
     }
-
-    // Increment views
-    asset.views += 1;
-    await asset.save();
 
     res.json(asset);
   } catch (error) {
@@ -387,28 +371,17 @@ router.get("/yacht/:id", async (req, res) => {
 router.get("/:type/:id", async (req, res) => {
   try {
     const { type, id } = req.params;
+    let Model;
 
-    let asset;
+    if (type === "cars") Model = CarAsset;
+    else if (type === "estates") Model = EstateAsset;
+    else if (type === "bikes") Model = BikeAsset;
+    else if (type === "yachts") Model = YachtAsset;
+    else return res.status(400).json({ message: "Invalid asset type" });
 
-    if (type === "cars") {
-      asset = await CarAsset.findById(id);
-    } else if (type === "estates") {
-      asset = await EstateAsset.findById(id);
-    } else if (type === "bikes") {
-      asset = await BikeAsset.findById(id);
-    } else if (type === "yachts") {
-      asset = await YachtAsset.findById(id);
-    } else {
-      return res.status(400).json({ message: "Invalid asset type" });
-    }
+    const asset = await Model.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
 
-    if (!asset) {
-      return res.status(404).json({ message: "Asset not found" });
-    }
-
-    // 👀 increment views
-    asset.views += 1;
-    await asset.save();
+    if (!asset) return res.status(404).json({ message: "Asset not found" });
 
     res.json(asset);
   } catch (error) {

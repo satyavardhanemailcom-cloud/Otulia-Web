@@ -4,7 +4,7 @@ import randomShuffle from "../../modules/randomShuffle";
 
 const MostPopularAssets = () => {
 
-     const [list, setlist] = useState([]);
+    const [list, setlist] = useState([]);
 
     // 1. Create a Ref to access the scrollable container
     const scrollRef = useRef(null);
@@ -19,23 +19,23 @@ const MostPopularAssets = () => {
         }
     };
 
-    const datafetch = async ()=> {
-        const url = "/api/home/trending";
+    const datafetch = async () => {
+        const url = "/api/home/popularity";
         try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
-          }
-          const result = await response.json();
-          const n = Math.floor(result.length / 2);
-          setlist(randomShuffle(result))
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+            const result = await response.json();
+            const n = Math.floor(result.length / 2);
+            setlist(randomShuffle(result))
         } catch (error) {
-          console.error(error.message);
+            console.error(error.message);
         }
-      }
-      useEffect(() => {
+    }
+    useEffect(() => {
         datafetch()
-      }, []);
+    }, []);
 
     return (
         <section className="relative md:w-[95%] md:justify-self-center px-3 md:px-16 py-6 bg-white group">
@@ -45,7 +45,7 @@ const MostPopularAssets = () => {
             <div className="relative">
 
                 {/* LEFT BUTTON */}
-                <button 
+                <button
                     onClick={() => scroll('left')}
                     className="absolute cursor-pointer -left-10 top-1/2 -translate-y-1/2 -ml-4 md:-ml-8 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
                 >
@@ -57,7 +57,7 @@ const MostPopularAssets = () => {
                 {/* SCROLLABLE CONTAINER */}
                 {/* flex + overflow-x-auto creates the slider */}
                 {/* scrollbar-hide (requires plugin) or inline style helps aesthetics */}
-                <div 
+                <div
                     ref={scrollRef}
                     className="flex gap-8 overflow-x-auto scroll-smooth pb-4 px-1"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }} // Hide scrollbar for Firefox/IE
@@ -70,13 +70,13 @@ const MostPopularAssets = () => {
                     {list.map((item, idx) => (
                         // min-w ensures cards don't shrink. Adjust width as needed.
                         <div key={item._id} className="min-w-[300px] md:min-w-[350px]">
-                            <AssetCard item={item} idx={idx}/>
+                            <AssetCard item={item} idx={idx} />
                         </div>
                     ))}
                 </div>
 
                 {/* RIGHT BUTTON */}
-                <button 
+                <button
                     onClick={() => scroll('right')}
                     className="absolute cursor-pointer -right-10 top-1/2 -translate-y-1/2 -mr-4 md:-mr-8 z-10 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform focus:outline-none hidden md:block border border-gray-100"
                 >

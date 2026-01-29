@@ -67,6 +67,14 @@ const Inventory = () => {
                 const resData = await response.json();
                 setData(resData);
                 if (resData.userProfile) {
+                    // Sync latest verification status to global user context
+                    if (updateUserLocal) {
+                        updateUserLocal({
+                            verificationStatus: resData.userProfile.verificationStatus,
+                            isVerified: resData.userProfile.isVerified
+                        });
+                    }
+
                     setCompanyInfo({
                         name: resData.userProfile.name || companyInfo.name,
                         email: resData.userProfile.email || companyInfo.email,
@@ -1074,33 +1082,43 @@ const Inventory = () => {
                                 <h3 className="text-xl font-bold text-gray-900 font-playfair mb-8">Dealer Verification</h3>
 
                                 {isVerifiedDealer ? (
-                                    <div className="bg-[#F0FDF4] border border-[#DCFCE7] rounded-[2rem] p-10 flex items-start gap-8">
-                                        <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-emerald-500 shadow-sm border border-[#DCFCE7]">
+                                    <div className="bg-[#ECFDF5] border border-[#D1FAE5] rounded-[2rem] p-10 flex items-start gap-8">
+                                        <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-emerald-500 shadow-sm border border-[#D1FAE5]">
                                             <FiCheckCircle className="text-3xl" />
                                         </div>
-                                        <div className="space-y-3">
-                                            <h4 className="text-xl font-bold text-gray-900 font-playfair">Verified Dealer</h4>
-                                            <p className="text-sm text-gray-500 leading-relaxed max-w-2xl">
-                                                Your company has been verified and is eligible for enhanced visibility and trust badges on all listings.
+                                        <div>
+                                            <h4 className="text-xl font-bold text-emerald-900 mb-2">Verified Dealer</h4>
+                                            <p className="text-emerald-700 leading-relaxed mb-6 max-w-2xl">
+                                                Your dealership is fully verified. You have access to all premium features, unlimited listings,
+                                                and priority support.
                                             </p>
-                                            <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest pt-2">
-                                                <FiCalendar /> Verified Partner
+                                            <div className="flex gap-4">
+                                                <button className="px-6 py-3 bg-white text-emerald-600 rounded-xl font-bold text-sm shadow-sm border border-emerald-100 hover:bg-emerald-50 transition-all">
+                                                    View Benefits
+                                                </button>
+                                                <button className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all">
+                                                    Account Settings
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                ) : user?.verificationStatus === 'Pending' ? (
+                                ) : (data?.userProfile?.verificationStatus || user?.verificationStatus) === 'Pending' ? (
                                     <div className="bg-[#EFF6FF] border border-[#DBEAFE] rounded-[2rem] p-10 flex items-start gap-8">
                                         <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center text-blue-500 shadow-sm border border-[#DBEAFE]">
                                             <FiClock className="text-3xl" />
                                         </div>
-                                        <div className="space-y-3">
-                                            <h4 className="text-xl font-bold text-gray-900 font-playfair">Verification Pending</h4>
-                                            <p className="text-sm text-gray-500 leading-relaxed max-w-2xl">
-                                                Your documents have been submitted and are currently under review by our team. This process typically takes 24-48 hours. You will be notified once approved.
+                                        <div>
+                                            <h4 className="text-xl font-bold text-blue-900 mb-2">Verification Pending</h4>
+                                            <p className="text-blue-700 leading-relaxed max-w-2xl">
+                                                Your documents have been submitted and are currently under review by our team. This process
+                                                typically takes 24-48 hours. You will be notified once approved.
                                             </p>
-                                            <button disabled className="mt-2 px-6 py-3 bg-white border border-blue-200 text-blue-600 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 cursor-wait opacity-75">
-                                                <FiLoader className="animate-spin" /> In Review
-                                            </button>
+                                            <div className="mt-6">
+                                                <span className="px-4 py-2 bg-white text-blue-600 rounded-lg text-xs font-black uppercase tracking-widest shadow-sm border border-blue-100 inline-flex items-center gap-2">
+                                                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                                                    In Review
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 ) : (
@@ -1159,212 +1177,215 @@ const Inventory = () => {
                             </div>
 
                         </div>
-                    )}
+                    )
+                    }
 
                     {/* SUBSCRIPTION TAB */}
-                    {activeTab === 'subscription' && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
+                    {
+                        activeTab === 'subscription' && (
+                            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
 
-                            {/* Current Plan Section */}
-                            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10">
-                                <div className="flex items-start justify-between mb-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-xl bg-[#FDF8F0] border border-[#F2E8DB] flex items-center justify-center">
-                                            <FiCreditCard className="text-2xl text-[#D48D2A]" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-2xl font-bold text-gray-900 font-playfair">Current Plan</h2>
-                                            <p className="text-sm text-gray-400 mt-1">Manage your subscription and billing</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Renewal Date</p>
-                                        <p className="text-sm font-black text-gray-900">
-                                            {companyInfo.planExpiresAt
-                                                ? new Date(companyInfo.planExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                                                : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                                            }
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="bg-gradient-to-br from-[#D48D2A] to-[#B5751C] rounded-[2rem] p-8 text-white mb-6">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <h3 className="text-3xl font-bold font-playfair">{user?.plan || 'Business VIP'}</h3>
-                                        <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-xs font-black uppercase tracking-wider">
-                                            Active
-                                        </span>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <div className="flex justify-between items-center mb-2">
-                                                <p className="text-sm font-bold opacity-90">Listing Usage</p>
-                                                <p className="text-sm font-black">
-                                                    {data?.inventory?.length || 0} of {user?.plan === 'Business VIP' ? '50' : '25'} listings
-                                                </p>
-                                            </div>
-                                            <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
-                                                <div
-                                                    className="h-full bg-white rounded-full transition-all duration-500"
-                                                    style={{ width: `${((data?.inventory?.length || 8) / (user?.plan === 'Business VIP' ? 50 : 25)) * 100}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
-                                            <div>
-                                                <p className="text-xs opacity-75 mb-1">Analytics Level</p>
-                                                <p className="text-sm font-bold">Advanced</p>
+                                {/* Current Plan Section */}
+                                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10">
+                                    <div className="flex items-start justify-between mb-8">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-12 h-12 rounded-xl bg-[#FDF8F0] border border-[#F2E8DB] flex items-center justify-center">
+                                                <FiCreditCard className="text-2xl text-[#D48D2A]" />
                                             </div>
                                             <div>
-                                                <p className="text-xs opacity-75 mb-1">Available Listings</p>
-                                                <p className="text-sm font-bold">{(user?.plan === 'Business VIP' ? 50 : 25) - (data?.inventory?.length || 8)} remaining</p>
+                                                <h2 className="text-2xl font-bold text-gray-900 font-playfair">Current Plan</h2>
+                                                <p className="text-sm text-gray-400 mt-1">Manage your subscription and billing</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Renewal Date</p>
+                                            <p className="text-sm font-black text-gray-900">
+                                                {companyInfo.planExpiresAt
+                                                    ? new Date(companyInfo.planExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                                    : new Date(new Date().setMonth(new Date().getMonth() + 1)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gradient-to-br from-[#D48D2A] to-[#B5751C] rounded-[2rem] p-8 text-white mb-6">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h3 className="text-3xl font-bold font-playfair">{user?.plan || 'Business VIP'}</h3>
+                                            <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-xs font-black uppercase tracking-wider">
+                                                Active
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <div>
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <p className="text-sm font-bold opacity-90">Listing Usage</p>
+                                                    <p className="text-sm font-black">
+                                                        {data?.inventory?.length || 0} of {user?.plan === 'Business VIP' ? '50' : '25'} listings
+                                                    </p>
+                                                </div>
+                                                <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+                                                    <div
+                                                        className="h-full bg-white rounded-full transition-all duration-500"
+                                                        style={{ width: `${((data?.inventory?.length || 8) / (user?.plan === 'Business VIP' ? 50 : 25)) * 100}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
+                                                <div>
+                                                    <p className="text-xs opacity-75 mb-1">Analytics Level</p>
+                                                    <p className="text-sm font-bold">Advanced</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs opacity-75 mb-1">Available Listings</p>
+                                                    <p className="text-sm font-bold">{(user?.plan === 'Business VIP' ? 50 : 25) - (data?.inventory?.length || 8)} remaining</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Available Plans Section */}
-                            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10">
-                                <h3 className="text-2xl font-bold text-gray-900 font-playfair mb-8">Available Plans</h3>
+                                {/* Available Plans Section */}
+                                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10">
+                                    <h3 className="text-2xl font-bold text-gray-900 font-playfair mb-8">Available Plans</h3>
 
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    {/* Premium Basic Plan */}
-                                    <div className={`rounded-[2rem] border-2 p-8 transition-all ${user?.plan === 'Premium Basic'
-                                        ? 'border-[#D48D2A] bg-[#FDF8F0] relative'
-                                        : 'border-gray-200 bg-white hover:border-[#D48D2A] hover:shadow-lg'
-                                        }`}>
-                                        {user?.plan === 'Premium Basic' && (
-                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                                                <span className="px-4 py-1 bg-[#D48D2A] text-white text-xs font-black uppercase tracking-widest rounded-full">
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        {/* Premium Basic Plan */}
+                                        <div className={`rounded-[2rem] border-2 p-8 transition-all ${user?.plan === 'Premium Basic'
+                                            ? 'border-[#D48D2A] bg-[#FDF8F0] relative'
+                                            : 'border-gray-200 bg-white hover:border-[#D48D2A] hover:shadow-lg'
+                                            }`}>
+                                            {user?.plan === 'Premium Basic' && (
+                                                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                                                    <span className="px-4 py-1 bg-[#D48D2A] text-white text-xs font-black uppercase tracking-widest rounded-full">
+                                                        Current Plan
+                                                    </span>
+                                                </div>
+                                            )}
+
+                                            <div className="text-center mb-8">
+                                                <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                                                    <FiPackage className="text-3xl text-gray-400" />
+                                                </div>
+                                                <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Premium Basic</h4>
+                                                <div className="flex items-baseline justify-center gap-1">
+                                                    <span className="text-5xl font-black text-gray-900">£99</span>
+                                                    <span className="text-gray-400 font-medium">/month</span>
+                                                </div>
+
+                                            </div>
+
+                                            <ul className="space-y-3 mb-8">
+                                                {[
+                                                    '25 Active Listings',
+                                                    'Advanced Analytics',
+                                                    'Priority Email Support',
+                                                    'Enhanced Visibility',
+                                                    'Lead Management'
+                                                ].map((feature, idx) => (
+                                                    <li key={idx} className="flex items-center gap-3 text-sm">
+                                                        <FiCheckCircle className="text-emerald-500 flex-shrink-0" />
+                                                        <span className="text-gray-600 font-medium">{feature}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+
+                                            {user?.plan === 'Premium Basic' ? (
+                                                <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed">
                                                     Current Plan
-                                                </span>
-                                            </div>
-                                        )}
-
-                                        <div className="text-center mb-8">
-                                            <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                                                <FiPackage className="text-3xl text-gray-400" />
-                                            </div>
-                                            <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Premium Basic</h4>
-                                            <div className="flex items-baseline justify-center gap-1">
-                                                <span className="text-5xl font-black text-gray-900">£99</span>
-                                                <span className="text-gray-400 font-medium">/month</span>
-                                            </div>
-
+                                                </button>
+                                            ) : user?.plan === 'Business VIP' ? (
+                                                <button disabled className="w-full py-4 bg-gray-50 text-gray-300 rounded-xl font-bold text-sm cursor-not-allowed hidden">
+                                                    Downgrade Unavailable
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handlePlanChange('Premium Basic')}
+                                                    className="w-full py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20"
+                                                >
+                                                    Upgrade to Premium Basic
+                                                </button>
+                                            )}
                                         </div>
 
-                                        <ul className="space-y-3 mb-8">
-                                            {[
-                                                '25 Active Listings',
-                                                'Advanced Analytics',
-                                                'Priority Email Support',
-                                                'Enhanced Visibility',
-                                                'Lead Management'
-                                            ].map((feature, idx) => (
-                                                <li key={idx} className="flex items-center gap-3 text-sm">
-                                                    <FiCheckCircle className="text-emerald-500 flex-shrink-0" />
-                                                    <span className="text-gray-600 font-medium">{feature}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        {/* Business VIP Plan */}
+                                        <div className={`rounded-[2rem] border-2 p-8 transition-all ${user?.plan === 'Business VIP'
+                                            ? 'border-[#D48D2A] bg-[#FDF8F0] relative'
+                                            : 'border-gray-200 bg-white hover:border-[#D48D2A] hover:shadow-lg'
+                                            }`}>
+                                            {user?.plan === 'Business VIP' && (
+                                                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                                                    <span className="px-4 py-1 bg-[#D48D2A] text-white text-xs font-black uppercase tracking-widest rounded-full">
+                                                        Current Plan
+                                                    </span>
+                                                </div>
+                                            )}
 
-                                        {user?.plan === 'Premium Basic' ? (
-                                            <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed">
-                                                Current Plan
-                                            </button>
-                                        ) : user?.plan === 'Business VIP' ? (
-                                            <button disabled className="w-full py-4 bg-gray-50 text-gray-300 rounded-xl font-bold text-sm cursor-not-allowed hidden">
-                                                Downgrade Unavailable
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => handlePlanChange('Premium Basic')}
-                                                className="w-full py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20"
-                                            >
-                                                Upgrade to Premium Basic
-                                            </button>
-                                        )}
-                                    </div>
+                                            <div className="text-center mb-8">
+                                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D48D2A] to-[#B5751C] flex items-center justify-center mx-auto mb-4">
+                                                    <FiBriefcase className="text-3xl text-white" />
+                                                </div>
+                                                <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Business VIP</h4>
+                                                <div className="flex items-baseline justify-center gap-1">
+                                                    <span className="text-5xl font-black text-gray-900">£299</span>
+                                                    <span className="text-gray-400 font-medium">/month</span>
+                                                </div>
+                                            </div>
 
-                                    {/* Business VIP Plan */}
-                                    <div className={`rounded-[2rem] border-2 p-8 transition-all ${user?.plan === 'Business VIP'
-                                        ? 'border-[#D48D2A] bg-[#FDF8F0] relative'
-                                        : 'border-gray-200 bg-white hover:border-[#D48D2A] hover:shadow-lg'
-                                        }`}>
-                                        {user?.plan === 'Business VIP' && (
-                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                                                <span className="px-4 py-1 bg-[#D48D2A] text-white text-xs font-black uppercase tracking-widest rounded-full">
+                                            <ul className="space-y-3 mb-8">
+                                                {[
+                                                    '50 Active Listings',
+                                                    'Full Analytics Suite',
+                                                    'Priority Phone & Email Support',
+                                                    'Premium Visibility',
+                                                    'Lead Scoring',
+                                                    'Dedicated Account Manager',
+                                                    'API Access'
+                                                ].map((feature, idx) => (
+                                                    <li key={idx} className="flex items-center gap-3 text-sm">
+                                                        <FiCheckCircle className="text-emerald-500 flex-shrink-0" />
+                                                        <span className="text-gray-600 font-medium">{feature}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+
+                                            {user?.plan === 'Business VIP' ? (
+                                                <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed">
                                                     Current Plan
-                                                </span>
-                                            </div>
-                                        )}
-
-                                        <div className="text-center mb-8">
-                                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D48D2A] to-[#B5751C] flex items-center justify-center mx-auto mb-4">
-                                                <FiBriefcase className="text-3xl text-white" />
-                                            </div>
-                                            <h4 className="text-2xl font-bold text-gray-900 font-playfair mb-2">Business VIP</h4>
-                                            <div className="flex items-baseline justify-center gap-1">
-                                                <span className="text-5xl font-black text-gray-900">£299</span>
-                                                <span className="text-gray-400 font-medium">/month</span>
-                                            </div>
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handlePlanChange('Business VIP')}
+                                                    className="w-full py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20"
+                                                >
+                                                    Upgrade to Business VIP
+                                                </button>
+                                            )}
                                         </div>
-
-                                        <ul className="space-y-3 mb-8">
-                                            {[
-                                                '50 Active Listings',
-                                                'Full Analytics Suite',
-                                                'Priority Phone & Email Support',
-                                                'Premium Visibility',
-                                                'Lead Scoring',
-                                                'Dedicated Account Manager',
-                                                'API Access'
-                                            ].map((feature, idx) => (
-                                                <li key={idx} className="flex items-center gap-3 text-sm">
-                                                    <FiCheckCircle className="text-emerald-500 flex-shrink-0" />
-                                                    <span className="text-gray-600 font-medium">{feature}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-
-                                        {user?.plan === 'Business VIP' ? (
-                                            <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-bold text-sm cursor-not-allowed">
-                                                Current Plan
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => handlePlanChange('Business VIP')}
-                                                className="w-full py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20"
-                                            >
-                                                Upgrade to Business VIP
-                                            </button>
-                                        )}
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Custom Solution Section */}
-                            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-[2.5rem] border border-gray-200 p-12 text-center">
-                                <div className="w-20 h-20 rounded-2xl bg-white border border-gray-200 flex items-center justify-center mx-auto mb-6 shadow-sm">
-                                    <FiSettings className="text-4xl text-gray-400" />
+                                {/* Custom Solution Section */}
+                                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-[2.5rem] border border-gray-200 p-12 text-center">
+                                    <div className="w-20 h-20 rounded-2xl bg-white border border-gray-200 flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                        <FiSettings className="text-4xl text-gray-400" />
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-gray-900 font-playfair mb-3">Need a Custom Solution?</h3>
+                                    <p className="text-gray-500 text-sm max-w-2xl mx-auto mb-8 leading-relaxed">
+                                        For large dealerships, auction houses, or enterprises with specific requirements, we offer tailored solutions with dedicated support and custom integrations.
+                                    </p>
+                                    <button className="px-8 py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20">
+                                        Contact Sales
+                                    </button>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 font-playfair mb-3">Need a Custom Solution?</h3>
-                                <p className="text-gray-500 text-sm max-w-2xl mx-auto mb-8 leading-relaxed">
-                                    For large dealerships, auction houses, or enterprises with specific requirements, we offer tailored solutions with dedicated support and custom integrations.
-                                </p>
-                                <button className="px-8 py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20">
-                                    Contact Sales
-                                </button>
+
                             </div>
+                        )
+                    }
 
-                        </div>
-                    )}
-
-                </main>
-            </div>
+                </main >
+            </div >
 
             <AddAssetModal
                 isOpen={isAddModalOpen}
@@ -1393,7 +1414,7 @@ const Inventory = () => {
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 20px; }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
             `}} />
-        </div>
+        </div >
     );
 };
 

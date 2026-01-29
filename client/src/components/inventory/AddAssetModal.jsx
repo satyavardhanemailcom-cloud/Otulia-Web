@@ -45,7 +45,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         propertyName: '', propertyType: '', country: '', city: '', address: '',
         builtUpArea: '', landArea: '', bedrooms: '', bathrooms: '', floors: '',
         furnishingStatus: '', architectureStyle: '', configuration: '',
-        interiorMaterial: '', interiorColorTheme: '', exteriorFinish: '',
+        interiorColorTheme: '', exteriorFinish: '',
         climateControl: '', usageStatus: '',
         areaNeighborhood: '', latitude: '', longitude: '',
         amenities: [], smartHomeSystems: [], viewTypes: [],
