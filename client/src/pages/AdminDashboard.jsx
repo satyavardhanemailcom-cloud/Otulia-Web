@@ -21,6 +21,11 @@ const AdminDashboard = () => {
     const [actionLoading, setActionLoading] = useState(null);
     const [savingSettings, setSavingSettings] = useState(false);
     const [selectedPartnerDocs, setSelectedPartnerDocs] = useState(null);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
 
     // ... existing ...
 
@@ -42,7 +47,14 @@ const AdminDashboard = () => {
     };
 
     useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 1024) {
+                setIsSidebarOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
         fetchData();
+        return () => window.removeEventListener('resize', handleResize);
     }, [token, user]);
 
     const fetchData = async () => {
@@ -133,12 +145,15 @@ const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
             {/* SIDEBAR */}
-            <aside className="w-72 border-r flex flex-col fixed inset-y-0 z-50 bg-white border-gray-100">
-                <div className="p-8 pb-12">
+            <aside className={`w-72 border-r flex-col fixed inset-y-0 z-50 bg-white border-gray-100 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}>
+                <div className="p-8 pb-12 flex justify-between items-center">
                     <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
                         <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-8" />
                         <span className="px-2 py-0.5 bg-[#D48D2A] text-white text-[9px] font-black uppercase tracking-widest rounded-md">Admin</span>
                     </div>
+                    <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900">
+                        <FiXCircle className="h-6 w-6" />
+                    </button>
                 </div>
 
                 <nav className="flex-1 px-4 space-y-2">
@@ -181,24 +196,29 @@ const AdminDashboard = () => {
             </aside>
 
             {/* MAIN CONTENT */}
-            <main className="flex-1 ml-72 bg-[#F9FAFB]">
+            <main className={`flex-1 bg-[#F9FAFB] transition-all duration-300 ease-in-out`}>
                 {/* HEADER */}
-                <header className="h-20 px-8 flex items-center justify-between border-b border-gray-100 bg-white sticky top-0 z-40">
-                    <h2 className="text-xl font-bold text-gray-900 font-playfair">
-                        {activeTab === 'overview' ? 'Dashboard Overview' :
-                            activeTab === 'partners' ? 'Partner Verification' :
-                                activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                    </h2>
-
+                <header className="h-20 px-4 sm:px-8 flex items-center justify-between border-b border-gray-100 bg-white sticky top-0 z-40">
                     <div className="flex items-center gap-4">
-                        <div className="relative">
+                        <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900">
+                            <FiGrid className="h-6 w-6" />
+                        </button>
+                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 font-playfair">
+                            {activeTab === 'overview' ? 'Dashboard Overview' :
+                                activeTab === 'partners' ? 'Partner Verification' :
+                                    activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+                        </h2>
+                    </div>
+
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <div className="relative hidden sm:block">
                             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input
-                                className="w-64 bg-gray-50 border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-400"
+                                className="w-40 sm:w-64 bg-gray-50 border border-gray-100 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-400"
                                 placeholder="Search system..."
                             />
                         </div>
-                        <div className="w-px h-8 bg-gray-100 mx-2"></div>
+                        <div className="w-px h-8 bg-gray-100 mx-2 hidden sm:block"></div>
                         <button className="relative w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-gray-100 transition-all">
                             <FiBell className="text-gray-500" />
                             <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
@@ -206,10 +226,10 @@ const AdminDashboard = () => {
                     </div>
                 </header>
 
-                <div className="p-10">
+                <div className="p-4 sm:p-10">
                     {activeTab === 'overview' && stats && (
                         <div className="animate-in fade-in duration-500">
-                            <div className="grid grid-cols-4 gap-6 mb-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                                 <KPICard
                                     title="Total Revenue"
                                     value={`$${numberWithCommas(stats.revenue)}`}
@@ -244,8 +264,8 @@ const AdminDashboard = () => {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-3 gap-8">
-                                <div className="col-span-2 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div className="lg:col-span-2 bg-white p-4 sm:p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden">
                                     <h3 className="text-lg font-bold text-gray-900 mb-6 font-playfair">Revenue Analytics</h3>
                                     {/* Simple CSS Bar Chart */}
                                     <div className="flex items-end gap-3 h-64 mt-4 px-4 pb-2">
@@ -283,64 +303,64 @@ const AdminDashboard = () => {
 
                     {activeTab === 'partners' && (
                         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
-                            <div className="p-8 border-b border-gray-100 flex justify-between items-end">
+                            <div className="p-4 sm:p-8 border-b border-gray-100 flex-col sm:flex-row flex justify-between items-start sm:items-end">
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">Partners Management</h3>
                                     <p className="text-sm text-gray-400 font-medium">Manage and verify dealer accounts</p>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 mt-4 sm:mt-0">
                                     <button className="px-4 py-2 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100">Export</button>
                                     <button className="px-4 py-2 bg-[#D48D2A] text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-[#B5751C] shadow-md shadow-[#D48D2A]/20">Add Partner</button>
                                 </div>
                             </div>
-                            <table className="w-full text-left">
-                                <thead>
-                                    <tr className="bg-gray-50/50 border-b border-gray-100">
-                                        <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partner Name</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Metrics</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</th>
-                                        <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-50">
-                                    {partners.map(partner => (
-                                        <tr key={partner.id} className="hover:bg-gray-50/50 transition-colors group">
-                                            <td className="px-8 py-5">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-[#F2E8DB] flex items-center justify-center text-xs font-black text-[#D48D2A] border border-[#E5DAC8]">
-                                                        {partner.name.substring(0, 2).toUpperCase()}
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className='hidden md:table-header-group'>
+                                        <tr className="bg-gray-50/50 border-b border-gray-100">
+                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partner Name</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Metrics</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</th>
+                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-50">
+                                        {partners.map(partner => (
+                                            <tr key={partner.id} className="block md:table-row hover:bg-gray-50/50 transition-colors group">
+                                                <td className="block md:table-cell px-8 py-5">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-[#F2E8DB] flex-shrink-0 items-center justify-center text-xs font-black text-[#D48D2A] border border-[#E5DAC8] hidden sm:flex">
+                                                            {partner.name.substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-bold text-gray-900">{partner.name}</p>
+                                                            <p className="text-xs text-gray-400 font-medium">{partner.email}</p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <p className="text-sm font-bold text-gray-900">{partner.name}</p>
-                                                        <p className="text-xs text-gray-400 font-medium">{partner.email}</p>
+                                                </td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Category">
+                                                    <span className="px-3 py-1 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-tight">
+                                                        {partner.category}
+                                                    </span>
+                                                </td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Status">
+                                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${partner.verificationStatus === 'Verified' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                                                        partner.verificationStatus === 'Pending' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
+                                                            'bg-red-50 text-red-600 border border-red-100'
+                                                        }`}>
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${partner.verificationStatus === 'Verified' ? 'bg-emerald-500' : partner.verificationStatus === 'Pending' ? 'bg-blue-500' : 'bg-red-500'}`}></span>
+                                                        {partner.verificationStatus || 'Unknown'}
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <span className="px-3 py-1 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-tight">
-                                                    {partner.category}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${partner.verificationStatus === 'Verified' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-                                                    partner.verificationStatus === 'Pending' ? 'bg-blue-50 text-blue-600 border border-blue-100' :
-                                                        'bg-red-50 text-red-600 border border-red-100'
-                                                    }`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${partner.verificationStatus === 'Verified' ? 'bg-emerald-500' : partner.verificationStatus === 'Pending' ? 'bg-blue-500' : 'bg-red-500'}`}></span>
-                                                    {partner.verificationStatus || 'Unknown'}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <p className="text-sm font-bold text-gray-900">${numberWithCommas(partner.totalSales)}</p>
-                                                <p className="text-xs text-gray-400 font-bold uppercase">Lifetime Sales</p>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <span className="text-sm text-gray-500 font-medium">{partner.location}</span>
-                                            </td>
-                                            <td className="px-8 py-5 text-right">
-                                                {['Pending', 'None', 'Rejected'].includes(partner.verificationStatus) ? (
+                                                </td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Metrics">
+                                                    <p className="text-sm font-bold text-gray-900">${numberWithCommas(partner.totalSales)}</p>
+                                                    <p className="text-xs text-gray-400 font-bold uppercase">Lifetime Sales</p>
+                                                </td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Location">
+                                                    <span className="text-sm text-gray-500 font-medium">{partner.location}</span>
+                                                </td>
+                                                <td className="block md:table-cell px-8 py-5 text-right">
                                                     <div className="flex justify-end gap-2">
                                                         <button
                                                             onClick={() => viewDocs(partner)}
@@ -363,84 +383,78 @@ const AdminDashboard = () => {
                                                             Reject
                                                         </button>
                                                     </div>
-                                                ) : (
-                                                    <div className="flex justify-end gap-2">
-                                                        <button
-                                                            onClick={() => viewDocs(partner)}
-                                                            className="px-3 py-1.5 bg-gray-50 text-gray-400 rounded-lg hover:bg-gray-200 hover:text-gray-600 transition-all text-xs font-bold uppercase border border-gray-100"
-                                                        >
-                                                            View Docs
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     )}
 
                     {activeTab === 'users' && (
                         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
-                            <div className="p-8 border-b border-gray-100 flex justify-between items-end">
+                            <div className="p-4 sm:p-8 border-b border-gray-100 flex-col sm:flex-row flex justify-between items-start sm:items-end">
                                 <div>
                                     <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">User Management</h3>
                                     <p className="text-sm text-gray-400 font-medium">View and manage all registered platform users</p>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 mt-4 sm:mt-0">
                                     <button className="px-4 py-2 bg-gray-50 text-gray-600 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-gray-100">Export CSV</button>
                                 </div>
                             </div>
-                            <table className="w-full text-left">
-                                <thead>
-                                    <tr className="bg-gray-50/50 border-b border-gray-100">
-                                        <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">User Profile</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Plan</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Est. Revenue</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Joined</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-50">
-                                    {usersList.map(u => (
-                                        <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="px-8 py-5">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-xs">
-                                                        {u.name[0]}
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-sm font-bold text-gray-900">{u.name}</p>
-                                                        <p className="text-xs text-gray-400">{u.email}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-tight ${u.plan === 'Business VIP' ? 'bg-[#F2E8DB] text-[#D48D2A]' : 'bg-gray-100 text-gray-600'
-                                                    }`}>
-                                                    {u.plan}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">{u.status}</span>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <p className="text-sm font-bold text-gray-900">${numberWithCommas(u.revenue)}</p>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <span className="text-xs text-gray-500">{new Date(u.joinDate).toLocaleDateString()}</span>
-                                            </td>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className='hidden md:table-header-group'>
+                                        <tr className="bg-gray-50/50 border-b border-gray-100">
+                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">User Profile</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Plan</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Est. Revenue</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Joined</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-50">
+                                        {usersList.map(u => (
+                                            <tr key={u.id} className="block md:table-row hover:bg-gray-50/50 transition-colors">
+                                                <td className="block md:table-cell px-8 py-5">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 items-center justify-center text-gray-500 font-bold text-xs hidden sm:flex">
+                                                            {u.name[0]}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-bold text-gray-900">{u.name}</p>
+                                                            <p className="text-xs text-gray-400">{u.email}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Plan">
+                                                    <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-tight ${u.plan === 'Business VIP' ? 'bg-[#F2E8DB] text-[#D48D2A]' : 'bg-gray-100 text-gray-600'
+                                                        }`}>
+                                                        {u.plan}
+                                                    </span>
+                                                </td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Status">
+                                                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">{u.status}</span>
+                                                </td>
+                
+                                                <td className="block md:table-cell px-6 py-5" data-label="Est. Revenue">
+                                                    <p className="text-sm font-bold text-gray-900">${numberWithCommas(u.revenue)}</p>
+                                                </td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Joined">
+                                                    <span className="text-xs text-gray-500">{new Date(u.joinDate).toLocaleDateString()}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     )}
 
                     {activeTab === 'analytics' && (
                         <div className="grid grid-cols-1 gap-8 animate-in fade-in duration-500">
-                            <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
+                            <div className="bg-white p-4 sm:p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
                                 <h3 className="text-xl font-bold text-gray-900 mb-2 font-playfair">Growth Analytics</h3>
                                 <p className="text-gray-400 text-sm mb-10">Platform user growth over the last 6 months</p>
 
@@ -466,52 +480,54 @@ const AdminDashboard = () => {
 
                     {activeTab === 'payouts' && (
                         <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
-                            <div className="p-8 border-b border-gray-100">
+                            <div className="p-4 sm:p-8 border-b border-gray-100">
                                 <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">Payout Management</h3>
                                 <p className="text-sm text-gray-400 font-medium">Manage partner withdrawals and payments</p>
                             </div>
-                            <table className="w-full text-left">
-                                <thead>
-                                    <tr className="bg-gray-50/50 border-b border-gray-100">
-                                        <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partner</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
-                                        <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                        <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {payouts.map(payout => (
-                                        <tr key={payout.id} className="hover:bg-gray-50/50 transition-colors">
-                                            <td className="px-8 py-5 font-bold text-gray-900">{payout.partner}</td>
-                                            <td className="px-6 py-5 font-medium text-gray-600">${numberWithCommas(payout.amount)}</td>
-                                            <td className="px-6 py-5 text-sm text-gray-500">{new Date(payout.date).toLocaleDateString()}</td>
-                                            <td className="px-6 py-5">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${payout.status === 'Completed' ? 'bg-emerald-50 text-emerald-600' :
-                                                    payout.status === 'Pending' ? 'bg-amber-50 text-amber-600' :
-                                                        'bg-blue-50 text-blue-600'
-                                                    }`}>
-                                                    {payout.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-8 py-5 text-right">
-                                                {payout.status === 'Pending' && (
-                                                    <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-xs font-bold hover:bg-black transition-colors">
-                                                        Process
-                                                    </button>
-                                                )}
-                                            </td>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className='hidden md:table-header-group'>
+                                        <tr className="bg-gray-50/50 border-b border-gray-100">
+                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Partner</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date</th>
+                                            <th className="px-6 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                                            <th className="px-8 py-5 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-50">
+                                        {payouts.map(payout => (
+                                            <tr key={payout.id} className="block md:table-row hover:bg-gray-50/50 transition-colors">
+                                                <td className="block md:table-cell px-8 py-5 font-bold text-gray-900" data-label="Partner">{payout.partner}</td>
+                                                <td className="block md:table-cell px-6 py-5 font-medium text-gray-600" data-label="Amount">${numberWithCommas(payout.amount)}</td>
+                                                <td className="block md:table-cell px-6 py-5 text-sm text-gray-500" data-label="Date">{new Date(payout.date).toLocaleDateString()}</td>
+                                                <td className="block md:table-cell px-6 py-5" data-label="Status">
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest ${payout.status === 'Completed' ? 'bg-emerald-50 text-emerald-600' :
+                                                        payout.status === 'Pending' ? 'bg-amber-50 text-amber-600' :
+                                                            'bg-blue-50 text-blue-600'
+                                                        }`}>
+                                                        {payout.status}
+                                                    </span>
+                                                </td>
+                                                <td className="block md:table-cell px-8 py-5 text-right" data-label="Actions">
+                                                    {payout.status === 'Pending' && (
+                                                        <button className="px-4 py-2 bg-gray-900 text-white rounded-lg text-xs font-bold hover:bg-black transition-colors">
+                                                            Process
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     )}
 
                     {activeTab === 'settings' && (
-                        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-10 animate-in fade-in duration-500">
+                        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-4 sm:p-10 animate-in fade-in duration-500">
                             <h3 className="text-xl font-bold text-gray-900 mb-8 font-playfair">Admin Settings</h3>
-                            <div className="grid grid-cols-2 gap-10">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div className="space-y-6">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Platform Name</label>
@@ -622,5 +638,6 @@ const AdminDashboard = () => {
         </div>
     );
 };
+
 
 export default AdminDashboard;
