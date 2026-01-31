@@ -34,7 +34,7 @@ import Shipping from "./pages/policies/Shipping";
 import Returns from "./pages/policies/Returns";
 import CookiePolicy from "./pages/policies/CookiePolicy";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollTop";
@@ -42,6 +42,9 @@ import ScrollToTop from "./components/ScrollTop";
 import { CartProvider } from "./contexts/CartContext";
 
 function App() {
+  const location = useLocation();
+  const hideFooterRoutes = ['/admin'];
+  const shouldShowFooter = !hideFooterRoutes.some(path => location.pathname.startsWith(path));
 
   return (
     <CartProvider>
@@ -73,7 +76,6 @@ function App() {
         <Route path="/success" element={<Success />} />
         <Route path="/listings" element={<MyListings />} />
         <Route path="/inventory" element={<Inventory />} />
-        <Route path="/inventory" element={<Inventory />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/admin" element={<AdminDashboard />} />
 
@@ -84,7 +86,7 @@ function App() {
         <Route path="/returns" element={<Returns />} />
         <Route path="/cookie-policy" element={<CookiePolicy />} />
       </Routes>
-      <Footer />
+      {shouldShowFooter && <Footer />}
     </CartProvider>
   )
 }

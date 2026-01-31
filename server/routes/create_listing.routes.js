@@ -37,6 +37,8 @@ const upload = multer({
 router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount: 5 }, { name: 'documents', maxCount: 3 }]), async (req, res) => {
     try {
         let { title, price, category, location, description } = req.body;
+        // Default location if missing
+        if (!location) location = 'Unspecified';
 
         if (!title && req.body.make && req.body.model) {
             title = `${req.body.make} ${req.body.model} ${req.body.variant || ''}`.trim();
@@ -81,6 +83,7 @@ router.post('/create', authMiddleware, upload.fields([{ name: 'images', maxCount
             documents: docUrls,
             status: req.body.isPublic === 'true' || req.body.isPublic === true ? 'Active' : 'Draft',
             type: req.body.type || 'Sale',
+            acquisition: (req.body.type === 'Rent' ? 'rent' : 'buy'), // Map Sale->buy, Rent->rent
             agent: {
                 id: user._id,
                 name: user.name, // Now cleanly coming from DB

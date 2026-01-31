@@ -147,50 +147,45 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         setLoading(true);
         const data = new FormData();
 
-        // Construct Fixed Highlights based on Asset Type
+        // Sync highlights to main fields to ensure backend keySpecs are populated
+        if (assetType === 'Car') {
+            if (!formData.horsepower) formData.horsepower = formData.highlight_hp;
+            if (!formData.mileage) formData.mileage = formData.highlight_km;
+            if (!formData.cylinderCapacity) formData.cylinderCapacity = formData.highlight_cc;
+        }
+
+        // Construct Fixed Highlights based on Asset Type (Validation Removed)
         let constructedHighlights = [];
         if (assetType === 'Car') {
-            if (!formData.highlight_hp || !formData.highlight_km || !formData.highlight_cc) {
-                alert('Please fill in all Car Highlights (HP, Mileage, Engine)');
-                setLoading(false);
-                return;
-            }
-            constructedHighlights = [`${formData.highlight_hp} hp`, `${formData.highlight_km} mi`, `${formData.highlight_cc} L`];
+            constructedHighlights = [
+                formData.highlight_hp ? `${formData.highlight_hp} hp` : '',
+                formData.highlight_km ? `${formData.highlight_km} mi` : '',
+                formData.highlight_cc ? `${formData.highlight_cc} L` : ''
+            ].filter(Boolean);
         } else if (assetType === 'Yacht') {
-            if (!formData.highlight_length || !formData.highlight_baths || !formData.highlight_fuel || !formData.highlight_engine_hp || !formData.highlight_beds || !formData.highlight_speed) {
-                alert('Please fill in all Yacht Highlights (Length, Baths, Fuel, Engine, Beds, Speed)');
-                setLoading(false);
-                return;
-            }
             constructedHighlights = [
-                `${formData.highlight_length} M length`,
-                `Bathrooms: ${formData.highlight_baths}`,
-                `${formData.highlight_fuel} L fuel capacity`,
-                `${formData.highlight_engine_hp} HP total`,
-                `Bedrooms: ${formData.highlight_beds}`,
-                `TopSpeed: ${formData.highlight_speed} knots`
-            ];
+                formData.highlight_length ? `${formData.highlight_length} M length` : '',
+                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
+                formData.highlight_fuel ? `${formData.highlight_fuel} L fuel capacity` : '',
+                formData.highlight_engine_hp ? `${formData.highlight_engine_hp} HP total` : '',
+                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
+                formData.highlight_speed ? `TopSpeed: ${formData.highlight_speed} knots` : ''
+            ].filter(Boolean);
         } else if (assetType === 'Estate') {
-            if (!formData.highlight_area || !formData.highlight_baths || !formData.highlight_garage || !formData.highlight_built_area || !formData.highlight_beds || !formData.highlight_floors) {
-                alert('Please fill in all Real Estate Highlights (Area, Baths, Garage, Built Area, Beds, Floors)');
-                setLoading(false);
-                return;
-            }
             constructedHighlights = [
-                `Land Area: ${formData.highlight_area} Acres`,
-                `Bathrooms: ${formData.highlight_baths}`,
-                `Garage: ${formData.highlight_garage} Cars`,
-                `Built Area: ${formData.highlight_built_area} Sq Ft`,
-                `Bedrooms: ${formData.highlight_beds}`,
-                `Floors: ${formData.highlight_floors}`
-            ];
+                formData.highlight_area ? `Land Area: ${formData.highlight_area} Acres` : '',
+                formData.highlight_baths ? `Bathrooms: ${formData.highlight_baths}` : '',
+                formData.highlight_garage ? `Garage: ${formData.highlight_garage} Cars` : '',
+                formData.highlight_built_area ? `Built Area: ${formData.highlight_built_area} Sq Ft` : '',
+                formData.highlight_beds ? `Bedrooms: ${formData.highlight_beds}` : '',
+                formData.highlight_floors ? `Floors: ${formData.highlight_floors}` : ''
+            ].filter(Boolean);
         } else if (assetType === 'Bike') {
-            if (!formData.highlight_cc || !formData.highlight_speed || !formData.highlight_fuel) {
-                alert('Please fill in all Bike Highlights (Engine, Speed, Fuel)');
-                setLoading(false);
-                return;
-            }
-            constructedHighlights = [`${formData.highlight_cc} cc`, `${formData.highlight_speed} km/h`, `${formData.highlight_fuel} liters`];
+            constructedHighlights = [
+                formData.highlight_cc ? `${formData.highlight_cc} cc` : '',
+                formData.highlight_speed ? `${formData.highlight_speed} km/h` : '',
+                formData.highlight_fuel ? `${formData.highlight_fuel} liters` : ''
+            ].filter(Boolean);
         }
 
         // Append to FormData
