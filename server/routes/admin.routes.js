@@ -183,7 +183,11 @@ router.post("/verify-partner", authMiddleware, adminCheck, async (req, res) => {
         if (action === 'approve') {
             updateData.isVerified = true;
             updateData.verificationStatus = 'Verified';
-            updateData.role = 'agent'; // Upgrade to agent/dealer upon verification
+
+            // Upgrade role to agent ONLY if they are a standard user. Do not downgrade admins.
+            if (user.role === 'user') {
+                updateData.role = 'agent';
+            }
         } else if (action === 'reject') {
             updateData.isVerified = false;
             updateData.verificationStatus = 'Rejected';

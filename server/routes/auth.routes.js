@@ -362,6 +362,7 @@ const upload = multer({ storage: storage });
 
 router.post("/submit-verification", authMiddleware, upload.any(), async (req, res) => {
   try {
+    console.log("Received verification submission:", req.files, req.body);
     const files = req.files;
     if (!files || files.length === 0) {
       return res.status(400).json({ error: "NO_FILES_UPLOADED" });

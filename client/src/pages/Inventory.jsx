@@ -145,7 +145,7 @@ const Inventory = () => {
             }
         } catch (error) {
             console.error("Verification Submit Error:", error);
-            alert('An error occurred. Please check your connection.');
+            alert(`An error occurred: ${error.message}`);
         }
     };
 
@@ -530,10 +530,12 @@ const Inventory = () => {
                                         } else {
                                             if (user?.verificationStatus === 'Pending') {
                                                 alert("Your dealer verification is currently pending approval. You will be notified once approved.");
+                                            } else if (user?.verificationStatus === 'Rejected') {
+                                                alert("Your previous verification documents were rejected. Please re-submit valid documents.");
+                                                setIsVerificationModalOpen(true);
                                             } else {
                                                 alert("Please complete dealer verification to start listing assets.");
-                                                setActiveTab('settings');
-                                                // setIsVerificationModalOpen(true); // Or navigate to settings
+                                                setIsVerificationModalOpen(true);
                                             }
                                         }
                                     }}
