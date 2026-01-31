@@ -4,30 +4,33 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import numberWithCommas from '../modules/numberwithcomma';
-import { loadRazorpay } from '../modules/razorpay';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const CartPage = () => {
     const { cart, removeFromCart, cartTotal, clearCart } = useCart();
     const { token, isAuthenticated, user } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
     const navigate = useNavigate();
 
-    const handleCheckout = async () => {
+    const paypalOptions = {
+        "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
+        currency: "GBP",
+        intent: "capture",
+    };
+
+    const handleProceedToCheckout = () => {
         if (!isAuthenticated) {
             alert('Please login to checkout.');
             navigate('/login');
             return;
         }
+        setIsCheckoutModalOpen(true);
+    };
 
-        const res = await loadRazorpay();
-        if (!res) {
-            alert('Razorpay SDK failed to load. Are you online?');
-            return;
-        }
-
-        setLoading(true);
+    const handlePayPalCreateOrder = async (data, actions) => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/payment/create-cart-checkout-session', {
+            const response = await fetch('http://127.0.0.1:8000/api/payment/create-order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,69 +39,47 @@ const CartPage = () => {
                 body: JSON.stringify({ cartItems: cart })
             });
 
-            const data = await response.json();
-
-            if (data.error) {
-                alert('Checkout failed: ' + data.error);
-                setLoading(false);
-                return;
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error || "Order creation failed");
             }
 
-            const options = {
-                key: data.key_id,
-                amount: data.order.amount,
-                currency: data.order.currency,
-                name: "Otulia",
-                description: "Cart Checkout",
-                order_id: data.order.id,
-                handler: async function (response) {
-                    try {
-                        const verifyRes = await fetch('http://127.0.0.1:8000/api/payment/verify-payment', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_signature: response.razorpay_signature,
-                                cartData: data.cartData
-                            })
-                        });
+            const order = await response.json();
+            return order.id;
+        } catch (err) {
+            console.error("Create Order Error: ", err);
+            alert("Failed to create order: " + err.message);
+            throw err;
+        }
+    };
 
-                        const verifyData = await verifyRes.json();
-                        if (verifyData.success) {
-                            alert("Payment Successful!");
-                            // clearCart(); // create clearCart if not exists or manually clear
-                            // Redirect
-                            navigate('/profile');
-                        } else {
-                            alert("Payment verification failed: " + (verifyData.error || 'Unknown error'));
-                        }
-                    } catch (err) {
-                        console.error("Verification error:", err);
-                        alert("Payment verification error");
-                    }
+    const handlePayPalApprove = async (data, actions) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/payment/capture-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                prefill: {
-                    name: user?.name,
-                    email: user?.email,
-                    contact: user?.phone || ''
-                },
-                theme: {
-                    color: "#000000"
-                }
-            };
+                body: JSON.stringify({
+                    orderID: data.orderID,
+                    cartItems: cart
+                })
+            });
 
-            const paymentObject = new window.Razorpay(options);
-            paymentObject.open();
+            const details = await response.json();
 
-        } catch (error) {
-            console.error('Checkout error:', error);
-            alert('An error occurred during checkout.');
-        } finally {
-            setLoading(false);
+            if (details.success) {
+                // Payment successful
+                setIsCheckoutModalOpen(false);
+                clearCart();
+                navigate('/profile');
+            } else {
+                alert("Payment failed: " + (details.error || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error("Capture Error: ", err);
+            alert("Payment verification failed.");
         }
     };
 
@@ -184,18 +165,70 @@ const CartPage = () => {
                                     <span className="font-bold text-lg">Total</span>
                                     <span className="font-bold text-lg">£ {numberWithCommas(cartTotal)}</span>
                                 </div>
+
                                 <button
-                                    onClick={handleCheckout}
-                                    disabled={loading}
+                                    onClick={handleProceedToCheckout}
                                     className="w-full bg-black text-white py-4 rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-50"
                                 >
-                                    {loading ? 'Processing...' : 'Proceed to Checkout'}
+                                    Proceed to Checkout
                                 </button>
                             </div>
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* PAYPAL COMPONENT MODAL */}
+            {isCheckoutModalOpen && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden relative animate-fade-in-up">
+
+                        {/* Header */}
+                        <div className="bg-gray-50 p-6 border-b border-gray-100 flex justify-between items-center">
+                            <div>
+                                <h3 className="text-lg font-bold font-playfair text-gray-800">Checkout</h3>
+                                <p className="text-sm text-gray-500">Secure Payment</p>
+                            </div>
+                            <button
+                                onClick={() => setIsCheckoutModalOpen(false)}
+                                className="text-gray-400 hover:text-gray-600 p-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Body */}
+                        <div className="p-6">
+                            <div className="mb-6 flex justify-between items-center">
+                                <span className="text-gray-600 font-medium">Total Payable</span>
+                                <span className="text-2xl font-bold text-black">£{numberWithCommas(cartTotal)}</span>
+                            </div>
+
+                            <div className="min-h-[150px] flex flex-col justify-center">
+                                <PayPalScriptProvider options={paypalOptions}>
+                                    <PayPalButtons
+                                        style={{ layout: "vertical", shape: "rect", color: "gold", label: "pay" }}
+                                        createOrder={handlePayPalCreateOrder}
+                                        onApprove={handlePayPalApprove}
+                                        onError={(err) => {
+                                            console.error("PayPal Error:", err);
+                                            alert("PayPal encountered an error. Please try again.");
+                                        }}
+                                    />
+                                </PayPalScriptProvider>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="bg-gray-50 px-6 py-4 text-center text-xs text-gray-400">
+                            Secure payment processed by PayPal
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

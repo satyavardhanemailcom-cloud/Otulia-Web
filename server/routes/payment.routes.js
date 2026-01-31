@@ -1,211 +1,158 @@
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
-const Razorpay = require('razorpay');
+const axios = require('axios');
 const User = require('../models/User.model');
 const authMiddleware = require('../middleware/auth.middleware');
 
-// Initialize Razorpay
-let razorpayInstance;
-if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
-    razorpayInstance = new Razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
-} else {
-    console.warn("Razorpay keys are missing in environment variables.");
+const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+// To switch to live, remove ".sandbox" from the URL
+const PAYPAL_API = 'https://api-m.paypal.com';
+
+// Helper: Generate Access Token
+async function generateAccessToken() {
+    if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+        throw new Error("Missing PayPal Credentials");
+    }
+    // Trim credentials to avoid whitespace issues
+    const clientId = PAYPAL_CLIENT_ID.trim();
+    const clientSecret = PAYPAL_CLIENT_SECRET.trim();
+
+    const auth = Buffer.from(clientId + ":" + clientSecret).toString("base64");
+    try {
+        const response = await axios.post(`${PAYPAL_API}/v1/oauth2/token`, "grant_type=client_credentials", {
+            headers: {
+                Authorization: `Basic ${auth}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        });
+        return response.data.access_token;
+    } catch (error) {
+        console.error("PayPal Token Error:", error.response ? error.response.data : error.message);
+        throw new Error("Failed to authenticate with PayPal");
+    }
 }
 
-const DOMAIN = 'http://localhost:5173';
+// Create Order (Unified for Plan or Cart)
+router.post('/create-order', authMiddleware, async (req, res) => {
+    const { plan, cartItems } = req.body;
 
-// Create Order for Plan Upgrade
-router.post('/create-checkout-session', authMiddleware, async (req, res) => {
-    const { plan } = req.body;
+    let totalAmount = 0;
+    let description = "";
 
-    let priceAmount = 0; // In smallest currency unit (e.g., paise/cents)
-    let currency = 'GBP';
-
-    // Validate Plan
-    if (plan === 'Premium Basic') {
-        priceAmount = 9900; // £99.00 -> 9900 pence
-    } else if (plan === 'Business VIP') {
-        priceAmount = 29900; // £299.00 -> 29900 pence
-    } else {
-        return res.status(400).json({ error: 'Invalid plan selected' });
-    }
-
-    if (!razorpayInstance) {
-        return res.status(500).json({ error: "Server Error: Razorpay API key is missing." });
-    }
-
-    try {
-        const options = {
-            amount: priceAmount,
-            currency: currency,
-            receipt: `plan_${Date.now().toString().slice(-10)}_${crypto.randomBytes(2).toString('hex')}`,
-            notes: {
-                userId: req.user.id,
-                plan: plan,
-                type: 'subscription'
-            }
-        };
-
-        const order = await razorpayInstance.orders.create(options);
-
-        res.json({
-            order,
-            key_id: process.env.RAZORPAY_KEY_ID,
-            // Pass plan info back so frontend knows what to send to verify if needed
-            plan: plan
-        });
-    } catch (e) {
-        console.error("Razorpay Error:", e);
-        res.status(500).json({ error: e.message });
-    }
-});
-
-// Create Order for Cart Checkout
-router.post('/create-cart-checkout-session', authMiddleware, async (req, res) => {
-    const { cartItems } = req.body;
-
-    if (!cartItems || cartItems.length === 0) {
-        return res.status(400).json({ error: 'Cart is empty' });
-    }
-
-    if (!razorpayInstance) {
-        return res.status(500).json({ error: "Server Error: Razorpay API key is missing." });
-    }
-
-    try {
-        // Calculate Total
-        let totalAmount = 0;
+    // Calculate Request Amount
+    if (plan) {
+        if (plan === 'Premium Basic') totalAmount = 99.00;
+        else if (plan === 'Business VIP') totalAmount = 299.00;
+        else return res.status(400).json({ error: 'Invalid plan' });
+        description = `Upgrade to ${plan}`;
+    } else if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
         cartItems.forEach(item => {
-            // Assuming item.totalPrice is in normal units (e.g. 100 GBP), convert to minor units
-            totalAmount += Math.round(item.totalPrice * 100);
+            totalAmount += parseFloat(item.totalPrice || 0);
         });
-
-        // Prepare simplified cart data for reconstruction/verification
-        const cartData = cartItems.map(item => ({
-            id: item.itemId,
-            mod: item.itemModel || 'Listing',
-            type: item.type,
-            s: item.startDate || null,
-            e: item.endDate || null,
-            p: item.totalPrice
-        }));
-
-        const options = {
-            amount: totalAmount,
-            currency: 'GBP',
-            receipt: `cart_${Date.now().toString().slice(-10)}_${crypto.randomBytes(2).toString('hex')}`,
-            notes: {
-                userId: req.user.id,
-                type: 'cart_checkout'
-                // We avoid putting large cartData in notes as it has limits
-            }
-        };
-
-        const order = await razorpayInstance.orders.create(options);
-
-        res.json({
-            order,
-            key_id: process.env.RAZORPAY_KEY_ID,
-            cartData: cartData // Send back to frontend to pass to verify
-        });
-
-    } catch (e) {
-        console.error("Razorpay Cart Error:", e);
-        res.status(500).json({ error: e.message });
-    }
-});
-
-// Verify Payment
-router.post('/verify-payment', authMiddleware, async (req, res) => {
-    const {
-        razorpay_payment_id,
-        razorpay_order_id,
-        razorpay_signature,
-        cartData, // Optional, present if cart checkout
-        plan      // Optional, present if subscription
-    } = req.body;
-
-    if (!razorpayInstance) {
-        return res.status(500).json({ error: "Server Error: Razorpay API keys missing." });
+        description = "Cart Checkout";
+    } else {
+        return res.status(400).json({ error: 'Invalid request data' });
     }
 
     try {
-        // Verify Signature
-        const body = razorpay_order_id + "|" + razorpay_payment_id;
-        const expectedSignature = crypto
-            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-            .update(body.toString())
-            .digest('hex');
+        const accessToken = await generateAccessToken();
+        const response = await axios.post(`${PAYPAL_API}/v2/checkout/orders`, {
+            intent: "CAPTURE",
+            purchase_units: [{
+                amount: {
+                    currency_code: "GBP",
+                    value: totalAmount.toFixed(2) // Ensure 2 decimal places
+                },
+                description: description
+            }],
+            application_context: {
+                shipping_preference: "NO_SHIPPING"
+            }
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            }
+        });
 
-        if (expectedSignature !== razorpay_signature) {
-            return res.status(400).json({ error: 'Invalid payment signature' });
-        }
-
-        // Payment is legit. Now fulfill the order.
-        const userId = req.user.id;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-
-        // Retrieve order to double check amount if needed? 
-        // For strictness we could fetch order from Razorpay, but signature verification confirms the order was paid.
-        // We verify the type based on input or logic.
-
-        if (cartData && Array.isArray(cartData) && cartData.length > 0) {
-            // Cart Checkout Logic
-            const orderId = razorpay_order_id;
-
-            // Optional: You could re-verify that cartData total matches order amount here
-            // But relying on signature is "okay" as long as order_id was created by us with that amount.
-            // The mapping assumes cartData passed is what was intended.
-
-            cartData.forEach(item => {
-                if (item.type === 'Rent') {
-                    user.rentedHistory.push({
-                        item: item.id,
-                        itemModel: item.mod,
-                        startDate: new Date(item.s),
-                        endDate: new Date(item.e),
-                        totalPrice: item.p,
-                        orderId: orderId,
-                        rentedAt: new Date()
-                    });
-                } else {
-                    user.boughtHistory.push({
-                        item: item.id,
-                        itemModel: item.mod,
-                        price: item.p, // This corresponds to 'price' in boughtHistory schema
-                        orderId: orderId,
-                        date: new Date()
-                    });
-                }
-            });
-
-            await user.save();
-            return res.json({ success: true, message: 'Cart processed successfully', user });
-
-        } else if (plan) {
-            // Subscription Logic
-            const expiryDate = new Date();
-            expiryDate.setMonth(expiryDate.getMonth() + 1);
-
-            user.plan = plan;
-            user.planExpiresAt = expiryDate;
-            await user.save();
-            return res.json({ success: true, message: `Upgraded to ${plan}`, user });
-        } else {
-            return res.status(400).json({ error: "Unknown purchase type" });
-        }
-
+        res.json({ id: response.data.id });
     } catch (e) {
-        console.error('Verify Payment Error:', e);
-        res.status(500).json({ error: e.message });
+        console.error("PayPal Create Order Error:", e.response ? e.response.data : e.message);
+        res.status(500).json({ error: "Failed to create order" });
     }
 });
 
+// Capture Order & Fulfill
+router.post('/capture-order', authMiddleware, async (req, res) => {
+    const { orderID, plan, cartItems } = req.body;
+
+    if (!orderID) return res.status(400).json({ error: "Missing Order ID" });
+
+    try {
+        const accessToken = await generateAccessToken();
+        const response = await axios.post(`${PAYPAL_API}/v2/checkout/orders/${orderID}/capture`, {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            }
+        });
+
+        const captureData = response.data;
+
+        if (captureData.status === 'COMPLETED') {
+            // Payment successful, fulfill order
+            const user = await User.findById(req.user.id);
+            if (!user) return res.status(404).json({ error: 'User not found' });
+
+            if (plan) {
+                // Update Plan Logic
+                const expiryDate = new Date();
+                expiryDate.setMonth(expiryDate.getMonth() + 1);
+                user.plan = plan;
+                user.planExpiresAt = expiryDate;
+                await user.save();
+                return res.json({ success: true, message: `Upgraded to ${plan}`, user });
+            } else if (cartItems && Array.isArray(cartItems)) {
+                // Fulfill Cart Logic
+                cartItems.forEach(item => {
+                    // Normalize item structure based on what frontend sends
+                    // Using structure consistent with CartPage context
+                    if (item.type === 'Rent') {
+                        user.rentedHistory.push({
+                            item: item.itemId || item.id,
+                            itemModel: item.itemModel || 'Listing',
+                            startDate: item.startDate ? new Date(item.startDate) : new Date(),
+                            endDate: item.endDate ? new Date(item.endDate) : new Date(),
+                            totalPrice: item.totalPrice,
+                            orderId: orderID,
+                            rentedAt: new Date()
+                        });
+                    } else {
+                        user.boughtHistory.push({
+                            item: item.itemId || item.id,
+                            itemModel: item.itemModel || 'Listing',
+                            price: item.totalPrice,
+                            orderId: orderID,
+                            date: new Date()
+                        });
+                    }
+                });
+                await user.save();
+                return res.json({ success: true, message: 'Cart processed successfully', user });
+            } else {
+                // Fallback if no context provided but payment success
+                return res.json({ success: true, message: "Payment successful (No fulfillment action triggered)", user });
+            }
+        } else {
+            res.status(400).json({ error: "Payment not completed" });
+        }
+    } catch (e) {
+        console.error("Capture Error:", e.response ? e.response.data : e.message);
+        res.status(500).json({ error: "Payment capture failed" });
+    }
+});
+
+// Cancel Subscription (Existing Logic Preserved)
 router.post('/cancel-subscription', authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
