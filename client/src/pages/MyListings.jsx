@@ -64,7 +64,7 @@ const MyListings = () => {
         const limits = {
             'Freemium': 5,
             'Premium Basic': 25,
-            'Business VIP': 100
+            'Business VIP': 50
         };
 
         const limit = limits[currentPlan] || 5;
@@ -88,7 +88,7 @@ const MyListings = () => {
 
     const getLimitText = () => {
         if (!user) return '';
-        const limits = { 'Freemium': 5, 'Premium Basic': 25, 'Business VIP': 100 };
+        const limits = { 'Freemium': 5, 'Premium Basic': 25, 'Business VIP': 50 };
         const limit = limits[user.plan] || 5;
         return `(${listings.length}/${limit} used)`;
     };

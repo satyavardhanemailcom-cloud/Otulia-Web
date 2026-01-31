@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import {
     FiGrid, FiPackage, FiUsers, FiPieChart,
     FiGlobe, FiCreditCard, FiSettings, FiBell,
@@ -15,8 +16,14 @@ import AddAssetModal from '../components/inventory/AddAssetModal';
 import DealerVerificationModal from '../components/inventory/DealerVerificationModal';
 import numberWithCommas from '../modules/numberwithcomma';
 
+const paypalOptions = {
+    "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
+    currency: "GBP",
+    intent: "capture"
+};
+
 const Inventory = () => {
-    const { token, user, refreshUser, updateUserLocal } = useAuth();
+    const { token, user, refreshUser, updateUserLocal, logout, login } = useAuth();
     const navigate = useNavigate();
 
     // UI State
@@ -34,6 +41,7 @@ const Inventory = () => {
     const [inventoryStatusFilter, setInventoryStatusFilter] = useState('All Status');
     const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('All Categories');
     const [isVerifiedDealer, setIsVerifiedDealer] = useState(user?.isVerified || false);
+    const [upgradePlan, setUpgradePlan] = useState(null); // 'Premium Basic' or 'Business VIP'
 
     useEffect(() => {
         if (user) {
@@ -51,10 +59,6 @@ const Inventory = () => {
     });
 
     useEffect(() => {
-        if (user && user.plan === 'Freemium') {
-            navigate('/pricing');
-            return;
-        }
         fetchDashboard();
     }, [token, user]);
 
@@ -71,7 +75,8 @@ const Inventory = () => {
                     if (updateUserLocal) {
                         updateUserLocal({
                             verificationStatus: resData.userProfile.verificationStatus,
-                            isVerified: resData.userProfile.isVerified
+                            isVerified: resData.userProfile.isVerified,
+                            plan: resData.userProfile.plan
                         });
                     }
 
@@ -149,24 +154,8 @@ const Inventory = () => {
         }
     };
 
-    const handlePlanChange = async (newPlan) => {
-        if (confirm(`Are you sure you want to switch to the ${newPlan} plan?`)) {
-            // TODO: Implement actual payment/upgrade logic
-            // For now, we'll simulate a plan update
-            try {
-                // In a real app, this would call an API endpoint, wait for success, then update context
-                // For this demo/request: "just upgrade for now"
-                if (updateUserLocal) {
-                    updateUserLocal({ plan: newPlan });
-                    alert(`Plan upgraded to ${newPlan}!`);
-                } else {
-                    alert(`Plan upgraded to ${newPlan}! (Refresh to see changes if backend supported)`);
-                    if (refreshUser) refreshUser();
-                }
-            } catch (error) {
-                console.error("Plan Update Error:", error);
-            }
-        }
+    const handlePlanChange = (newPlan) => {
+        setUpgradePlan(newPlan);
     };
 
     if (loading) {
@@ -181,7 +170,7 @@ const Inventory = () => {
 
     const navItems = [
         { id: 'dashboard', label: 'Dashboard', icon: FiGrid },
-        { id: 'inventory', label: 'My Inventory', icon: FiPackage },
+        { id: 'inventory', label: 'My Assets', icon: FiPackage },
         { id: 'leads', label: 'Leads', icon: FiUsers },
         { id: 'analytics', label: 'Analytics & Insights', icon: FiPieChart },
         { id: 'marketplace', label: 'Public Marketplace', icon: FiGlobe },
@@ -228,8 +217,13 @@ const Inventory = () => {
                 {/* TOP HEADER BAR */}
                 <header className={`h-20 border-b flex items-center justify-between px-8 sticky top-0 z-[40] transition-colors duration-300 bg-white border-gray-100`}>
                     <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-bold text-gray-900">
+                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                             {activeTab === 'settings' ? 'Profile & Company Settings' : navItems.find(n => n.id === activeTab)?.label}
+                            {activeTab === 'inventory' && (
+                                <span className="text-sm font-medium text-gray-400">
+                                    ({data?.inventory?.length || 0}/{user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5} used)
+                                </span>
+                            )}
                         </h2>
                     </div>
 
@@ -321,8 +315,7 @@ const Inventory = () => {
                                     <div className="border-t border-gray-50 py-1">
                                         <button
                                             onClick={() => {
-                                                // Handle logout logic here
-                                                console.log('Logging out...');
+                                                logout();
                                                 navigate('/login');
                                             }}
                                             className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
@@ -525,7 +518,12 @@ const Inventory = () => {
 
                                 <button
                                     onClick={() => {
+                                        const limit = user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5;
                                         if (isVerifiedDealer) {
+                                            if ((data?.inventory?.length || 0) >= limit) {
+                                                alert(`You have reached your limit of ${limit} listings. Please upgrade your plan.`);
+                                                return;
+                                            }
                                             setIsAddModalOpen(true);
                                         } else {
                                             if (user?.verificationStatus === 'Pending') {
@@ -1223,13 +1221,13 @@ const Inventory = () => {
                                                 <div className="flex justify-between items-center mb-2">
                                                     <p className="text-sm font-bold opacity-90">Listing Usage</p>
                                                     <p className="text-sm font-black">
-                                                        {data?.inventory?.length || 0} of {user?.plan === 'Business VIP' ? '50' : '25'} listings
+                                                        {data?.inventory?.length || 0} of {user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5} listings
                                                     </p>
                                                 </div>
                                                 <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
                                                     <div
                                                         className="h-full bg-white rounded-full transition-all duration-500"
-                                                        style={{ width: `${((data?.inventory?.length || 8) / (user?.plan === 'Business VIP' ? 50 : 25)) * 100}%` }}
+                                                        style={{ width: `${Math.min(((data?.inventory?.length || 0) / (user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5)) * 100, 100)}%` }}
                                                     ></div>
                                                 </div>
                                             </div>
@@ -1241,7 +1239,7 @@ const Inventory = () => {
                                                 </div>
                                                 <div>
                                                     <p className="text-xs opacity-75 mb-1">Available Listings</p>
-                                                    <p className="text-sm font-bold">{(user?.plan === 'Business VIP' ? 50 : 25) - (data?.inventory?.length || 8)} remaining</p>
+                                                    <p className="text-sm font-bold">{(user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5) - (data?.inventory?.length || 0)} remaining</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1408,6 +1406,83 @@ const Inventory = () => {
                 onClose={() => setIsVerificationModalOpen(false)}
                 onSubmit={handleVerificationSubmit}
             />
+
+            {/* PAYPAL UPGRADE MODAL */}
+            {upgradePlan && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in duration-300">
+                        <button
+                            onClick={() => setUpgradePlan(null)}
+                            className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                        >
+                            <FiPlus className="rotate-45 text-gray-500" />
+                        </button>
+
+                        <div className="text-center mb-8">
+                            <div className="w-16 h-16 rounded-2xl bg-[#FDF8F0] border border-[#F2E8DB] flex items-center justify-center mx-auto mb-4 text-[#D48D2A]">
+                                <FiCreditCard className="text-3xl" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 font-playfair mb-1">Upgrade to {upgradePlan}</h3>
+                            <p className="text-gray-400 text-sm">
+                                {upgradePlan === 'Business VIP' ? '£299.00 / month' : '£99.00 / month'}
+                            </p>
+                        </div>
+
+                        <PayPalScriptProvider options={paypalOptions}>
+                            <PayPalButtons
+                                style={{ layout: "vertical", shape: "rect", color: "gold", label: "pay" }}
+                                createOrder={(data, actions) => {
+                                    return fetch("/api/payment/create-order", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "Authorization": `Bearer ${token}`
+                                        },
+                                        body: JSON.stringify({ plan: upgradePlan })
+                                    })
+                                        .then((response) => response.json())
+                                        .then((order) => order.id)
+                                        .catch(err => {
+                                            console.error("Order Create Error:", err);
+                                            alert("Failed to initiate payment.");
+                                            return null;
+                                        });
+                                }}
+                                onApprove={(data, actions) => {
+                                    return fetch("/api/payment/capture-order", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "Authorization": `Bearer ${token}`
+                                        },
+                                        body: JSON.stringify({ orderID: data.orderID, plan: upgradePlan })
+                                    })
+                                        .then((response) => response.json())
+                                        .then(async (details) => {
+                                            if (details.success) {
+                                                alert(`Successfully upgraded to ${upgradePlan}!`);
+                                                setUpgradePlan(null);
+                                                await fetchDashboard();
+                                                if (refreshUser) refreshUser();
+                                                // Ensure tab stays on subscription or reloads
+                                            } else {
+                                                alert("Payment failed: " + (details.error || "Unknown error"));
+                                            }
+                                        });
+                                }}
+                                onError={(err) => {
+                                    console.error("PayPal Error:", err);
+                                    alert("An error occurred with PayPal.");
+                                }}
+                            />
+                        </PayPalScriptProvider>
+
+                        <p className="text-[10px] text-gray-400 text-center mt-6">
+                            Secure payment processed by PayPal. You can cancel anytime.
+                        </p>
+                    </div>
+                </div>
+            )}
 
             <style dangerouslySetInnerHTML={{
                 __html: `

@@ -145,13 +145,13 @@ const AdminDashboard = () => {
     return (
         <div className="min-h-screen bg-[#F9FAFB] flex montserrat">
             {/* SIDEBAR */}
-            <aside className={`w-72 border-r flex-col fixed inset-y-0 z-50 bg-white border-gray-100 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}>
+            <aside className={`w-72 border-r flex-col fixed inset-y-0 z-50 bg-white border-gray-100 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} transition-transform duration-300 ease-in-out`}>
                 <div className="p-8 pb-12 flex justify-between items-center">
                     <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
                         <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-8" />
-                        <span className="px-2 py-0.5 bg-[#D48D2A] text-white text-[9px] font-black uppercase tracking-widest rounded-md">Admin</span>
+                        <img src="/icons/admin_shield.png" alt="Admin" className="w-6 h-6" />
                     </div>
-                    <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900">
+                    <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900 lg:hidden">
                         <FiXCircle className="h-6 w-6" />
                     </button>
                 </div>
@@ -196,11 +196,11 @@ const AdminDashboard = () => {
             </aside>
 
             {/* MAIN CONTENT */}
-            <main className={`flex-1 bg-[#F9FAFB] transition-all duration-300 ease-in-out`}>
+            <main className={`flex-1 bg-[#F9FAFB] transition-all duration-300 ease-in-out lg:ml-72`}>
                 {/* HEADER */}
                 <header className="h-20 px-4 sm:px-8 flex items-center justify-between border-b border-gray-100 bg-white sticky top-0 z-40">
                     <div className="flex items-center gap-4">
-                        <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900">
+                        <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900 lg:hidden">
                             <FiGrid className="h-6 w-6" />
                         </button>
                         <h2 className="text-lg sm:text-xl font-bold text-gray-900 font-playfair">
@@ -437,7 +437,7 @@ const AdminDashboard = () => {
                                                 <td className="block md:table-cell px-6 py-5" data-label="Status">
                                                     <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">{u.status}</span>
                                                 </td>
-                
+
                                                 <td className="block md:table-cell px-6 py-5" data-label="Est. Revenue">
                                                     <p className="text-sm font-bold text-gray-900">${numberWithCommas(u.revenue)}</p>
                                                 </td>

@@ -25,6 +25,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         highlight_hp: '', highlight_km: '', highlight_cc: '',
         highlight_length: '', highlight_baths: '', highlight_beds: '',
         highlight_area: '', highlight_kml: '', highlight_fuel: '',
+        highlight_garage: '', highlight_built_area: '', highlight_floors: '',
+        highlight_engine_hp: '', highlight_speed: '',
 
         // Car Specific
         mileage: '', fuelType: '', transmission: '',
@@ -153,28 +155,42 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 setLoading(false);
                 return;
             }
-            constructedHighlights = [`${formData.highlight_hp} hp`, `${formData.highlight_km} km`, `${formData.highlight_cc} cc`];
+            constructedHighlights = [`${formData.highlight_hp} hp`, `${formData.highlight_km} mi`, `${formData.highlight_cc} L`];
         } else if (assetType === 'Yacht') {
-            if (!formData.highlight_length || !formData.highlight_baths || !formData.highlight_beds) {
-                alert('Please fill in all Yacht Highlights (Length, Baths, Beds)');
+            if (!formData.highlight_length || !formData.highlight_baths || !formData.highlight_fuel || !formData.highlight_engine_hp || !formData.highlight_beds || !formData.highlight_speed) {
+                alert('Please fill in all Yacht Highlights (Length, Baths, Fuel, Engine, Beds, Speed)');
                 setLoading(false);
                 return;
             }
-            constructedHighlights = [`${formData.highlight_length} M length`, `Bathrooms: ${formData.highlight_baths}`, `Bedrooms: ${formData.highlight_beds}`];
+            constructedHighlights = [
+                `${formData.highlight_length} M length`,
+                `Bathrooms: ${formData.highlight_baths}`,
+                `${formData.highlight_fuel} L fuel capacity`,
+                `${formData.highlight_engine_hp} HP total`,
+                `Bedrooms: ${formData.highlight_beds}`,
+                `TopSpeed: ${formData.highlight_speed} knots`
+            ];
         } else if (assetType === 'Estate') {
-            if (!formData.highlight_area || !formData.highlight_baths || !formData.highlight_beds) {
-                alert('Please fill in all Real Estate Highlights (Area, Baths, Beds)');
+            if (!formData.highlight_area || !formData.highlight_baths || !formData.highlight_garage || !formData.highlight_built_area || !formData.highlight_beds || !formData.highlight_floors) {
+                alert('Please fill in all Real Estate Highlights (Area, Baths, Garage, Built Area, Beds, Floors)');
                 setLoading(false);
                 return;
             }
-            constructedHighlights = [`Land Area: ${formData.highlight_area} Acres`, `Bathrooms: ${formData.highlight_baths}`, `Bedrooms: ${formData.highlight_beds}`];
+            constructedHighlights = [
+                `Land Area: ${formData.highlight_area} Acres`,
+                `Bathrooms: ${formData.highlight_baths}`,
+                `Garage: ${formData.highlight_garage} Cars`,
+                `Built Area: ${formData.highlight_built_area} Sq Ft`,
+                `Bedrooms: ${formData.highlight_beds}`,
+                `Floors: ${formData.highlight_floors}`
+            ];
         } else if (assetType === 'Bike') {
-            if (!formData.highlight_cc || !formData.highlight_kml || !formData.highlight_fuel) {
-                alert('Please fill in all Bike Highlights (Engine, Mileage, Fuel)');
+            if (!formData.highlight_cc || !formData.highlight_speed || !formData.highlight_fuel) {
+                alert('Please fill in all Bike Highlights (Engine, Speed, Fuel)');
                 setLoading(false);
                 return;
             }
-            constructedHighlights = [`${formData.highlight_cc} cc`, `${formData.highlight_kml} km/l`, `${formData.highlight_fuel} liters`];
+            constructedHighlights = [`${formData.highlight_cc} cc`, `${formData.highlight_speed} km/h`, `${formData.highlight_fuel} liters`];
         }
 
         // Append to FormData
@@ -420,28 +436,34 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                             {assetType === 'Car' && (
                                                 <>
                                                     <InputField label="Horsepower (hp) *" name="highlight_hp" value={formData.highlight_hp || ''} placeholder="e.g. 986" onChange={handleInputChange} />
-                                                    <InputField label="Mileage (km) *" name="highlight_km" value={formData.highlight_km || ''} placeholder="e.g. 1,200" onChange={handleInputChange} />
-                                                    <InputField label="Engine (cc) *" name="highlight_cc" value={formData.highlight_cc || ''} placeholder="e.g. 3990" onChange={handleInputChange} />
+                                                    <InputField label="Mileage (mi) *" name="highlight_km" value={formData.highlight_km || ''} placeholder="e.g. 1,200" onChange={handleInputChange} />
+                                                    <InputField label="Engine Capacity (L) *" name="highlight_cc" value={formData.highlight_cc || ''} placeholder="e.g. 3.8" onChange={handleInputChange} />
                                                 </>
                                             )}
                                             {assetType === 'Yacht' && (
                                                 <>
                                                     <InputField label="Length (M) *" name="highlight_length" value={formData.highlight_length || ''} placeholder="e.g. 27" onChange={handleInputChange} />
                                                     <InputField label="Bathrooms *" name="highlight_baths" value={formData.highlight_baths || ''} placeholder="e.g. 6" onChange={handleInputChange} />
-                                                    <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds || ''} placeholder="e.g. 5" onChange={handleInputChange} />
+                                                    <InputField label="Fuel Capacity (L) *" name="highlight_fuel" value={formData.highlight_fuel || ''} placeholder="e.g. 9500" onChange={handleInputChange} />
+                                                    <InputField label="Engine (HP total) *" name="highlight_engine_hp" value={formData.highlight_engine_hp || ''} placeholder="e.g. 3800" onChange={handleInputChange} />
+                                                    <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds || ''} placeholder="e.g. 7" onChange={handleInputChange} />
+                                                    <InputField label="Top Speed (knots) *" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 28" onChange={handleInputChange} />
                                                 </>
                                             )}
                                             {assetType === 'Estate' && (
                                                 <>
-                                                    <InputField label="Land Area (Acres) *" name="highlight_area" value={formData.highlight_area || ''} placeholder="e.g. 2" onChange={handleInputChange} />
-                                                    <InputField label="Bathrooms *" name="highlight_baths" value={formData.highlight_baths || ''} placeholder="e.g. 8" onChange={handleInputChange} />
-                                                    <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds || ''} placeholder="e.g. 6" onChange={handleInputChange} />
+                                                    <InputField label="Land Area (Acres) *" name="highlight_area" value={formData.highlight_area || ''} placeholder="e.g. 0.5" onChange={handleInputChange} />
+                                                    <InputField label="Bathrooms *" name="highlight_baths" value={formData.highlight_baths || ''} placeholder="e.g. 6" onChange={handleInputChange} />
+                                                    <InputField label="Garage (Cars) *" name="highlight_garage" value={formData.highlight_garage || ''} placeholder="e.g. 3" onChange={handleInputChange} />
+                                                    <InputField label="Built Area (Sq Ft) *" name="highlight_built_area" value={formData.highlight_built_area || ''} placeholder="e.g. 6500" onChange={handleInputChange} />
+                                                    <InputField label="Bedrooms *" name="highlight_beds" value={formData.highlight_beds || ''} placeholder="e.g. 5" onChange={handleInputChange} />
+                                                    <InputField label="Floors *" name="highlight_floors" value={formData.highlight_floors || ''} placeholder="e.g. 3" onChange={handleInputChange} />
                                                 </>
                                             )}
                                             {assetType === 'Bike' && (
                                                 <>
                                                     <InputField label="Engine (cc) *" name="highlight_cc" value={formData.highlight_cc || ''} placeholder="e.g. 803" onChange={handleInputChange} />
-                                                    <InputField label="Mileage (km/l) *" name="highlight_kml" value={formData.highlight_kml || ''} placeholder="e.g. 20" onChange={handleInputChange} />
+                                                    <InputField label="Top Speed (km/h) *" name="highlight_speed" value={formData.highlight_speed || ''} placeholder="e.g. 175" onChange={handleInputChange} />
                                                     <InputField label="Fuel Capacity (L) *" name="highlight_fuel" value={formData.highlight_fuel || ''} placeholder="e.g. 13.5" onChange={handleInputChange} />
                                                 </>
                                             )}

@@ -376,11 +376,18 @@ router.post("/submit-verification", authMiddleware, upload.any(), async (req, re
       verificationDocuments[file.fieldname] = publicUrl;
     });
 
+    // Fetch current user to merge documents instead of overwriting
+    const currentUser = await User.findById(req.user.id);
+    const existingDocs = currentUser.verificationDocuments ? Object.fromEntries(currentUser.verificationDocuments) : {};
+
+    // Merge new files into existing docs
+    const updatedDocs = { ...existingDocs, ...verificationDocuments };
+
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
         verificationStatus: "Pending",
-        verificationDocuments: verificationDocuments
+        verificationDocuments: updatedDocs
       },
       { new: true }
     ).select("-password");
