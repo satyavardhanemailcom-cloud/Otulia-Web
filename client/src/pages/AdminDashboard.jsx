@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
     FiGrid, FiUsers, FiPieChart, FiDollarSign, FiSettings,
     FiSearch, FiBell, FiChevronDown, FiCheckCircle, FiXCircle,
-    FiMoreVertical, FiShoppingBag
+    FiMoreVertical, FiShoppingBag, FiShield
 } from 'react-icons/fi';
 import numberWithCommas from '../modules/numberwithcomma';
 
@@ -149,7 +149,10 @@ const AdminDashboard = () => {
                 <div className="p-8 pb-12 flex justify-between items-center">
                     <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
                         <img src="/logos/otulia_logo_black.png" alt="Otulia" className="h-8" />
-                        <img src="/icons/admin_shield.png" alt="Admin" className="w-6 h-6" />
+                        <div className="ml-3 px-3 py-1 bg-[#D48D2A] text-white rounded-md flex items-center gap-1.5 shadow-sm shadow-orange-200">
+                            <FiShield className="text-sm" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">Admin</span>
+                        </div>
                     </div>
                     <button onClick={toggleSidebar} className="text-gray-500 hover:text-gray-900 lg:hidden">
                         <FiXCircle className="h-6 w-6" />
