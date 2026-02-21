@@ -81,7 +81,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
     const handleFileUpload = (e, type) => {
         const files = Array.from(e.target.files);
-        
+
         // Image validation
         if (type === 'cover' || type === 'gallery') {
             const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -122,17 +122,23 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
             setFormData(initialFormState);
         } else if (editData) {
             setStep(1);
-            
+
             // Map model or category string to assetType
             let type = 'Car';
             const model = editData.itemModel || '';
             const cat = editData.category || '';
-            
-            if (model.includes('Car') || cat === 'vehicles') type = 'Car';
-            else if (model.includes('Bike') || cat === 'bikes') type = 'Bike';
-            else if (model.includes('Yacht') || cat === 'yachts') type = 'Yacht';
-            else if (model.includes('Estate') || cat === 'estates') type = 'Estate';
-            
+
+            // Check for exact category match (e.g., 'CarAsset', 'YachtAsset', 'EstateAsset', 'BikeAsset')
+            if (cat === 'CarAsset' || model === 'CarAsset') type = 'Car';
+            else if (cat === 'YachtAsset' || model === 'YachtAsset') type = 'Yacht';
+            else if (cat === 'EstateAsset' || model === 'EstateAsset') type = 'Estate';
+            else if (cat === 'BikeAsset' || model === 'BikeAsset') type = 'Bike';
+            // Fallback to string contains check for backwards compatibility
+            else if (model.includes('Car') || cat.includes('car')) type = 'Car';
+            else if (model.includes('Bike') || cat.includes('bike')) type = 'Bike';
+            else if (model.includes('Yacht') || cat.includes('yacht')) type = 'Yacht';
+            else if (model.includes('Estate') || cat.includes('estate')) type = 'Estate';
+
             setAssetType(type);
             setExistingImages(editData.images || []);
             const spec = editData.specification || {};
@@ -175,6 +181,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 bathrooms: spec.bathrooms || '',
                 brand: editData.brand || '',
                 engineCapacity: spec.engineCapacity || '',
+                configuration: spec.configuration || '',
+                cylinderCapacity: spec.cylinderCapacity || '',
+                interiorMaterial: spec.interiorMaterial || '',
+                countryOfFirstDelivery: spec.countryOfFirstDelivery || '',
             });
         }
     }, [isOpen, editData]);
@@ -341,12 +351,12 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         setAssetType(type.id);
                                         setStep(1);
                                     }}
-                                    className="group bg-white border border-gray-100 p-10 rounded-[2rem] hover:border-[#D48D2A] hover:bg-[#F2E8DB]/20 hover:shadow-xl transition-all duration-300 text-center"
+                                    className="group bg-white border border-gray-100 p-8 rounded-[2rem] hover:border-[#D48D2A] hover:bg-[#F2E8DB]/20 hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-between min-h-[260px]"
                                 >
-                                    <div className="text-6xl mb-6 grayscale group-hover:grayscale-0 transition-all transform group-hover:scale-110 duration-500">
-                                        <img className='w-fit h-fit object-contain' src={type.icon} alt="icon" title={type.label} />
+                                    <div className="flex-1 w-full flex justify-center items-center grayscale group-hover:grayscale-0 transition-all transform group-hover:scale-110 duration-500">
+                                        <img className="max-w-[140px] max-h-[100px] object-contain" src={type.icon} alt="icon" title={type.label} />
                                     </div>
-                                    <span className="text-xl font-bold text-gray-900 font-playfair">{type.label}</span>
+                                    <span className="text-xl font-bold text-gray-900 font-playfair mt-6">{type.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -360,7 +370,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                             <div className="flex justify-between items-center pb-8 border-b border-gray-50">
                                 <div className="flex items-center gap-5">
                                     <div className="w-16 h-16 bg-[#FDF8F0] border border-[#F2E8DB] rounded-2xl flex items-center justify-center text-3xl shadow-sm p-1">
-                                        <img className='w-fit object-contain' src={assetType === 'Car' ? carIcon : assetType === 'Yacht' ? yachtIcon : assetType === 'Estate' ? estateIcon : assetType === 'Bike' ? bikeIcon : otherassetIcon} alt={assetType} />  
+                                        <img className='w-fit object-contain' src={assetType === 'Car' ? carIcon : assetType === 'Yacht' ? yachtIcon : assetType === 'Estate' ? estateIcon : assetType === 'Bike' ? bikeIcon : otherassetIcon} alt={assetType} />
                                     </div>
                                     <div>
                                         <h3 className="text-2xl font-bold text-gray-900 font-playfair">{assetType} Details</h3>
@@ -382,7 +392,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                         <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="625000" onChange={handleInputChange} />
                                         <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
-                                        <InputField label="Location" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} />
+                                        <LocationInputField label="Location" name="location" value={formData.location} placeholder="Beverly Hills, CA" onChange={handleInputChange} />
                                         <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} placeholder="1500" onChange={handleInputChange} />
                                         <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} />
                                         <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} />
@@ -392,6 +402,10 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic', 'Restored']} onChange={handleInputChange} />
                                         <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
                                         <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
+                                        <InputField label="Configuration" name="configuration" value={formData.configuration} placeholder="e.g., LHD" onChange={handleInputChange} />
+                                        <InputField label="Cylinder Capacity" name="cylinderCapacity" type="number" value={formData.cylinderCapacity} placeholder="e.g., 3990" onChange={handleInputChange} />
+                                        <InputField label="Interior Material" name="interiorMaterial" value={formData.interiorMaterial} placeholder="e.g., Alcantara" onChange={handleInputChange} />
+                                        <InputField label="Country of First Delivery" name="countryOfFirstDelivery" value={formData.countryOfFirstDelivery} placeholder="e.g., Germany" onChange={handleInputChange} />
                                     </>
                                 )}
                                 {assetType === 'Yacht' && (
@@ -402,7 +416,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                         <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="8500000" onChange={handleInputChange} />
                                         <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
-                                        <InputField label="Location / Marina" name="location" value={formData.location} placeholder="e.g., Monaco, Port Hercules" onChange={handleInputChange} />
+                                        <LocationInputField label="Location / Marina" name="location" value={formData.location} placeholder="e.g., Monaco, Port Hercules" onChange={handleInputChange} />
                                         <InputField label="Length (m)" name="length" type="number" value={formData.length} placeholder="32" onChange={handleInputChange} />
                                         <InputField label="Beam (m)" name="beam" type="number" value={formData.beam} placeholder="7.5" onChange={handleInputChange} />
                                         <InputField label="Draft (m)" name="draft" type="number" value={formData.draft} placeholder="2.2" onChange={handleInputChange} />
@@ -418,6 +432,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <SelectField label="Property Type" name="propertyType" value={formData.propertyType} options={['Villa', 'Penthouse', 'Apartment', 'Mansion', 'Estate']} onChange={handleInputChange} />
                                         <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="28000000" onChange={handleInputChange} />
                                         <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
+                                        <LocationInputField label="Location" name="location" value={formData.location} placeholder="e.g., Miami, FL" onChange={handleInputChange} />
                                         <InputField label="Country" name="country" value={formData.country} placeholder="e.g., Monaco" onChange={handleInputChange} />
                                         <InputField label="City" name="city" value={formData.city} placeholder="e.g., Monte Carlo" onChange={handleInputChange} />
                                         <InputField label="Address (Optional)" name="address" value={formData.address} placeholder="e.g., Avenue Princess Grace" onChange={handleInputChange} />
@@ -437,7 +452,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Year" name="year" type="number" value={formData.year} onChange={handleInputChange} />
                                         <InputField label={formData.type === 'Rent' ? "Price per Day ($)" : "Price ($)"} name="price" type="number" value={formData.price} placeholder="28000" onChange={handleInputChange} />
                                         <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} />
-                                        <InputField label="Location" name="location" value={formData.location} placeholder="e.g., Miami, FL" onChange={handleInputChange} />
+                                        <LocationInputField label="Location" name="location" value={formData.location} placeholder="e.g., Miami, FL" onChange={handleInputChange} />
                                     </>
                                 )}
                             </div>
@@ -483,7 +498,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                                     <div>
                                         <div className="flex items-center gap-2 mb-6">
-                                           
+
                                             <div>
                                                 <h4 className="text-lg font-bold text-gray-900 font-playfair">Key Highlights</h4>
                                                 <p className="text-xs text-gray-400 italic">These specific details will be highlighted on your listing</p>
@@ -662,24 +677,14 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="pt-10 border-t border-gray-100">
-                                                <div className="flex items-center gap-2 mb-8">
-                                                    <FiMapPin className="text-[#D48D2A] text-xl" />
-                                                    <h4 className="text-lg font-bold text-gray-900 font-playfair">Location Details</h4>
-                                                </div>
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                                    <InputField label="Area / Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} placeholder="e.g., Palm Jumeirah" onChange={handleInputChange} />
-                                                    <InputField label="Latitude" name="latitude" value={formData.latitude} placeholder="e.g., 25.1124" onChange={handleInputChange} />
-                                                    <InputField label="Longitude" name="longitude" value={formData.longitude} placeholder="e.g., 55.1390" onChange={handleInputChange} />
-                                                </div>
-                                            </div>
+
                                         </div>
                                     )}
 
                                     {/* Media Section - Common to all */}
                                     <div className="pt-10 border-t border-gray-100 space-y-10">
                                         <h3 className="text-xl font-bold text-gray-900 mb-8 font-playfair">Media</h3>
-                                        
+
                                         {/* Show existing images if editing */}
                                         {editData && existingImages.length > 0 && (
                                             <div className="bg-amber-50/50 p-8 rounded-[2rem] border border-amber-100">
@@ -860,5 +865,77 @@ const SelectField = ({ label, name, value, options, onChange }) => (
         </select>
     </div>
 );
+
+const LocationInputField = ({ label, name, value, placeholder, onChange }) => {
+    const [suggestions, setSuggestions] = React.useState([]);
+    const [showSuggestions, setShowSuggestions] = React.useState(false);
+    const locationRef = React.useRef(null);
+
+    React.useEffect(() => {
+        const handler = setTimeout(async () => {
+            if (value && value.length > 0) {
+                try {
+                    const response = await fetch(`/api/assets/location-suggestions?q=${encodeURIComponent(value)}`);
+                    const data = await response.json();
+                    setSuggestions(Array.isArray(data) ? data : []);
+                } catch (error) {
+                    console.error("Failed to fetch location suggestions", error);
+                }
+            } else {
+                setSuggestions([]);
+            }
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [value]);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (locationRef.current && !locationRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative" ref={locationRef}>
+            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">{label}</label>
+            <input
+                type="text"
+                name={name}
+                value={value}
+                onChange={(e) => {
+                    onChange(e);
+                    setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                placeholder={placeholder}
+                className="w-full bg-gray-50/50 border border-gray-100 rounded-xl px-5 py-3.5 text-sm font-medium focus:outline-none focus:border-[#D48D2A] focus:bg-white transition-all placeholder:text-gray-300"
+                autoComplete="off"
+            />
+            {showSuggestions && suggestions.length > 0 && (
+                <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-2xl left-0 p-2 overflow-hidden max-h-64 overflow-y-auto">
+                    {suggestions.map((s, idx) => {
+                        const labelText = typeof s === 'string' ? s : s.value;
+                        return (
+                            <li
+                                key={idx}
+                                className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors"
+                                onClick={() => {
+                                    onChange({ target: { name, value: labelText, type: 'text' } });
+                                    setShowSuggestions(false);
+                                }}
+                            >
+                                {labelText}
+                            </li>
+                        );
+                    })}
+                </ul>
+            )}
+        </div>
+    );
+};
 
 export default AddAssetModal;

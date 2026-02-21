@@ -389,31 +389,35 @@ const Inventory = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {/* Last 30 Days Dropdown */}
-                        <div className="relative">
-                            <select className="appearance-none bg-white border border-gray-200 rounded-lg py-2 pl-4 pr-10 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] cursor-pointer">
-                                <option>Last 30 days</option>
-                                <option>Last 7 days</option>
-                                <option>Last 90 days</option>
-                                <option>This year</option>
-                            </select>
-                            <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm" />
-                        </div>
+                        {activeTab === 'dashboard' && (
+                            <>
+                                {/* Last 30 Days Dropdown */}
+                                <div className="relative">
+                                    <select className="appearance-none bg-white border border-gray-200 rounded-lg py-2 pl-4 pr-10 text-sm font-medium text-gray-600 focus:outline-none focus:border-[#D48D2A] cursor-pointer">
+                                        <option>Last 30 days</option>
+                                        <option>Last 7 days</option>
+                                        <option>Last 90 days</option>
+                                        <option>This year</option>
+                                    </select>
+                                    <FiChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm" />
+                                </div>
 
-                        {/* Day/Week/Month Tabs */}
-                        <div className="flex items-center rounded-lg bg-gray-50 p-1">
-                            {['Day', 'Week', 'Month'].map((t) => (
-                                <button
-                                    key={t}
-                                    onClick={() => setTimeframe(t)}
-                                    className={`px-5 py-2 text-sm font-semibold transition-all rounded-md ${timeframe === t
-                                        ? 'bg-[#D48D2A] text-white shadow-sm'
-                                        : 'text-gray-600 hover:text-gray-900'}`}
-                                >
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
+                                {/* Day/Week/Month Tabs */}
+                                <div className="flex items-center rounded-lg bg-gray-50 p-1">
+                                    {['Day', 'Week', 'Month'].map((t) => (
+                                        <button
+                                            key={t}
+                                            onClick={() => setTimeframe(t)}
+                                            className={`px-5 py-2 text-sm font-semibold transition-all rounded-md ${timeframe === t
+                                                ? 'bg-[#D48D2A] text-white shadow-sm'
+                                                : 'text-gray-600 hover:text-gray-900'}`}
+                                        >
+                                            {t}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
 
                         {/* Icons Section */}
                         <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
@@ -432,7 +436,7 @@ const Inventory = () => {
 
                                 {/* Notification Dropdown */}
                                 {isNotificationDropdownOpen && (
-                                    <div 
+                                    <div
                                         className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 py-3 animate-in fade-in slide-in-from-top-2 duration-200 z-[60]"
                                         onMouseLeave={() => setIsNotificationDropdownOpen(false)}
                                     >
@@ -448,8 +452,8 @@ const Inventory = () => {
                                                 </div>
                                             ) : (
                                                 data.notifications.map((notif) => (
-                                                    <div 
-                                                        key={notif._id} 
+                                                    <div
+                                                        key={notif._id}
                                                         onClick={() => {
                                                             handleRemoveNotification(notif._id);
                                                             if (notif.targetTab) {
@@ -470,7 +474,7 @@ const Inventory = () => {
                                                                 <p className="text-[10px] text-gray-400 font-medium">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • Click to view</p>
                                                             </div>
                                                         </div>
-                                                        <button 
+                                                        <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 handleRemoveNotification(notif._id);
@@ -485,7 +489,7 @@ const Inventory = () => {
                                         </div>
                                         {data?.notifications?.length > 0 && (
                                             <div className="px-4 pt-2 text-center">
-                                                <button 
+                                                <button
                                                     onClick={() => {
                                                         setActiveTab('leads');
                                                         setIsNotificationDropdownOpen(false);
@@ -578,8 +582,8 @@ const Inventory = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                                 <AnalyticsCard title="Total Views" value={data.stats.totalViews} growth="+12.5%" icon={<FiEye />} />
                                 <AnalyticsCard title="Total Leads" value={data.stats.totalLeads} growth="+8.2%" icon={<FiUsers />} />
-                                <AnalyticsCard title="Saved / Shortlisted" value="89" growth="+5.1%" icon={<FiHeart />} />
-                                <AnalyticsCard title="Est. Lead Value" value={`$${numberWithCommas(4250000)}`} growth="+15.3%" icon={<FiTrendingUp />} />
+                                <AnalyticsCard title="Saved / Shortlisted" value={data.stats.savedCount || "0"} growth="+5.1%" icon={<FiHeart />} />
+                                <AnalyticsCard title="Est. Lead Value" value={`$${numberWithCommas(data.stats.estLeadValue || 0)}`} growth="+15.3%" icon={<FiTrendingUp />} />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -587,14 +591,22 @@ const Inventory = () => {
                                 <div className="lg:col-span-3 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
                                     <h4 className="text-lg font-bold text-gray-900 mb-8 font-playfair">Views vs Leads Over Time</h4>
                                     <div className="h-64 flex items-end gap-4 border-b border-gray-100 pb-2 overflow-hidden px-4 relative">
-                                        {/* Simplified Line Chart Mockup */}
+                                        {/* Dynamic Simplified Line Chart */}
                                         <svg className="absolute inset-0 w-full h-full px-10 pb-10" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                            <path d="M0,80 L20,70 L40,75 L60,60 L80,65 L100,50" fill="none" stroke="#D48D2A" strokeWidth="2" />
-                                            <path d="M0,90 L20,85 L40,88 L60,75 L80,80 L100,65" fill="none" stroke="#3B82F6" strokeWidth="2" />
+                                            {/* Views Line - Orange */}
+                                            <polyline
+                                                points={data.analytics?.performanceTrend?.map((d, i, arr) => `${(i * 100) / Math.max(1, arr.length - 1)},${100 - (d.views > 0 ? (d.views / Math.max(10, ...arr.map(t => t.views))) * 90 : 10)}`).join(' ')}
+                                                fill="none" stroke="#D48D2A" strokeWidth="2" strokeLinejoin="round"
+                                            />
+                                            {/* Leads Line - Blue */}
+                                            <polyline
+                                                points={data.analytics?.performanceTrend?.map((d, i, arr) => `${(i * 100) / Math.max(1, arr.length - 1)},${100 - (d.leads > 0 ? (d.leads / Math.max(10, ...arr.map(t => t.leads))) * 90 : 10)}`).join(' ')}
+                                                fill="none" stroke="#3B82F6" strokeWidth="2" strokeLinejoin="round"
+                                            />
                                         </svg>
-                                        {['Jan 1', 'Jan 8', 'Jan 15', 'Jan 22', 'Jan 29', 'Feb 5', 'Feb 12'].map((date, idx) => (
-                                            <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full">
-                                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none mb-[-24px]">{date}</span>
+                                        {(data.analytics?.performanceTrend || []).map((d, idx) => (
+                                            <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full relative z-10">
+                                                <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none mb-[-24px]">{d.week}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -612,21 +624,26 @@ const Inventory = () => {
                                 <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
                                     <h4 className="text-lg font-bold text-gray-900 mb-8 font-playfair">Leads by Asset Category</h4>
                                     <div className="space-y-6">
-                                        {[
-                                            { label: 'Cars', count: 142, color: 'bg-[#D48D2A]' },
-                                            { label: 'Yachts', count: 86, color: 'bg-blue-500' },
-                                            { label: 'Real Estate', count: 98, color: 'bg-emerald-500' },
-                                            { label: 'Bikes', count: 54, color: 'bg-indigo-500' }
-                                        ].map((cat) => (
-                                            <div key={cat.label}>
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">{cat.label}</span>
+                                        {(data.analytics?.leadsByCategory || [
+                                            { label: 'Cars', count: 0 },
+                                            { label: 'Yachts', count: 0 },
+                                            { label: 'Real Estate', count: 0 },
+                                            { label: 'Bikes', count: 0 }
+                                        ]).map((cat, idx) => {
+                                            const maxCount = Math.max(160, ...(data.analytics?.leadsByCategory || []).map(c => c.count));
+                                            const colors = ['bg-[#D48D2A]', 'bg-[#3B82F6]']; // Decreased number of colors from 4 to 2 (Orange and Blue)
+                                            const color = colors[idx % 2];
+                                            return (
+                                                <div key={cat.label}>
+                                                    <div className="flex justify-between items-center mb-2">
+                                                        <span className="text-xs font-bold text-gray-600 uppercase tracking-tighter">{cat.label}</span>
+                                                    </div>
+                                                    <div className="w-full h-8 bg-gray-50 rounded-lg overflow-hidden flex">
+                                                        <div className={`${color} h-full transition-all duration-1000`} style={{ width: `${(cat.count / maxCount) * 100}%` }}></div>
+                                                    </div>
                                                 </div>
-                                                <div className="w-full h-8 bg-gray-50 rounded-lg overflow-hidden flex">
-                                                    <div className={`${cat.color} h-full transition-all duration-1000`} style={{ width: `${(cat.count / 160) * 100}%` }}></div>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                     <div className="flex justify-between mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                                         <span>0</span>
@@ -646,12 +663,12 @@ const Inventory = () => {
                                     </div>
                                     <div className="flex items-start justify-between">
                                         <div>
-                                            <h5 className="text-xl font-bold text-gray-900 mb-2 font-playfair">{data.inventory[1]?.title || '2024 Lamborghini Revuelto'}</h5>
+                                            <h5 className="text-xl font-bold text-gray-900 mb-2 font-playfair">{data.topAssets?.[0]?.name || 'Bugatti Chiron'}</h5>
                                             <div className="flex items-center gap-4 text-gray-400 text-sm mb-4">
-                                                <span className="flex items-center gap-1.5"><FiEye /> 12,450 views</span>
-                                                <span className="flex items-center gap-1.5"><FiUsers /> 34 leads</span>
+                                                <span className="flex items-center gap-1.5"><FiEye /> {numberWithCommas(data.topAssets?.[0]?.views || 12450)} views</span>
+                                                <span className="flex items-center gap-1.5"><FiUsers /> {numberWithCommas(data.topAssets?.[0]?.leads || 34)} leads</span>
                                             </div>
-                                            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold uppercase">Cars</span>
+                                            <span className="px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold uppercase">{data.topAssets?.[0]?.category?.replace('Asset', '') || 'Cars'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -662,12 +679,12 @@ const Inventory = () => {
                                     </div>
                                     <div className="flex items-start justify-between">
                                         <div>
-                                            <h5 className="text-xl font-bold text-gray-900 mb-2 font-playfair">{data.inventory[7]?.title || 'Vintage 1965 Aston Martin DB5'}</h5>
+                                            <h5 className="text-xl font-bold text-gray-900 mb-2 font-playfair">{data.bottomAssets?.[0]?.name || 'Vintage 1965 Aston Martin DB5'}</h5>
                                             <div className="flex items-center gap-4 text-gray-400 text-sm mb-4">
-                                                <span className="flex items-center gap-1.5"><FiEye /> 890 views</span>
-                                                <span className="flex items-center gap-1.5"><FiUsers /> 2 leads</span>
+                                                <span className="flex items-center gap-1.5"><FiEye /> {numberWithCommas(data.bottomAssets?.[0]?.views || 890)} views</span>
+                                                <span className="flex items-center gap-1.5"><FiUsers /> {numberWithCommas(data.bottomAssets?.[0]?.leads || 2)} leads</span>
                                             </div>
-                                            <span className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-[10px] font-bold uppercase">Cars</span>
+                                            <span className="px-3 py-1 bg-orange-50 text-orange-600 rounded-full text-[10px] font-bold uppercase">{data.bottomAssets?.[0]?.category?.replace('Asset', '') || 'Cars'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -694,10 +711,10 @@ const Inventory = () => {
                                             <tr key={lead.id} className="hover:bg-gray-50/30 transition-all">
                                                 <td className="px-8 py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <img 
-                                                            src={lead.buyerPhoto || '/assets/user.png'} 
-                                                            className="w-8 h-8 rounded-full border border-gray-100 object-cover" 
-                                                            alt="Buyer" 
+                                                        <img
+                                                            src={lead.buyerPhoto || '/assets/user.png'}
+                                                            className="w-8 h-8 rounded-full border border-gray-100 object-cover"
+                                                            alt="Buyer"
                                                             onError={(e) => e.target.src = '/assets/user.png'}
                                                         />
                                                         <div>
@@ -991,10 +1008,10 @@ const Inventory = () => {
                                                 <tr key={lead.id} className="hover:bg-gray-50/50 transition-all group">
                                                     <td className="px-10 py-6">
                                                         <div className="flex items-center gap-4">
-                                                            <img 
-                                                                src={lead.buyerPhoto || '/assets/user.png'} 
-                                                                className="w-10 h-10 rounded-full border border-gray-100 object-cover" 
-                                                                alt="Buyer" 
+                                                            <img
+                                                                src={lead.buyerPhoto || '/assets/user.png'}
+                                                                className="w-10 h-10 rounded-full border border-gray-100 object-cover"
+                                                                alt="Buyer"
                                                                 onError={(e) => e.target.src = '/assets/user.png'}
                                                             />
                                                             <div>
@@ -1043,16 +1060,16 @@ const Inventory = () => {
                                                         <div className="flex items-center justify-end gap-2">
                                                             {user.plan === 'Business VIP' ? (
                                                                 <>
-                                                                    <a 
-                                                                        href={`https://wa.me/${lead.buyerPhone?.replace(/[^0-9]/g, '')}`} 
-                                                                        target="_blank" 
+                                                                    <a
+                                                                        href={`https://wa.me/${lead.buyerPhone?.replace(/[^0-9]/g, '')}`}
+                                                                        target="_blank"
                                                                         rel="noopener noreferrer"
                                                                         className="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
                                                                         title="WhatsApp Message"
                                                                     >
                                                                         <FiPhone className="text-lg" />
                                                                     </a>
-                                                                    <a 
+                                                                    <a
                                                                         href={`mailto:${lead.customerContact}`}
                                                                         className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-all"
                                                                         title="Send Email"
@@ -1061,8 +1078,8 @@ const Inventory = () => {
                                                                     </a>
                                                                 </>
                                                             ) : (
-                                                                <button 
-                                                                    disabled 
+                                                                <button
+                                                                    disabled
                                                                     className="p-2 bg-gray-50 text-gray-300 rounded-lg cursor-not-allowed opacity-50"
                                                                     title="Upgrade to Business VIP to Contact"
                                                                 >
@@ -1166,33 +1183,36 @@ const Inventory = () => {
                                 <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm">
                                     <h4 className="text-xl font-bold text-gray-900 mb-10 font-playfair">Leads by Location</h4>
                                     <div className="space-y-8">
-                                        {[
-                                            { country: 'United States', count: 98 },
-                                            { country: 'United Kingdom', count: 68 },
-                                            { country: 'UAE', count: 54 },
-                                            { country: 'France', count: 42 },
-                                            { country: 'Germany', count: 38 }
-                                        ].map((loc) => (
-                                            <div key={loc.country} className="flex flex-col gap-2">
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-tight">{loc.country}</span>
-                                                    <span className="text-xs font-black text-gray-900">{loc.count}</span>
+                                        {(data.analytics?.leadsByLocation || [
+                                            { country: 'United States', count: 0 },
+                                            { country: 'United Kingdom', count: 0 },
+                                            { country: 'UAE', count: 0 },
+                                            { country: 'France', count: 0 },
+                                            { country: 'Germany', count: 0 }
+                                        ]).map((loc) => {
+                                            const maxLocCount = Math.max(10, ...(data.analytics?.leadsByLocation || []).map(l => l.count));
+                                            return (
+                                                <div key={loc.country} className="flex flex-col gap-2">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-xs font-bold text-gray-500 uppercase tracking-tight">{loc.country}</span>
+                                                        <span className="text-xs font-black text-gray-900">{loc.count || 0}</span>
+                                                    </div>
+                                                    <div className="w-full h-10 bg-gray-50/50 rounded-lg overflow-hidden flex items-center pr-2">
+                                                        <div
+                                                            className="h-full bg-[#D48D2A] rounded-lg transition-all duration-1000 ease-out"
+                                                            style={{ width: `${maxLocCount > 0 ? (loc.count / maxLocCount) * 100 : 0}%` }}
+                                                        ></div>
+                                                    </div>
                                                 </div>
-                                                <div className="w-full h-10 bg-gray-50/50 rounded-lg overflow-hidden flex items-center pr-2">
-                                                    <div
-                                                        className="h-full bg-[#D48D2A] rounded-lg transition-all duration-1000 ease-out"
-                                                        style={{ width: `${loc.count}%` }}
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                     <div className="flex justify-between mt-6 px-1 opacity-20 text-[9px] font-black text-gray-400">
                                         <span>0</span>
-                                        <span>25</span>
-                                        <span>50</span>
-                                        <span>75</span>
-                                        <span>100</span>
+                                        <span>25%</span>
+                                        <span>50%</span>
+                                        <span>75%</span>
+                                        <span>100%</span>
                                     </div>
                                 </div>
                             </div>
@@ -1226,30 +1246,7 @@ const Inventory = () => {
                                 </table>
                             </div>
 
-                            {/* AI Insights Section */}
-                            <div className="space-y-6">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-yellow-500 text-xl">💡</span>
-                                    <h4 className="text-xl font-bold text-gray-900 font-playfair">AI Insights</h4>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="bg-white p-8 rounded-[1.5rem] border border-gray-100 border-l-4 border-l-[#D48D2A] shadow-sm">
-                                        <p className="text-sm text-gray-500 leading-relaxed">
-                                            High views but low leads on <span className="font-bold text-gray-900">'Vintage 1965 Aston Martin DB5'</span> — consider improving listing images or adjusting price.
-                                        </p>
-                                    </div>
-                                    <div className="bg-white p-8 rounded-[1.5rem] border border-gray-100 border-l-4 border-l-emerald-500 shadow-sm">
-                                        <p className="text-sm text-gray-500 leading-relaxed">
-                                            <span className="font-bold text-gray-900">'2024 Lamborghini Revuelto'</span> performs 340% above category average. Consider featuring it prominently.
-                                        </p>
-                                    </div>
-                                    <div className="bg-white p-8 rounded-[1.5rem] border border-gray-100 border-l-4 border-l-blue-500 shadow-sm">
-                                        <p className="text-sm text-gray-500 leading-relaxed">
-                                            Average response time to leads is <span className="font-bold text-gray-900">4.2 hours</span>. Faster responses correlate with higher conversion rates.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+
 
                         </div>
                     )}
@@ -1397,14 +1394,14 @@ const Inventory = () => {
                                     {/* Form Fields */}
                                     <div className="lg:col-span-8 space-y-8">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                            <SettingsInputField label="Company Name" value={companyInfo.name} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({...companyInfo, name: e.target.value})} />
-                                            <SettingsInputField label="Website" value={companyInfo.website} icon={<FiGlobe />} readOnly={false} onChange={(e) => setCompanyInfo({...companyInfo, website: e.target.value})} />
+                                            <SettingsInputField label="Company Name" value={companyInfo.name} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({ ...companyInfo, name: e.target.value })} />
+                                            <SettingsInputField label="Website" value={companyInfo.website} icon={<FiGlobe />} readOnly={false} onChange={(e) => setCompanyInfo({ ...companyInfo, website: e.target.value })} />
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                             <SettingsInputField label="Public Email" value={companyInfo.email} icon={<FiMail />} readOnly={true} />
-                                            <SettingsInputField label="Public Phone" value={companyInfo.phone} icon={<FiPhone />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({...companyInfo, phone: e.target.value})} />
+                                            <SettingsInputField label="Public Phone" value={companyInfo.phone} icon={<FiPhone />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({ ...companyInfo, phone: e.target.value })} />
                                         </div>
-                                        <SettingsInputField label="Office Address" value={companyInfo.address} icon={<FiMapPin />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({...companyInfo, address: e.target.value})} />
+                                        <SettingsInputField label="Office Address" value={companyInfo.address} icon={<FiMapPin />} readOnly={isVerifiedDealer} onChange={(e) => setCompanyInfo({ ...companyInfo, address: e.target.value })} />
                                     </div>
                                 </div>
                             </div>
@@ -1503,7 +1500,7 @@ const Inventory = () => {
 
                             {/* Footer Action */}
                             <div className="flex justify-end pt-4 pb-10">
-                                <button 
+                                <button
                                     onClick={handleSaveSettings}
                                     className="bg-[#D48D2A] text-white px-10 py-4 rounded-xl flex items-center gap-2 font-bold text-sm shadow-xl shadow-[#D48D2A]/20 hover:bg-[#B5751C] transition-all"
                                 >
@@ -1710,7 +1707,7 @@ const Inventory = () => {
                                     <p className="text-gray-500 text-sm max-w-2xl mx-auto mb-8 leading-relaxed">
                                         For large dealerships, auction houses, or enterprises with specific requirements, we offer tailored solutions with dedicated support and custom integrations.
                                     </p>
-                                    <button className="px-8 py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20">
+                                    <button onClick={() => navigate('/contact')} className="px-8 py-4 bg-[#D48D2A] text-white rounded-xl font-bold text-sm hover:bg-[#B5751C] transition-all shadow-lg shadow-[#D48D2A]/20">
                                         Contact Sales
                                     </button>
                                 </div>

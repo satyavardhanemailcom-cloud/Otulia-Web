@@ -360,7 +360,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
 
                     <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Location</label>
-                        <input type="text" name="location" value={formData.location} required className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors" onChange={handleInputChange} />
+                        <LocationInputField value={formData.location} onChange={handleInputChange} />
                     </div>
 
                     <div>
@@ -408,14 +408,14 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <SelectField label="Condition" name="condition" value={formData.condition} options={['New', 'Used', 'Classic']} onChange={handleInputChange} />
                                     <InputField label="Ownership Count" name="ownershipCount" type="number" value={formData.ownershipCount} onChange={handleInputChange} />
                                     <SelectField label="Accident History" name="accidentHistory" value={formData.accidentHistory} options={['None', 'Minor', 'Repaired']} onChange={handleInputChange} />
-                                    
+
                                     {/* Bike Docs */}
                                     <div className="md:col-span-2 space-y-4 pt-4 border-t border-gray-100">
                                         <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Documents (PDF Only)</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
                                                 <label className="block text-[10px] font-bold text-gray-500 uppercase mb-2">Registration (RC)</label>
-                                                <input type="file" accept=".pdf" className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800" 
+                                                <input type="file" accept=".pdf" className="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800"
                                                     onChange={(e) => setRegistrationRC(e.target.files[0])} />
                                             </div>
                                             <div>
@@ -472,9 +472,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                     <InputField label="Country" name="country" value={formData.country} onChange={handleInputChange} />
                                     <InputField label="City" name="city" value={formData.city} onChange={handleInputChange} />
                                     <InputField label="Address" name="address" value={formData.address} onChange={handleInputChange} />
-                                    <InputField label="Neighborhood" name="areaNeighborhood" value={formData.areaNeighborhood} onChange={handleInputChange} />
-                                    <InputField label="Latitude" name="latitude" value={formData.latitude} onChange={handleInputChange} />
-                                    <InputField label="Longitude" name="longitude" value={formData.longitude} onChange={handleInputChange} />
+
                                 </>
                             )}
                         </div>
@@ -484,7 +482,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 <div>
                                     <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Amenities</label>
                                     <div className="flex flex-wrap gap-2">
-                                        {['Pool', 'Garden', 'Parking', 'Security', 'Smart Home', 'Gym', 'Wine Cellar', 'Home Theater', 'Elevator', 'Sea View'].map(item => (
+                                        {['Pool', 'Garden', 'Parking', 'Security', 'Smart Home', 'Gym', 'Wine Cellar', 'Home Theater', 'Elevator'].map(item => (
                                             <button
                                                 key={item}
                                                 type="button"
@@ -533,7 +531,7 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                     {/* Media Upload Section */}
                     <div className="space-y-6 pt-4 border-t border-gray-100">
                         <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">Media & Documents</h3>
-                        
+
                         {/* Image Upload */}
                         <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100">
                             <div className="flex items-center gap-3 mb-4">
@@ -576,27 +574,27 @@ const CreateListingModal = ({ isOpen, onClose, onCreated, editData }) => {
                                 </div>
                             </label>
 
-                                                        {images.length > 0 && (
-                                                            <div className="mt-4 space-y-2">
-                                                                {images.map((file, idx) => (
-                                                                    <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
-                                                                        <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
-                                                                            <FiCheckCircle className="text-sm" />
-                                                                        </div>
-                                                                        <p className="text-xs font-bold text-gray-700 truncate flex-1">{file.name}</p>
-                                                                        <button type="button" onClick={() => handleRemoveFile(idx, 'images')} className="p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-all">
-                                                                            <FiX />
-                                                                        </button>
-                                                                    </div>
-                                                                ))}
-                                                                                            </div>
-                                                                                        )}
-                                                                                    </div>
-                                                                                </div>
-                                                            
-                                                                                <div className="pt-4">                        <button disabled={loading} type="submit" className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
-                            {loading ? 'Processing...' : (editData ? 'Update Listing' : 'Submit Listing')}
-                        </button>
+                            {images.length > 0 && (
+                                <div className="mt-4 space-y-2">
+                                    {images.map((file, idx) => (
+                                        <div key={idx} className="flex items-center gap-3 bg-white p-3 rounded-xl border border-emerald-100 shadow-sm">
+                                            <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                                                <FiCheckCircle className="text-sm" />
+                                            </div>
+                                            <p className="text-xs font-bold text-gray-700 truncate flex-1">{file.name}</p>
+                                            <button type="button" onClick={() => handleRemoveFile(idx, 'images')} className="p-1 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-all">
+                                                <FiX />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="pt-4">                        <button disabled={loading} type="submit" className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all disabled:opacity-50">
+                        {loading ? 'Processing...' : (editData ? 'Update Listing' : 'Submit Listing')}
+                    </button>
                     </div>
                 </form>
             </div>
@@ -632,5 +630,76 @@ const SelectField = ({ label, name, value, options, onChange }) => (
         </select>
     </div>
 );
+
+const LocationInputField = ({ value, onChange }) => {
+    const [suggestions, setSuggestions] = React.useState([]);
+    const [showSuggestions, setShowSuggestions] = React.useState(false);
+    const locationRef = React.useRef(null);
+
+    React.useEffect(() => {
+        const handler = setTimeout(async () => {
+            if (value && value.length > 0) {
+                try {
+                    const response = await fetch(`/api/assets/location-suggestions?q=${encodeURIComponent(value)}`);
+                    const data = await response.json();
+                    setSuggestions(Array.isArray(data) ? data : []);
+                } catch (error) {
+                    console.error("Failed to fetch location suggestions", error);
+                }
+            } else {
+                setSuggestions([]);
+            }
+        }, 300);
+
+        return () => clearTimeout(handler);
+    }, [value]);
+
+    React.useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (locationRef.current && !locationRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative" ref={locationRef}>
+            <input
+                type="text"
+                name="location"
+                value={value}
+                required
+                onChange={(e) => {
+                    onChange(e);
+                    setShowSuggestions(true);
+                }}
+                onFocus={() => setShowSuggestions(true)}
+                className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:border-black transition-colors"
+                autoComplete="off"
+            />
+            {showSuggestions && suggestions.length > 0 && (
+                <ul className="absolute z-[110] w-full bg-white border border-gray-100 rounded-xl mt-2 shadow-2xl left-0 p-2 overflow-hidden max-h-64 overflow-y-auto">
+                    {suggestions.map((s, idx) => {
+                        const labelText = typeof s === 'string' ? s : s.value;
+                        return (
+                            <li
+                                key={idx}
+                                className="p-3 rounded-lg hover:bg-gray-50 cursor-pointer text-gray-600 text-sm font-medium transition-colors"
+                                onClick={() => {
+                                    onChange({ target: { name: 'location', value: labelText, type: 'text' } });
+                                    setShowSuggestions(false);
+                                }}
+                            >
+                                {labelText}
+                            </li>
+                        );
+                    })}
+                </ul>
+            )}
+        </div>
+    );
+};
 
 export default CreateListingModal;

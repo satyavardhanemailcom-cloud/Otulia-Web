@@ -18,6 +18,7 @@ import FAQ from "./pages/company_pages/FAQ";
 // Auth pages
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import ContactSales from "./pages/ContactSales";
 
 // User pages
 import Profile from "./pages/Profile";
@@ -61,7 +62,7 @@ function App() {
       <Routes>
 
         <Route path="/" element={<Home />} />
-  
+
         <Route path="/shop" element={<Shop />} />
         <Route path="/community" element={<Community />} />
         <Route path="/rent" element={<Rent />} />
@@ -83,7 +84,7 @@ function App() {
         {/* User routes */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/success" element={<Success />} />
-        <Route path="/listings"element={<MyListings />} />
+        <Route path="/listings" element={<MyListings />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/admin" element={<AdminDashboard />} />
@@ -95,6 +96,7 @@ function App() {
         <Route path="/shipping" element={<Shipping />} />
         <Route path="/returns" element={<Returns />} />
         <Route path="/cookie-policy" element={<CookiePolicy />} />
+        <Route path="/contact" element={<ContactSales />} />
       </Routes>
       {shouldShowFooter && <Footer />}
     </CartProvider>

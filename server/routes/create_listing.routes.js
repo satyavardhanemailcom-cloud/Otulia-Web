@@ -77,7 +77,7 @@ const deleteFolderFromCloudinary = async (folderPath) => {
         await cloudinary.api.delete_resources_by_prefix(folderPath, { resource_type: 'image' });
         await cloudinary.api.delete_resources_by_prefix(folderPath, { resource_type: 'raw' });
         await cloudinary.api.delete_resources_by_prefix(folderPath, { resource_type: 'video' });
-        
+
         // Then delete the folder itself
         await cloudinary.api.delete_folder(folderPath);
         console.log(`Cloudinary folder deleted: ${folderPath}`);
@@ -92,7 +92,7 @@ const deleteFolderFromCloudinary = async (folderPath) => {
  * POST /api/listings/create
  */
 router.post('/create', authMiddleware, upload.fields([
-    { name: 'images', maxCount: 5 },
+    { name: 'images', maxCount: 15 },
     { name: 'documents', maxCount: 3 },
     { name: 'registrationRC', maxCount: 1 },
     { name: 'insurance', maxCount: 1 },
@@ -112,7 +112,7 @@ router.post('/create', authMiddleware, upload.fields([
             const makeOrBrand = req.body.make || req.body.brand || req.body.builder || '';
             const model = req.body.model || '';
             const variant = req.body.variant || '';
-            
+
             if (makeOrBrand || model) {
                 title = `${makeOrBrand} ${model} ${variant}`.trim();
             } else if (req.body.propertyName) {
@@ -164,7 +164,7 @@ router.post('/create', authMiddleware, upload.fields([
         const imageFiles = req.files['images'] || [];
         const docFiles = req.files['documents'] || [];
 
-        
+
 
         // Define Base Data
         const baseData = {
@@ -251,6 +251,7 @@ router.post('/create', authMiddleware, upload.fields([
                 mileage: req.body.mileage,
                 power: req.body.horsepower,
                 cylinderCapacity: req.body.cylinderCapacity,
+                configuration: req.body.configuration,
                 topSpeed: req.body.topSpeed,
                 engineType: req.body.engineType,
                 steering: req.body.steering,
@@ -390,7 +391,7 @@ router.post('/create', authMiddleware, upload.fields([
  * PUT /api/listings/:id
  */
 router.put('/:id', authMiddleware, upload.fields([
-    { name: 'images', maxCount: 5 },
+    { name: 'images', maxCount: 15 },
     { name: 'documents', maxCount: 3 },
     { name: 'registrationRC', maxCount: 1 },
     { name: 'insurance', maxCount: 1 },
@@ -439,7 +440,7 @@ router.put('/:id', authMiddleware, upload.fields([
                 newImageUrls.push(result.secure_url);
                 fs.unlinkSync(file.path);
             }
-            listing.images = newImageUrls.slice(0, 5);
+            listing.images = newImageUrls.slice(0, 15);
         }
 
         const docFields = ['documents', 'registrationRC', 'insurance', 'serviceHistory', 'businessLicense', 'taxId', 'proofOfAddress', 'dealershipCertificate', 'insuranceProof'];
@@ -498,6 +499,7 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.mileage) { spec.mileage = req.body.mileage; keySpec.mileage = req.body.mileage; }
             if (req.body.horsepower) { spec.power = req.body.horsepower; keySpec.power = req.body.horsepower; }
             if (req.body.cylinderCapacity) { spec.cylinderCapacity = req.body.cylinderCapacity; keySpec.cylinderCapacity = req.body.cylinderCapacity; }
+            if (req.body.configuration) spec.configuration = req.body.configuration;
             if (req.body.topSpeed) { spec.topSpeed = req.body.topSpeed; keySpec.topSpeed = req.body.topSpeed; }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
             if (req.body.steering) spec.steering = req.body.steering;

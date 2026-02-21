@@ -27,14 +27,15 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 
         const listings = user.myListings.filter(l => l.item);
 
-        // 1. Calculate General Stats
         let stats = {
             totalAssets: listings.length,
             totalViews: 0,
             totalLeads: 0,
             avgConversion: 0,
             activeCount: 0,
-            closedCount: 0
+            closedCount: 0,
+            savedCount: 0,
+            estLeadValue: 0
         };
 
         const detailedItems = listings.map(l => {
@@ -44,9 +45,10 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             stats.closedCount += (item.status !== 'Active' ? 1 : 0);
 
             return {
+                ...item.toObject ? item.toObject() : item,
                 id: item._id,
+                itemModel: l.itemModel,
                 title: item.title,
-                category: l.itemModel,
                 price: item.price,
                 status: item.status,
                 views: item.views || 0,
@@ -58,7 +60,7 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 
         // 2. Fetch Leads (from Lead model and Activities)
         const assetIds = detailedItems.map(i => i.id);
-        
+
         const newLeads = await Lead.find({ agentId: userId })
             .populate('sender', 'name email phone profilePicture')
             .sort({ createdAt: -1 });
@@ -72,6 +74,27 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
 
         stats.totalLeads = newLeads.length + activities.length;
         stats.avgConversion = stats.totalViews > 0 ? ((stats.totalLeads / stats.totalViews) * 100).toFixed(2) : 0;
+
+        // Calculate Saved/Shortlisted Count
+        const usersWithSaved = await User.countDocuments({
+            'favorites.assetId': { $in: assetIds }
+        });
+        stats.savedCount = usersWithSaved; // Or you could aggregate the exact number of favorites, this gives number of users who saved at least one
+
+        // Calculate Est Lead Value
+        // Find unique assets that have leads/activities
+        const leadAssetIds = new Set([
+            ...newLeads.map(l => l.assetId?.toString()),
+            ...activities.map(a => a.assetId?.toString())
+        ].filter(Boolean));
+
+        let estLeadValue = 0;
+        detailedItems.forEach(item => {
+            if (leadAssetIds.has(item.id.toString())) {
+                estLeadValue += (item.price || 0);
+            }
+        });
+        stats.estLeadValue = estLeadValue;
 
         // 3. Lead Details (Formatted for the Leads Table)
         const leadsTable = [
@@ -143,11 +166,47 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
         // Top Performing Assets
         const topAssets = [...detailedItems].sort((a, b) => b.views - a.views).slice(0, 5).map(item => ({
             name: item.title,
+            category: item.category,
             views: item.views,
             leads: activities.filter(a => a.assetId.toString() === item.id.toString()).length,
             trend: item.views > 50 ? 'Up' : 'Stable', // Simple logic
             color: item.views > 50 ? 'text-emerald-500' : 'text-gray-400'
         }));
+
+        // Needs Attention Assets
+        const bottomAssets = [...detailedItems].sort((a, b) => a.views - b.views).slice(0, 5).map(item => ({
+            name: item.title,
+            category: item.category,
+            views: item.views,
+            leads: activities.filter(a => a.assetId.toString() === item.id.toString()).length,
+            trend: 'Down',
+            color: 'text-orange-500'
+        }));
+
+        // Leads by Category
+        const categoryCounts = {
+            'CarAsset': 0,
+            'YachtAsset': 0,
+            'EstateAsset': 0,
+            'BikeAsset': 0
+        };
+
+        [...newLeads, ...activities].forEach(leadOrAct => {
+            const item = detailedItems.find(i =>
+                (leadOrAct.assetId && i.id.toString() === leadOrAct.assetId.toString()) ||
+                (leadOrAct.assetTitle && i.title === leadOrAct.assetTitle)
+            );
+            if (item) {
+                categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
+            }
+        });
+
+        const leadsByCategory = [
+            { label: 'Cars', count: categoryCounts['CarAsset'] || 0 },
+            { label: 'Yachts', count: categoryCounts['YachtAsset'] || 0 },
+            { label: 'Real Estate', count: categoryCounts['EstateAsset'] || 0 },
+            { label: 'Bikes', count: categoryCounts['BikeAsset'] || 0 }
+        ];
 
         res.json({
             plan: user.plan,
@@ -168,8 +227,10 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
             leads: leadsTable,
             notifications: user.notifications || [],
             topAssets,
+            bottomAssets,
             analytics: {
                 performanceTrend: performanceHistory,
+                leadsByCategory,
                 leadsByLocation: [ // Placeholder as we don't have location data yet
                     { country: 'United States', count: Math.floor(stats.totalLeads * 0.4) },
                     { country: 'United Kingdom', count: Math.floor(stats.totalLeads * 0.3) },

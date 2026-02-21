@@ -46,11 +46,11 @@ router.get("/cars", async (req, res) => {
 
     if (type) andClauses.push({ type: type });
     if (acquisition) {
-        if (acquisition === 'buy') {
-            andClauses.push({ acquisition: {$in: ['buy', 'rent/buy']} });
-        } else if (acquisition === 'rent') {
-            andClauses.push({ acquisition: {$in: ['rent', 'rent/buy']} });
-        }
+      if (acquisition === 'buy') {
+        andClauses.push({ acquisition: { $in: ['buy', 'rent/buy'] } });
+      } else if (acquisition === 'rent') {
+        andClauses.push({ acquisition: { $in: ['rent', 'rent/buy'] } });
+      }
     }
     if (location || country) {
       const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
@@ -70,7 +70,7 @@ router.get("/cars", async (req, res) => {
       if (maxPrice) priceQuery.$lte = Number(maxPrice);
       andClauses.push({ price: priceQuery });
     }
-    
+
     if (andClauses.length > 0) {
       query.$and = andClauses;
     }
@@ -113,15 +113,17 @@ router.get("/estates", async (req, res) => {
     query.status = 'Active';
 
     if (acquisition) {
-        if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
-        } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
-        }
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
     }
     if (location || country) {
-      const locations = location.split(',').map(l => l.trim());
-      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
+      if (locations.length > 0) {
+        query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
+      }
     }
 
     if (propertyType) query['keySpecifications.propertyType'] = propertyType;
@@ -181,15 +183,17 @@ router.get("/bikes", async (req, res) => {
 
     if (type) query.type = type;
     if (acquisition) {
-        if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
-        } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
-        }
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
     }
     if (location || country) {
-      const locations = location.split(',').map(l => l.trim());
-      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
+      if (locations.length > 0) {
+        query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
+      }
     }
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
@@ -234,15 +238,17 @@ router.get("/yachts", async (req, res) => {
 
     if (type) query.type = type;
     if (acquisition) {
-        if (acquisition === 'buy') {
-            query.acquisition = {$in: ['buy', 'rent/buy']};
-        } else if (acquisition === 'rent') {
-            query.acquisition = {$in: ['rent', 'rent/buy']};
-        }
+      if (acquisition === 'buy') {
+        query.acquisition = { $in: ['buy', 'rent/buy'] };
+      } else if (acquisition === 'rent') {
+        query.acquisition = { $in: ['rent', 'rent/buy'] };
+      }
     }
     if (location || country) {
-      const locations = location.split(',').map(l => l.trim());
-      query.$or = locations.map(loc => ({ location: { $regex: loc, $options: "i" } }));
+      const locations = (location || '').split(',').concat((country || '').split(',')).filter(l => l && l.trim());
+      if (locations.length > 0) {
+        query.$or = locations.map(loc => ({ location: { $regex: loc.trim(), $options: "i" } }));
+      }
     }
     if (brand) query.brand = brand;
     if (model) query['specification.model'] = { $regex: model, $options: "i" };
@@ -291,7 +297,7 @@ router.get("/all/estates", async (req, res) => {
   try {
     const data = await EstateAsset.find({ status: 'Active' }).sort({ createdAt: -1 });
     res.json(data);
-  }  catch (err) {
+  } catch (err) {
     res.status(500).json({ message: "Failed to fetch all estate assets" });
   }
 });
@@ -772,7 +778,7 @@ router.get("/suggestions", async (req, res) => {
       YachtAsset.find({ 'specification.model': searchRegex }).limit(5),
       EstateAsset.find({ title: searchRegex }).limit(5)
     ]);
-    
+
     const localSuggestions = {};
     const processAssets = (assets, field, type) => {
       assets.forEach(asset => {
@@ -791,7 +797,7 @@ router.get("/suggestions", async (req, res) => {
     const combined = [...googleSuggestions.map(s => ({ value: s, type: 'Global' })), ...Object.values(localSuggestions)];
     const uniqueValues = {};
     const uniqueSuggestions = [];
-    
+
     for (const suggestion of combined) {
       if (!uniqueValues[suggestion.value]) {
         uniqueValues[suggestion.value] = true;
