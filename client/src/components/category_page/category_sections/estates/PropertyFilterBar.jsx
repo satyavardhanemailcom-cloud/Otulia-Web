@@ -65,7 +65,6 @@ const PropertyFilterBar = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ── TYPE DATA ──────────────────────────────────────────────────────────────
   const typeGroups = [
     {
       label: "House",
@@ -92,7 +91,6 @@ const PropertyFilterBar = ({
     { label: "Private Island", key: "Private Island", subcategories: [] },
   ];
 
-  // ── AMENITIES DATA ─────────────────────────────────────────────────────────
   const amenityGroups = [
     {
       group: "View",
@@ -537,9 +535,7 @@ const PropertyFilterBar = ({
 
 export default PropertyFilterBar;
 
-// ─────────────────────────────────────────────────────────────────────────────
 // Icons for the Amenities
-// ─────────────────────────────────────────────────────────────────────────────
 
 const SvgIcon = ({ children, ...props }) => (
   <svg

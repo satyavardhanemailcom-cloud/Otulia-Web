@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
@@ -159,4 +160,161 @@ html {
   animation: fadeIn 0.3s ease-out forwards;
 }e-in {
   animation: fadeIn 0.3s ease-out forwards;
+=======
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Thin-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-ThinItalic-Trial.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Light-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-LightItalic-Trial.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Regular-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-RegularItalic-Trial.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Medium-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-MediumItalic-Trial.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Bold-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-BoldItalic-Trial.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-Black-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('./assets/fonts/Canela_Collection/Canela Family/Canela-BlackItalic-Trial.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+}
+
+:root {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-bodoni {
+  font-family: 'Bodoni Moda', serif;
+}
+
+/* Apply to the root elements to hide the main browser scrollbar */
+html,
+body {
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none;
+  /* Hide scrollbar for IE and Edge */
+  -ms-overflow-style: none;
+  width: 100%;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optional: Enforce strictly consistent scrolling behavior */
+html {
+  scroll-behavior: smooth;
+  /* Matches the "Slow, confident" feel */
+}
+
+/* Hides the scrollbar for Chrome, Safari, and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hides the scrollbar for IE, Edge, and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.canela {
+  font-family: "Canela", serif;
+}
+
+.font-playfair {
+  font-family: "Playfair Display", serif;
+}
+
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+  
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}e-in {
+  animation: fadeIn 0.3s ease-out forwards;
+>>>>>>> 3edc3346474f28c49f8469b1ffb519a670809c77
 }
