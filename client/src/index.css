@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
 @import "tailwindcss";
 
 @font-face {
@@ -142,6 +143,11 @@ html {
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+}
+
+.font-poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
 }
 
 @keyframes fadeIn {

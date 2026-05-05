@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import SortDropdown from "./category_page/category_sections/SortDropdown";
 
 const SharedFilterBar = ({ onSearch, initialLocation = "" }) => {
   const [query, setQuery] = useState("");
@@ -52,6 +53,12 @@ const SharedFilterBar = ({ onSearch, initialLocation = "" }) => {
     if (e) e.preventDefault();
     onSearch({ q: query, location, minPrice, maxPrice, sort });
     setShowSuggestions(false);
+  };
+
+  const handleSortChange = (newSort) => {
+    setSort(newSort);
+    // Optionally trigger search immediately on sort change
+    onSearch({ q: query, location, minPrice, maxPrice, sort: newSort });
   };
 
   return (
@@ -136,17 +143,8 @@ const SharedFilterBar = ({ onSearch, initialLocation = "" }) => {
           <div className="hidden lg:block h-8 w-px bg-gray-100"></div>
 
           {/* Sort */}
-          <div className="relative w-full lg:flex-1 px-4">
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="w-full p-2.5 outline-none text-sm font-sans text-gray-400 font-medium bg-transparent cursor-pointer appearance-none"
-            >
-              <option value="Newest">Newest First</option>
-              <option value="Oldest">Oldest First</option>
-              <option value="Low to High">Price: Low to High</option>
-              <option value="High to Low">Price: High to Low</option>
-            </select>
+          <div className="relative w-full lg:flex-1 px-4 flex justify-center lg:justify-start">
+            <SortDropdown currentSort={sort} onSortChange={handleSortChange} />
           </div>
         </div>
 

@@ -33,6 +33,7 @@ const Inventory = lazy(() => import("./pages/Inventory"));
 const Favorites = lazy(() => import("./pages/Favorites"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const DocumentViewer = lazy(() => import("./pages/DocumentViewer"));
+const DealerProfile = lazy(() => import("./pages/DealerProfile"));
 
 // Policy pages
 const Terms = lazy(() => import("./pages/policies/Terms"));
@@ -127,6 +128,7 @@ function App() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/view-document" element={<DocumentViewer />} />
+          <Route path="/dealer/:email" element={<DealerProfile />} />
 
           {/* Policy Routes */}
           <Route path="/terms" element={<Terms />} />

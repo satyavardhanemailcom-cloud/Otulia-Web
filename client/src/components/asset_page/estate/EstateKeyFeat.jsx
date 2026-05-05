@@ -9,10 +9,11 @@ import garage from '../../../assets/productpage/garage.png'
 
 const EstateKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
-  
+
   const specItems = [
     { label: 'Bedrooms', value: kSpecs.bedrooms, icon: bedRoom },
     { label: 'Bathrooms', value: kSpecs.bathrooms, icon: bathRoom },
+
     { label: 'Built Area', value: kSpecs.builtUpArea, icon: sqrtFt },
     { label: 'Land Area', value: kSpecs.landArea, icon: land },
     { label: 'Floors', value: kSpecs.floors, icon: floor },
@@ -22,39 +23,60 @@ const EstateKeyFeatures = ({ item }) => {
   if (specItems.length === 0) return null;
 
   // Helper Component for a Feature Card
- const FeatureCard = ({ icon, label, value }) => (
-    <div className="flex items-center gap-6 border border-gray-100 rounded-lg px-6 py-4 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md transition-shadow cursor-default montserrat">
+  const FeatureCard = ({ icon, label, value }) => (
+    <div className="flex items-center w-9/10 gap-4 border border-gray-100 rounded-lg px-4   py-4 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md transition-shadow cursor-default font-poppins-light">
       {/* Icon Container */}
       <div className="w-8 h-8 flex justify-center items-center opacity-80 shrink-0">
         {icon}
       </div>
       {/* Text Content */}
       <div className="flex flex-col gap-0.5">
-         <span className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.2em]">{label}</span>
-         <span className="text-lg font-medium font-serif text-black">{value}</span>
+        <span className="text-[9px] font-poppins-light font-light text-gray-400 uppercase tracking-[0.2em]">{label}</span>
+         <span className="text-lg font-poppins-light font-light text-black">{value}</span>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full px-[2%] py-10 bg-white font-sans">
-      
+    <div className="w-full px-[2%] py-10 bg-white font-poppins-light">
+
       {/* Header Box - Line with Centered Text */}
-      <div className="relative flex items-center justify-center mb-12">
-        <span className="absolute left-0 text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em] bg-white z-10 pr-4">HIGHLIGHTS</span>
-        <div className="w-full h-px border-t border-gray-200"></div>
-        <div className="absolute bg-white px-6 flex flex-col items-center">
+      <div className="mb-12">
+
+        {/* Heading */}
+        <div className="flex items-center justify-center gap-6">
+          <div className="flex-1 h-px bg-gray-300"></div>
+
           <h2 className="text-2xl md:text-3xl font-normal canela text-black">
             Key Features
           </h2>
-          <span className="text-[#B58252] text-[10px] mt-1">♦</span>
-        </div>
-      </div>
 
+          <div className="flex-1 h-px bg-gray-300"></div>
+        </div>
+
+        {/* Highlights row */}
+        <div className="grid grid-cols-3 items-center mt-3">
+
+          {/* Left */}
+          <span className="text-[10px] font-bold text-[#B58252] uppercase tracking-[0.2em]">
+            Highlights
+          </span>
+
+          {/* Center */}
+          <div className="flex justify-center">
+            <span className="text-[#B58252] text-[10px]">♦</span>
+          </div>
+
+          {/* Right (empty for balance) */}
+          <div></div>
+
+        </div>
+
+      </div>
       {/* 3-Column Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4 w-full font-poppins-light">
         {specItems.map((spec, index) => (
-          <FeatureCard 
+          <FeatureCard
             key={index}
             label={spec.label}
             value={spec.value}

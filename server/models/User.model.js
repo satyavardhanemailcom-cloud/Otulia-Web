@@ -41,6 +41,9 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
+    coverPhoto: String,
+    coverPhotoPublicId: String,
+
     phone: {
       type: String,
     },
@@ -48,15 +51,37 @@ const userSchema = new mongoose.Schema(
     whatsapp: String,
     jobTitle: String,
     language: String,
+    timezone: String,
+    preferredContact: String,
+    agentDescription: String,
+    social: {
+      instagram: String,
+      linkedin: String,
+      facebook: String,
+      twitter: String,
+      youtube: String
+    },
 
     company: {
       companyName: String,
       companyLogo: String,
+      companyLogoPublicId: String,
+      coverPhoto: String,
+      coverPhotoPublicId: String,
       address: String,
       website: String,
       description: String,
       businessType: String,
       establishedYear: String,
+      phone: String,
+      email: String,
+      social: {
+        instagram: String,
+        linkedin: String,
+        facebook: String,
+        twitter: String,
+        youtube: String
+      }
     },
 
     isVerified: {

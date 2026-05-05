@@ -263,8 +263,8 @@ Reference ID: #${refId}
           
           <div className="w-full flex flex-col pt-1">
             <span className="text-[10px] font-bold text-[#B58252] uppercase tracking-widest mb-1 w-fit">PRICE</span>
-            <h2 
-              className="text-3xl md:text-4xl font-bold text-black"
+            <h2   
+              className="text-3xl md:text-4xl font-poppins-light text-black"
               style={{ fontFamily: 'Canela, "Times New Roman", Times, serif' }}
             >
               {item.isPriceOnRequest ? 'Price on Demand' : `$${numberWithCommas(price)}`}

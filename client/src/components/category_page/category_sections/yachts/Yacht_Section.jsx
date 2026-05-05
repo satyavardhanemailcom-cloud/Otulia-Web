@@ -209,9 +209,7 @@ const Yacht_Section = () => {
                                     Browse our premium selection of luxury yachts.
                                 </p>
                             </div>
-                            <div className="bg-white rounded-md shadow-sm border border-gray-100 px-2 py-1 flex items-center">
                                 <SortDropdown onSortChange={handleSortChange} currentSort={currentSort} />
-                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

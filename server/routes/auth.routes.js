@@ -434,46 +434,25 @@ router.post("/upgrade-plan", authMiddleware, async (req, res) => {
  */
 router.put("/update-profile", authMiddleware, async (req, res) => {
   try {
-    const { name, phone, whatsapp, jobTitle, language, profilePicture, company } = req.body;
+    const { name, phone, whatsapp, jobTitle, language, timezone, preferredContact, agentDescription, social, profilePicture, company } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
-
-    // Allow Premium users to edit even if verified
-    const isPremium = user.plan === 'Premium Basic' || user.plan === 'Business VIP';
-
-    // Lock certain fields if verified (unless Premium)
-    if (user.isVerified && !isPremium) {
-      if (name && name !== user.name) return res.status(403).json({ error: "VERIFIED_NAME_LOCKED" });
-      if (phone && phone !== user.phone) return res.status(403).json({ error: "VERIFIED_PHONE_LOCKED" });
-      
-      if (company) {
-        if (company.companyName && company.companyName !== user.company?.companyName) 
-          return res.status(403).json({ error: "VERIFIED_COMPANY_NAME_LOCKED" });
-        if (company.address && company.address !== user.company?.address) 
-          return res.status(403).json({ error: "VERIFIED_ADDRESS_LOCKED" });
-      }
-    }
-
-    /* Original restricted logic preserved
-    if (user.isVerified) {
-      if (name && name !== user.name) return res.status(403).json({ error: "VERIFIED_NAME_LOCKED" });
-      if (phone && phone !== user.phone) return res.status(403).json({ error: "VERIFIED_PHONE_LOCKED" });
-      
-      if (company) {
-        if (company.companyName && company.companyName !== user.company?.companyName) 
-          return res.status(403).json({ error: "VERIFIED_COMPANY_NAME_LOCKED" });
-        if (company.address && company.address !== user.company?.address) 
-          return res.status(403).json({ error: "VERIFIED_ADDRESS_LOCKED" });
-      }
-    }
-    */
 
     if (name) user.name = name;
     if (phone) user.phone = phone;
     if (whatsapp) user.whatsapp = whatsapp;
     if (jobTitle) user.jobTitle = jobTitle;
     if (language) user.language = language;
+    if (timezone) user.timezone = timezone;
+    if (preferredContact) user.preferredContact = preferredContact;
+    if (agentDescription) user.agentDescription = agentDescription;
+    if (social) {
+      user.social = {
+        ...user.social,
+        ...social
+      };
+    }
     if (profilePicture) user.profilePicture = profilePicture;
     if (req.body.leadEmailNotifications !== undefined) {
       user.leadEmailNotifications = !!req.body.leadEmailNotifications;
@@ -482,7 +461,8 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     if (company) {
       user.company = {
         ...user.company,
-        ...company
+        ...company,
+        social: company.social ? { ...user.company?.social, ...company.social } : user.company?.social
       };
     }
 
@@ -610,39 +590,36 @@ router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('co
     }
 
     const currentUser = await User.findById(req.user.id);
-    
+
     // Check if verified - lock update (Unless Premium)
     const isPremium = currentUser.plan === 'Premium Basic' || currentUser.plan === 'Business VIP';
     if (currentUser.isVerified && !isPremium) {
       return res.status(403).json({ error: "VERIFIED_USER_CANNOT_CHANGE_LOGO" });
     }
 
-    /* Original restricted logic preserved
-    if (currentUser.isVerified) {
-      return res.status(403).json({ error: "VERIFIED_USER_CANNOT_CHANGE_LOGO" });
-    }
-    */
-
     // Delete old company logo if exists
-    if (currentUser.company && currentUser.company.companyLogo) {
+    if (currentUser.company?.companyLogoPublicId) {
+        await cloudinary.uploader.destroy(currentUser.company.companyLogoPublicId).catch(err =>
+            console.error("Failed to delete old company logo from Cloudinary:", err)
+        );
+    } else if (currentUser.company?.companyLogo) {
         const oldPublicId = getPublicIdFromUrl(currentUser.company.companyLogo);
         if (oldPublicId) {
-            console.log(`Deleting old company logo: ${oldPublicId}`);
-            await cloudinary.uploader.destroy(oldPublicId).catch(err => 
+            await cloudinary.uploader.destroy(oldPublicId).catch(err =>
                 console.error("Failed to delete old company logo from Cloudinary:", err)
             );
         }
     }
 
     const logoUrl = req.file.path;
+    const logoPublicId = req.file.filename;
 
-    // Update User Model surgically to avoid spreading Mongoose internal state
     if (!currentUser.company) {
         currentUser.company = {};
     }
     currentUser.company.companyLogo = logoUrl;
-    
-    // Explicitly mark as modified if it's a nested object
+    currentUser.company.companyLogoPublicId = logoPublicId;
+
     currentUser.markModified('company');
     await currentUser.save();
 
@@ -651,10 +628,10 @@ router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('co
       companyLogo: logoUrl
     });
 
-    res.json({ 
-      message: "COMPANY_LOGO_UPDATED_SUCCESSFULLY", 
+    res.json({
+      message: "COMPANY_LOGO_UPDATED_SUCCESSFULLY",
       companyLogo: logoUrl,
-      user: currentUser 
+      user: currentUser
     });
   } catch (err) {
     console.error("Company Logo Upload Error:", err);
@@ -662,6 +639,93 @@ router.post("/upload-company-logo", authMiddleware, uploadCompanyLogo.single('co
   }
 });
 
+/**
+ * UPLOAD COVER PHOTO (USER)
+ */
+const coverPhotoStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: (req, file) => {
+    const folders = getFolderPaths(req.user.email);
+    return {
+      folder: folders.profile,
+      public_id: `cover_photo_${Date.now()}`,
+      resource_type: 'auto',
+      allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    };
+  },
+});
+
+const uploadCoverPhoto = multer({ storage: coverPhotoStorage });
+
+router.post("/upload-cover-photo", authMiddleware, uploadCoverPhoto.single('coverPhoto'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "NO_FILE_UPLOADED" });
+    }
+
+    const currentUser = await User.findById(req.user.id);
+    if (currentUser.coverPhotoPublicId) {
+      await cloudinary.uploader.destroy(currentUser.coverPhotoPublicId).catch(e => console.error("Cloudinary delete failed:", e));
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        coverPhoto: req.file.path,
+        coverPhotoPublicId: req.file.filename
+      },
+      { new: true }
+    ).select("-password");
+
+    res.json({ message: "COVER_PHOTO_UPDATED_SUCCESSFULLY", user });
+  } catch (err) {
+    console.error("Cover Photo Upload Error:", err);
+    res.status(500).json({ error: "UPLOAD_FAILED" });
+  }
+});
+
+/**
+ * UPLOAD COMPANY COVER PHOTO
+ */
+const companyCoverStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: (req, file) => {
+    const folders = getFolderPaths(req.user.email);
+    return {
+      folder: folders.company,
+      public_id: `company_cover_${Date.now()}`,
+      resource_type: 'auto',
+      allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    };
+  },
+});
+
+const uploadCompanyCover = multer({ storage: companyCoverStorage });
+
+router.post("/upload-company-cover", authMiddleware, uploadCompanyCover.single('coverPhoto'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "NO_FILE_UPLOADED" });
+    }
+
+    const currentUser = await User.findById(req.user.id);
+    if (currentUser.company?.coverPhotoPublicId) {
+      await cloudinary.uploader.destroy(currentUser.company.coverPhotoPublicId).catch(e => console.error("Cloudinary delete failed:", e));
+    }
+
+    if (!currentUser.company) currentUser.company = {};
+    currentUser.company.coverPhoto = req.file.path;
+    currentUser.company.coverPhotoPublicId = req.file.filename;
+
+    currentUser.markModified('company');
+    await currentUser.save();
+
+    res.json({ message: "COMPANY_COVER_UPDATED_SUCCESSFULLY", user: currentUser });
+  } catch (err) {
+    console.error("Company Cover Upload Error:", err);
+    res.status(500).json({ error: "UPLOAD_FAILED" });
+  }
+});
 const verificationDiskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(__dirname, '../uploads/temp');
@@ -854,6 +918,35 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
     if (!res.headersSent) {
         res.status(500).json({ error: "SUBMISSION_FAILED", details: err.message });
     }
+  }
+});
+
+/**
+ * GET PUBLIC PROFILE BY EMAIL
+ */
+router.get("/public-profile/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await User.findOne({ email }).select("-password -notifications -favorites -myListings -boughtHistory -rentedHistory -verificationDocuments");
+    
+    if (!user) {
+      return res.status(404).json({ error: "USER_NOT_FOUND" });
+    }
+
+    // Fetch all active listings for this user
+    const models = [CarAsset, BikeAsset, YachtAsset, EstateAsset, Listing];
+    const listingPromises = models.map(Model => Model.find({ ownerEmail: email, status: 'Active' }));
+    
+    const results = await Promise.all(listingPromises);
+    const allListings = results.flat();
+
+    res.json({
+      user,
+      listings: allListings
+    });
+  } catch (err) {
+    console.error("Public Profile Fetch Error:", err);
+    res.status(500).json({ error: "FETCH_PROFILE_FAILED" });
   }
 });
 

@@ -1,8 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 
-export default function SEO({ title, description, name = 'Otulia', type = 'website', image, url, productData }) {
-  const defaultDescription = 'The premier destination for buying and selling editorial-grade luxury cars, yachts, estates, and bikes.';
+export default function SEO({ title, description, keywords, name = 'Otulia', type = 'website', image, url, productData }) {
+  const defaultDescription = 'The premier destination for buying and selling editorial-grade luxury cars, yachts, estates, and bikes. Explore exclusive global listings.';
+  const defaultKeywords = 'luxury assets, luxury cars, yachts for sale, luxury real estate, exclusive bikes, otulia, buy luxury assets, sell luxury assets';
   const defaultImage = 'https://otulia.com/images/exclusive_club_bg.jpg';
   const defaultUrl = 'https://otulia.com';
 
@@ -63,6 +64,8 @@ export default function SEO({ title, description, name = 'Otulia', type = 'websi
       {/* Standard metadata tags */}
       <title>{seoTitle}</title>
       <meta name="description" content={description || defaultDescription} />
+      <meta name="keywords" content={keywords || defaultKeywords} />
+      <meta name="robots" content="index, follow" />
       
       {/* Canonical Link */}
       <link rel="canonical" href={url || defaultUrl + window.location.pathname} />
