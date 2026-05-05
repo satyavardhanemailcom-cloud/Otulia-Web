@@ -105,7 +105,7 @@ const PillDropdown = ({ label, value, options, onChange, dark = false }) => {
             border: "1.5px solid #e8e8e8",
             borderRadius: 14,
             boxShadow: "0 8px 30px rgba(0,0,0,0.10)",
-            overflow: "hidden",
+            overflow: "visible",
             animation: "fadeInDown 0.12s ease",
           }}
         >
@@ -118,6 +118,7 @@ const PillDropdown = ({ label, value, options, onChange, dark = false }) => {
               cursor: "pointer",
               fontFamily: "'DM Sans', sans-serif",
               transition: "background 0.1s",
+              borderRadius: "14px 14px 0 0",
             }}
             onMouseEnter={(e) => (e.currentTarget.style.background = "#fafafa")}
             onMouseLeave={(e) =>
@@ -126,31 +127,42 @@ const PillDropdown = ({ label, value, options, onChange, dark = false }) => {
           >
             Any {label}
           </div>
-          {options.map((opt) => (
-            <div
-              key={opt}
-              onClick={() => handleSelect(opt)}
-              style={{
-                padding: "9px 16px",
-                fontSize: 13,
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: value === opt ? 600 : 400,
-                color: value === opt ? "#9C824A" : "#333",
-                background: value === opt ? "#fdf8f0" : "transparent",
-                cursor: "pointer",
-                transition: "background 0.1s",
-              }}
-              onMouseEnter={(e) => {
-                if (value !== opt) e.currentTarget.style.background = "#fafafa";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background =
-                  value === opt ? "#fdf8f0" : "transparent";
-              }}
-            >
-              {opt}
-            </div>
-          ))}
+
+          <div
+            className="pill-dropdown-scroll"
+            style={{
+              maxHeight: 220,
+              overflowY: "auto",
+              borderRadius: "0 0 14px 14px",
+            }}
+          >
+            {options.map((opt) => (
+              <div
+                key={opt}
+                onClick={() => handleSelect(opt)}
+                style={{
+                  padding: "9px 16px",
+                  fontSize: 13,
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: value === opt ? 600 : 400,
+                  color: value === opt ? "#9C824A" : "#333",
+                  background: value === opt ? "#fdf8f0" : "transparent",
+                  cursor: "pointer",
+                  transition: "background 0.1s",
+                }}
+                onMouseEnter={(e) => {
+                  if (value !== opt)
+                    e.currentTarget.style.background = "#fafafa";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background =
+                    value === opt ? "#fdf8f0" : "transparent";
+                }}
+              >
+                {opt}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -262,12 +274,33 @@ const FilterBar = ({
 
   return (
     <>
-      {/* Inject font + keyframe */}
+      {/* Inject font + keyframe + custom scrollbar */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
         @keyframes fadeInDown {
           from { opacity: 0; transform: translateY(-6px); }
           to   { opacity: 1; transform: translateY(0); }
+        }
+
+  
+        .pill-dropdown-scroll::-webkit-scrollbar {
+          width: 4px;
+        }
+        .pill-dropdown-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .pill-dropdown-scroll::-webkit-scrollbar-thumb {
+          background: #e0e0e0;
+          border-radius: 999px;
+        }
+        .pill-dropdown-scroll::-webkit-scrollbar-thumb:hover {
+          background: #c8c8c8;
+        }
+        /* Firefox */
+        .pill-dropdown-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #e0e0e0 transparent;
         }
       `}</style>
 
