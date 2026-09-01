@@ -130,7 +130,7 @@ const AssetCard = ({ item }) => {
   const handleDeleteClick = async (e) => {
     e.stopPropagation();
     const confirmDelete = window.confirm(
-      `Are you sure you want to delete this asset: "${item.title}"? This action cannot be undone.`
+      `Are you sure you want to delete this asset: "${item.title}"? This action cannot be undone.`,
     );
     if (!confirmDelete) return;
 
@@ -475,7 +475,7 @@ const AssetCard = ({ item }) => {
                 src={optimizeCloudinaryUrl(item.agent.companyLogo, 200)}
                 alt="Company"
                 className="w-auto object-contain shrink-0"
-                style={{ height: "4.7cqi" /* h-7 (28px) */ }}
+                style={{ height: "35px" /* h-7 (28px) */ }}
               />
             ) : (
               <div
