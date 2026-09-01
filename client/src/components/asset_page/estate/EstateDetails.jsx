@@ -499,16 +499,13 @@ Reference ID: #${refId}
                   </div>
                 </div>
 
-                {/* Vertical Line Divider */}
-                <div className="w-px h-16 bg-gray-200 mx-1 shrink-0"></div>
-
                 {/* Right: Company Logo */}
                 <div className="flex items-center justify-center shrink-0 max-w-[110px]">
                   {agent?.companyLogo && agent.companyLogo !== agent?.photo ? (
                     <img
                       src={agent.companyLogo}
                       alt={agent.company || "Company"}
-                      className="max-h-12 w-auto object-contain"
+                      className="max-h-20 w-auto object-contain"
                     />
                   ) : item?.brand_logo ? (
                     <img

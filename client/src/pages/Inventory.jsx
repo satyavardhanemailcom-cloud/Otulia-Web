@@ -172,7 +172,10 @@ const Inventory = () => {
     if (user) {
       const pCode = extractPhoneCode(user.phone, user.phoneCode);
       const wCode = extractPhoneCode(user.whatsapp, user.whatsappCode);
-      const cCode = extractPhoneCode(user.company?.phone, user.company?.phoneCode);
+      const cCode = extractPhoneCode(
+        user.company?.phone,
+        user.company?.phoneCode,
+      );
 
       setAgentInfo({
         fullName: user.name || "",
@@ -181,7 +184,9 @@ const Inventory = () => {
         phoneCode: pCode,
         phone: user.phone ? formatPhoneWithCode(user.phone, pCode) : "",
         whatsappCode: wCode,
-        whatsapp: user.whatsapp ? formatPhoneWithCode(user.whatsapp, wCode) : "",
+        whatsapp: user.whatsapp
+          ? formatPhoneWithCode(user.whatsapp, wCode)
+          : "",
         contactMethod: user.contactMethod || "WhatsApp",
         language: user.language || "English",
         timezone: user.timezone || "(GMT+4) Dubai, UAE",
@@ -198,16 +203,23 @@ const Inventory = () => {
       setCompanyInfo({
         name: user.company?.companyName || user.company?.name || "",
         website: user.company?.website || "",
-        email: user.company?.email || user.company?.companyEmail || user.email || "",
+        email:
+          user.company?.email || user.company?.companyEmail || user.email || "",
         businessType:
           user.company?.businessType || "Luxury Cars & Supercars Dealer",
         establishedYear: user.company?.establishedYear || "",
         address: user.company?.address || "",
         phoneCode: cCode,
-        phone: user.company?.phone ? formatPhoneWithCode(user.company.phone, cCode) : "",
+        phone: user.company?.phone
+          ? formatPhoneWithCode(user.company.phone, cCode)
+          : "",
         description: user.company?.description || "",
         logo: user.company?.companyLogo || user.company?.logo || "",
-        coverImage: user.company?.coverPhoto || user.company?.coverImage || user.coverPhoto || "",
+        coverImage:
+          user.company?.coverPhoto ||
+          user.company?.coverImage ||
+          user.coverPhoto ||
+          "",
         languagesKnown: user.company?.languagesKnown || user.languages || [],
         social: {
           instagram: user.company?.social?.instagram || "",
@@ -391,8 +403,14 @@ const Inventory = () => {
   const handleSavePersonalDetails = async () => {
     setIsSavingPersonal(true);
     try {
-      const formattedPhone = formatPhoneWithCode(agentInfo.phone, agentInfo.phoneCode);
-      const formattedWhatsapp = formatPhoneWithCode(agentInfo.whatsapp, agentInfo.whatsappCode);
+      const formattedPhone = formatPhoneWithCode(
+        agentInfo.phone,
+        agentInfo.phoneCode,
+      );
+      const formattedWhatsapp = formatPhoneWithCode(
+        agentInfo.whatsapp,
+        agentInfo.whatsappCode,
+      );
 
       const response = await fetch("/api/auth/update-profile", {
         method: "PUT",
@@ -436,7 +454,10 @@ const Inventory = () => {
   const handleSaveCompanyDetails = async () => {
     setIsSavingCompany(true);
     try {
-      const formattedCompanyPhone = formatPhoneWithCode(companyInfo.phone, companyInfo.phoneCode);
+      const formattedCompanyPhone = formatPhoneWithCode(
+        companyInfo.phone,
+        companyInfo.phoneCode,
+      );
 
       const response = await fetch("/api/auth/update-profile", {
         method: "PUT",
