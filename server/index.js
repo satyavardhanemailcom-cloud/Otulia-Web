@@ -362,7 +362,7 @@ app.get(/^\/asset\/(car|estate|bike|yacht)\/([^/]+)\/?$/i, async (req, res, next
       : "";
     const listingHtml = `<main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(title.replace(/ \| Otulia$/, ""))}</h1>${fallbackImage}<p>${htmlEscape(String(asset.description || "").replace(/\s+/g, " ").trim())}</p><ul>${fallbackDetails}</ul><p><a href="${htmlEscape(canonical)}">View this ${htmlEscape(category)} listing on Otulia</a></p></main>`;
     html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, "");
-    html = html.replace('<div id="root"></div>', `<div id="root">${listingHtml}</div>`);
+    html = html.replace('<div id="root"></div>', `<div id="root"><div data-seo-fallback>${listingHtml}</div></div>`);
     res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
     return res.type("html").send(html);
   } catch (error) {
@@ -449,7 +449,7 @@ app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
     }).join("");
     const renderedContent = `<main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(category.title)}</h1><p>${htmlEscape(description)}</p>${entries || "<p>No ranked entries are currently available.</p>"}<p><a href="/ranking">Browse all Otulia rankings</a></p></main>`;
     html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, "");
-    html = html.replace('<div id="root"></div>', `<div id="root">${renderedContent}</div>`);
+    html = html.replace('<div id="root"></div>', `<div id="root"><div data-seo-fallback>${renderedContent}</div></div>`);
 
     if (rankedNominees.length) {
       const itemList = {
@@ -570,7 +570,7 @@ const renderPublicPage = async (req, res, { title, description, canonical, asset
   ].map(([label, href]) => `<li><a href="${href}">${label}</a></li>`).join("");
   const main = `<main style="font-family:Arial,sans-serif;max-width:1100px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(title.replace(/\s*\|\s*Otulia(?: Journal| Rankings)?$/, ""))}</h1><p>${htmlEscape(description)}</p>${extraContent}${assets.length ? `<section><h2>Featured listings</h2>${cards}</section>` : ""}<nav aria-label="Explore Otulia"><h2>Explore Otulia</h2><ul>${categoryLinks}</ul></nav></main>`;
   html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, "");
-  html = html.replace('<div id="root"></div>', `<div id="root">${main}</div>`);
+  html = html.replace('<div id="root"></div>', `<div id="root"><div data-seo-fallback>${main}</div></div>`);
   if (assets.length) {
     const itemList = {
       "@context": "https://schema.org",

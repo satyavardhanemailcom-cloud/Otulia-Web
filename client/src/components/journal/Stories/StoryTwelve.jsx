@@ -181,7 +181,7 @@ export default function TerryCrewsBinghattiArticle() {
         .font-sans { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      <div className="mx-auto max-w-[860px] px-6 pb-24 pt-14 md:px-8 md:pt-20">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-24 pt-14 md:px-8 md:pt-20">
         {/* Eyebrow */}
         <p className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-[#7A2E2E]">
           {EYEBROW}

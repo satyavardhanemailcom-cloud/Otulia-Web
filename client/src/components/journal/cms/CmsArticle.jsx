@@ -24,6 +24,54 @@ const formatDate = (date) =>
     year: "numeric",
   });
 
+// Same look as the ShareIcon in the hand-written stories, but as real share links.
+function ShareIcon({ label, path, href }) {
+  return (
+    <a
+      href={href}
+      target={href.startsWith("mailto:") ? undefined : "_blank"}
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="flex h-9 w-9 items-center justify-center rounded-full border border-[#DDD6C7] text-[#1C1A17] transition-colors hover:border-[#7A2E2E] hover:bg-[#7A2E2E] hover:text-[#F7F4EC]"
+    >
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
+        <path d={path} />
+      </svg>
+    </a>
+  );
+}
+
+function ShareIcons({ post }) {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const url = encodeURIComponent(`${origin}/journal/${post.slug || ""}`);
+  const title = encodeURIComponent(post.title || "");
+
+  return (
+    <div className="flex items-center gap-2">
+      <ShareIcon
+        label="Share via email"
+        href={`mailto:?subject=${title}&body=${url}`}
+        path="M2 6a2 2 0 012-2h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm2 0l8 6 8-6"
+      />
+      <ShareIcon
+        label="Share on Facebook"
+        href={`https://www.facebook.com/sharer/sharer.php?u=${url}`}
+        path="M13 22v-8h2.7l.4-3H13V9c0-.9.2-1.5 1.6-1.5H16V5c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.5-4 4.1V11H7v3h2.6v8H13z"
+      />
+      <ShareIcon
+        label="Share on X"
+        href={`https://twitter.com/intent/tweet?url=${url}&text=${title}`}
+        path="M4 4l7.5 8.6L4.4 20H6l6.3-6.9L17 20h3l-7.9-9L19 4h-1.6l-5.7 6.3L8 4H4z"
+      />
+      <ShareIcon
+        label="Share on LinkedIn"
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${url}`}
+        path="M4.98 3.5A2.5 2.5 0 100 6a2.5 2.5 0 004.98-.5zM.5 8.75h4.9V21H.5V8.75zM8.5 8.75h4.7v1.68h.07c.66-1.2 2.27-2.47 4.68-2.47 5 0 5.93 3.3 5.93 7.59V21h-4.9v-5.9c0-1.41-.03-3.23-1.97-3.23-1.97 0-2.27 1.54-2.27 3.13V21H8.5V8.75z"
+      />
+    </div>
+  );
+}
+
 function SectionHeading({ children }) {
   return (
     <h2 className="font-display text-[26px] leading-tight text-[#1C1A17] md:text-[30px]">
@@ -107,7 +155,7 @@ export function CmsArticleView({ post }) {
         .font-sans { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      <div className="mx-auto max-w-[860px] px-6 pb-24 pt-14 md:px-8 md:pt-20">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-24 pt-14 md:px-8 md:pt-20">
         {post.tag && (
           <p className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-[#7A2E2E]">
             {post.tag}
@@ -124,11 +172,12 @@ export function CmsArticleView({ post }) {
           </p>
         )}
 
-        <div className="mt-7 border-b border-[#DDD6C7] pb-6">
+        <div className="mt-7 flex flex-wrap items-center justify-between gap-4 border-b border-[#DDD6C7] pb-6">
           <p className="font-sans text-[12px] uppercase tracking-[0.1em] text-[#4A463F]">
             {post.publishedAt && formatDate(post.publishedAt)}
             {post.author && <> &nbsp;|&nbsp; By {post.author}</>}
           </p>
+          <ShareIcons post={post} />
         </div>
 
         {post.heroImage && (

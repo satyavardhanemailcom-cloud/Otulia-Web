@@ -127,6 +127,8 @@
       The React app below renders the full experience; this is the
       best-effort fallback so the site is never blank.
     -->
+    <!-- Server-rendered SEO fallback stays in the HTML for crawlers but is never painted; React replaces #root on mount. -->
+    <style>[data-seo-fallback] { display: none; }</style>
   </head>
 
   <body>
