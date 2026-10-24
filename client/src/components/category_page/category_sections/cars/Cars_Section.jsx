@@ -18,7 +18,7 @@ import koenigseggLogo from "../../../../assets/car_brands/Koenigsegg_Automotive_
 import lexusLogo from "../../../../assets/car_brands/Lexus.webp";
 import mercedesLogo from "../../../../assets/car_brands/Mercedes-Benz.webp";
 import porscheLogo from "../../../../assets/car_brands/Porsche.webp";
-import shelbyLogo from "../../../../assets/car_brands/Shelby_American.webp";
+import lamborghiniLogo from "../../../../assets/car_brands/lamborghini.webp";
 
 const Cars_Section = () => {
   const [list, setlist] = useState([]);
@@ -141,13 +141,13 @@ const Cars_Section = () => {
   };
 
   const handleBrandClick = (brandName) => {
-    const searchParams = new URLSearchParams(location.search);
-    searchParams.set("brand", brandName);
-    navigate(`?${searchParams.toString()}`, { replace: true });
-
-    if (featuredListRef.current) {
-      featuredListRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    const brandSlug = brandName
+      .toLowerCase()
+      .trim()
+      .replace(/&/g, "and")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+    navigate(`/listings/${brandSlug}`);
   };
 
   const brands = [
@@ -198,8 +198,8 @@ const Cars_Section = () => {
     },
     {
       id: 10,
-      name: "Shelby",
-      logo: shelbyLogo,
+      name: "Lamborghini",
+      logo: lamborghiniLogo,
     },
   ];
 
@@ -257,6 +257,7 @@ const Cars_Section = () => {
             yearOptions={yearOptions}
             filterOptions={carFilterOptions}
             hideLocation={true}
+            showVehicleSpecFilters
           />
         </section>
 

@@ -89,6 +89,11 @@ const Shop = () => {
       if (filters.brand) params.append('brand', filters.brand);
       if (filters.model) params.append('model', filters.model);
       if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
+      if (activeCategory === 'Cars') {
+        if (filters.fuelType) params.append('fuelType', filters.fuelType);
+        if (filters.transmission) params.append('transmission', filters.transmission);
+        if (filters.exteriorColor) params.append('exteriorColor', filters.exteriorColor);
+      }
       if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
       if (filters.bedrooms && filters.bedrooms !== 'Any') params.append('bedrooms', filters.bedrooms);
       if (filters.bathrooms && filters.bathrooms !== 'Any') params.append('bathrooms', filters.bathrooms);
@@ -163,7 +168,7 @@ const Shop = () => {
         {activeCategory === 'Real Estate' ? (
           <PropertyFilterBar onFilter={handleSearch} initialLocation={filters.location} />
         ) : activeCategory === 'Cars' ? (
-          <FilterBar onFilter={handleSearch} filterOptions={carFilterOptions} priceRanges={['$50K – $100K', '$100K – $200K', '$200K – $400K', '$400K – $750K', '$750K – $1.5M', '$1.5M – $3M', '$3M+']} initialLocation={filters.location} />
+          <FilterBar onFilter={handleSearch} filterOptions={carFilterOptions} priceRanges={['$50K – $100K', '$100K – $200K', '$200K – $400K', '$400K – $750K', '$750K – $1.5M', '$1.5M – $3M', '$3M+']} initialLocation={filters.location} showVehicleSpecFilters />
         ) : activeCategory === 'Bikes' ? (
           <FilterBar onFilter={handleSearch} filterOptions={bikeFilterOptions} priceRanges={['$15K – $30K', '$30K – $60K', '$60K – $120K', '$120K – $250K', '$250K+']} initialLocation={filters.location} />
         ) : activeCategory === 'Yachts' ? (

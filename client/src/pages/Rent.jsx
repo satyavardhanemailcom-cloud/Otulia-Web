@@ -93,6 +93,11 @@ const Rent = () => {
       if (filters.brand) params.append('brand', filters.brand);
       if (filters.model) params.append('model', filters.model);
       if (filters.category && filters.category !== 'Any') params.append('category', filters.category);
+      if (activeCategory === 'Cars') {
+        if (filters.fuelType) params.append('fuelType', filters.fuelType);
+        if (filters.transmission) params.append('transmission', filters.transmission);
+        if (filters.exteriorColor) params.append('exteriorColor', filters.exteriorColor);
+      }
       
       // Estate specifics
       if (filters.type && filters.type !== 'Any') params.append('propertyType', filters.type);
@@ -151,7 +156,7 @@ const Rent = () => {
         {activeCategory === 'Real Estate' ? (
           <PropertyFilterBar onFilter={handleSearch} initialLocation={filters.location} />
         ) : activeCategory === 'Cars' ? (
-          <FilterBar onFilter={handleSearch} filterOptions={carFilterOptions} priceRanges={['$1K – $2K', '$2K – $5K', '$5K – $10K', '$10K+']} initialLocation={filters.location} />
+          <FilterBar onFilter={handleSearch} filterOptions={carFilterOptions} priceRanges={['$1K – $2K', '$2K – $5K', '$5K – $10K', '$10K+']} initialLocation={filters.location} showVehicleSpecFilters />
         ) : activeCategory === 'Bikes' ? (
           <FilterBar onFilter={handleSearch} filterOptions={bikeFilterOptions} priceRanges={['$100 – $500', '$500 – $1K', '$1K – $2K', '$2K+']} initialLocation={filters.location} />
         ) : activeCategory === 'Yachts' ? (

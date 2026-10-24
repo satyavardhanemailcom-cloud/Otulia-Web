@@ -360,7 +360,7 @@ const syncAgentInfo = async (assets) => {
  */
 router.get("/cars", async (req, res) => {
   try {
-    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, category, country, sort, acquisition } = req.query;
+    const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, category, country, sort, acquisition, fuelType, transmission, exteriorColor } = req.query;
 
     let query = { status: 'Active' };
     
@@ -405,6 +405,17 @@ router.get("/cars", async (req, res) => {
     
     if (model) orClauses.push({ 'specification.model': { $regex: model, $options: "i" } });
     if (category) orClauses.push({ category: { $regex: category, $options: "i" } });
+
+    const specificationFilters = [];
+    const addSpecificationMatch = (fields, value) => {
+      if (!value) return;
+      const escaped = String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      specificationFilters.push({ $or: fields.map((field) => ({ [field]: { $regex: escaped, $options: "i" } })) });
+    };
+    addSpecificationMatch(["specification.fuel", "specification.fuelType", "specification.engineType"], fuelType);
+    addSpecificationMatch(["specification.transmission"], transmission);
+    addSpecificationMatch(["specification.exteriorColor", "specification.manufacturerColorCode"], exteriorColor);
+    if (specificationFilters.length) query.$and = specificationFilters;
 
     if (minPrice || maxPrice) {
       const priceQuery = {};

@@ -225,6 +225,7 @@ const FilterBar = ({
   hideLocation = false,
   initialFilters = {},
   disabledFilters = [],
+  showVehicleSpecFilters = false,
 }) => {
   const [filters, setFilters] = useState({
     location: initialLocation,
@@ -234,6 +235,9 @@ const FilterBar = ({
     model: "",
     priceRange: "",
     year: "",
+    fuelType: "",
+    transmission: "",
+    exteriorColor: "",
     sort: "",
     ...initialFilters,
   });
@@ -385,7 +389,7 @@ const FilterBar = ({
         <div
           className="listing-car-filter-shell"
           style={{
-            maxWidth: 900,
+            maxWidth: showVehicleSpecFilters ? 1300 : 900,
             width: "100%",
             background: "#ffffff",
             border: "1.5px solid #ebebeb",
@@ -410,7 +414,6 @@ const FilterBar = ({
               gap: 4,
             }}
           >
-            {/* Filters badge pill (dark) */}
             <PillDropdown
               label={activeCount > 0 ? `Filters ${activeCount}` : "Filters"}
               value=""
@@ -552,6 +555,29 @@ const FilterBar = ({
               onChange={(val) => handleFilterChange("priceRange", val)}
               disabled={disabledFilters.includes("priceRange")}
             />
+
+            {showVehicleSpecFilters && (
+              <>
+                <PillDropdown
+                  label="Fuel Type"
+                  value={filters.fuelType}
+                  options={["Petrol", "Gasoline", "Diesel", "Electric", "Hybrid", "Plug-in Hybrid"]}
+                  onChange={(val) => handleFilterChange("fuelType", val)}
+                />
+                <PillDropdown
+                  label="Transmission"
+                  value={filters.transmission}
+                  options={["Automatic", "Manual", "Semi-Automatic", "CVT", "DCT"]}
+                  onChange={(val) => handleFilterChange("transmission", val)}
+                />
+                <PillDropdown
+                  label="Exterior Color"
+                  value={filters.exteriorColor}
+                  options={["Black", "White", "Silver", "Grey", "Blue", "Red", "Green", "Gold", "Brown", "Other"]}
+                  onChange={(val) => handleFilterChange("exteriorColor", val)}
+                />
+              </>
+            )}
 
             {/* Search button */}
             <button
