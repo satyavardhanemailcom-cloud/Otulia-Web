@@ -9,7 +9,6 @@ import {
   FiShoppingCart,
   FiHeart,
   FiMapPin,
-  FiCalendar,
   FiChevronRight,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
@@ -184,21 +183,6 @@ Reference ID: #${refId}
       });
     }
   };
-
-  function getTimeSinceJoined(createdAt) {
-    if (!createdAt) return "Recently";
-    const joinedDate = new Date(createdAt);
-    const now = new Date();
-    const diffInMonths =
-      (now.getFullYear() - joinedDate.getFullYear()) * 12 +
-      (now.getMonth() - joinedDate.getMonth());
-
-    if (diffInMonths < 12) {
-      return diffInMonths <= 0 ? "this month" : `${diffInMonths} months ago`;
-    }
-    const years = Math.floor(diffInMonths / 12);
-    return `${years} ${years === 1 ? "year" : "years"} ago`;
-  }
 
   const isLongDescription = description && description.length > 400;
 
@@ -496,58 +480,34 @@ Reference ID: #${refId}
 
             {/* Expanded Agent Box */}
             <div className="border border-gray-200 rounded-2xl shadow-sm p-4 md:p-6 bg-white flex flex-col gap-4">
-              {/* Agent Profile & Company Logo Header */}
-              <div className="flex items-center justify-between gap-3 pb-1">
-                {/* Left: Avatar & Details */}
-                <div className="flex items-center gap-3.5 min-w-0">
+              {/* Seller identity and location */}
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="flex min-w-0 flex-1 items-center gap-3.5">
                   <img
                     src={agent?.photo}
                     alt={agent?.name || "Agent"}
                     className="w-14 h-14 rounded-full object-cover border border-gray-100 shrink-0"
                   />
-                  <div className="flex flex-col min-w-0">
+                  <div className="flex min-w-0 flex-col">
                     <h3 className="text-base font-bold text-black truncate">
                       {agent?.name || "Agent Name"}
                     </h3>
                     <span className="inline-block bg-[#FFF8E7] text-[#B58252] text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mt-0.5 w-fit">
                       {agent?.badge || agent?.plan || "BUSINESS VIP"}
                     </span>
-                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-1.5">
-                      <FiMapPin className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                      <span className="truncate">
-                        {location
-                          ? location.split(",").pop().trim()
-                          : "Location"}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-                      <FiCalendar className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                      <span className="truncate">{`Joined ${getTimeSinceJoined(agent?.createdAt)}`}</span>
-                    </div>
                   </div>
                 </div>
 
-                {/* Right: Company Logo */}
-                <div className="flex items-center justify-center shrink-0 max-w-[110px]">
-                  {agent?.companyLogo && agent.companyLogo !== agent?.photo ? (
-                    <img
-                      src={agent.companyLogo}
-                      alt={agent.company || "Company"}
-                      className="max-h-20 w-auto object-contain"
-                    />
-                  ) : item?.brand_logo ? (
-                    <img
-                      src={item.brand_logo}
-                      alt="Brand"
-                      className="max-h-12 w-auto object-contain"
-                    />
-                  ) : (
-                    <div className="h-12 w-12 bg-gray-50 flex items-center justify-center rounded-lg border border-gray-100">
-                      <span className="text-gray-300 font-bold text-sm">
-                        {agent?.company?.[0] || "A"}
-                      </span>
-                    </div>
-                  )}
+                <div className="flex min-w-0 items-center gap-2.5 rounded-xl bg-gray-50 px-3.5 py-3 md:w-[210px] md:shrink-0">
+                  <FiMapPin className="w-4 h-4 text-gray-400 shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[9px] font-semibold uppercase tracking-wider text-gray-400">
+                      Location
+                    </p>
+                    <p className="truncate text-xs font-medium text-gray-700">
+                      {location ? location.split(",").pop().trim() : "Location"}
+                    </p>
+                  </div>
                 </div>
               </div>
 

@@ -180,7 +180,7 @@ const LocationMap = ({ locationName, lat, lng }) => {
   };
 
   return (
-    <div className="w-full px-[2%] mb-10 md:mb-16">
+    <div className="relative z-0 isolate w-full px-[2%] mb-10 md:mb-16">
       <div
         className="w-full h-[340px] md:h-[550px] relative rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 group cursor-pointer"
         onClick={handleOpenMap}

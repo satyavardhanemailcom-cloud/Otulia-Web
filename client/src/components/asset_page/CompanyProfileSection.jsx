@@ -25,14 +25,14 @@ const CompanyProfileSection = ({ agent }) => {
 
   return (
     <div className="w-full px-6 md:px-10 py-10 border-t border-gray-100 mt-10">
-      <div className="flex flex-col lg:flex-row gap-6 md:gap-12 items-start">
+      <div className="grid grid-cols-1 items-start gap-6 md:gap-8 lg:grid-cols-[180px_minmax(0,1fr)] lg:gap-5">
         {/* Left: Logo */}
-        <div className="w-full lg:w-1/4 flex justify-center lg:justify-start">
+        <div className="flex w-full justify-center lg:justify-center">
           {agent.companyLogo && agent.companyLogo !== agent?.photo ? (
             <img
               src={agent.companyLogo}
               alt={agent.company}
-              className="max-h-24 md:max-h-32 w-auto object-contain"
+              className="max-h-24 w-auto object-contain md:max-h-32"
             />
           ) : (
             <div className="h-24 md:h-32 aspect-square bg-gray-50 flex items-center justify-center rounded-xl border border-gray-100">
@@ -44,7 +44,7 @@ const CompanyProfileSection = ({ agent }) => {
         </div>
 
         {/* Right: Details */}
-        <div className="flex-1 space-y-6">
+        <div className="min-w-0 space-y-6">
           <div>
             <h3 className="text-2xl font-bold text-black montserrat mb-2">
               {agent.company || "Agency Profile"}

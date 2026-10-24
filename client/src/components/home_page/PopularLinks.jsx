@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const PopularLinks = () => {
   const [databaseBrands, setDatabaseBrands] = useState([]);
+  const [expandedGroups, setExpandedGroups] = useState({});
   useEffect(() => {
     const controller = new AbortController();
     fetch('/api/assets/car-taxonomy?activeOnly=true', { signal: controller.signal })
@@ -47,16 +48,57 @@ const PopularLinks = () => {
     { label: 'Porsche for sale', path: '/listings/porsche' },
     { label: 'Rolls-Royce for sale', path: '/listings/rolls-royce' },
   ];
-  const knownBrandNames = new Map(cars.map(({ label }) => [label.replace(/ for sale$/i, '').toLowerCase(), label.replace(/ for sale$/i, '')]));
+  const normalizeBrand = (brand) => brand
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+  const knownBrandNames = new Map(cars.map(({ label }) => {
+    const name = label.replace(/ for sale$/i, '');
+    return [normalizeBrand(name), name];
+  }));
   const dynamicCars = databaseBrands
     .filter((brand) => typeof brand === 'string' && brand.trim())
     .map((brand) => {
-      const canonical = knownBrandNames.get(brand.trim().toLowerCase()) || brand.trim();
+      const canonical = knownBrandNames.get(normalizeBrand(brand.trim())) || brand.trim();
       const slug = canonical.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       return { label: `${canonical} for sale`, path: `/listings/${slug}` };
     })
-    .filter((link) => !cars.some((existing) => existing.path === link.path));
+    .filter((link) => !cars.some((existing) => existing.path === link.path))
+    .filter((link, index, links) => links.findIndex((candidate) => candidate.path === link.path) === index);
   const allCars = [...cars, ...dynamicCars];
+
+  const renderLinks = (group, links) => {
+    const isExpanded = Boolean(expandedGroups[group]);
+    const visibleLinks = isExpanded ? links : links.slice(0, 10);
+
+    return (
+      <>
+        <ul className="space-y-3">
+          {visibleLinks.map((link) => (
+            <li key={link.path}>
+              <a
+                href={link.path}
+                onClick={() => handleLinkClick(link.label, link.path)}
+                className="text-gray-600 hover:text-[#D48D2A] transition-colors duration-200 text-sm hover:font-medium"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        {links.length > 10 && (
+          <button
+            type="button"
+            onClick={() => setExpandedGroups((current) => ({ ...current, [group]: !isExpanded }))}
+            className="mt-3 text-sm font-medium text-gray-700 hover:text-[#D48D2A] transition-colors"
+          >
+            {isExpanded ? 'View less' : 'View all'}
+          </button>
+        )}
+      </>
+    );
+  };
 
   const handleLinkClick = (label, path) => {
     // Track breadcrumb for analytics or state if needed
@@ -81,19 +123,7 @@ const PopularLinks = () => {
             <h3 className="text-lg font-bold text-gray-900 mb-4 ">
               Cities & Regions
             </h3>
-            <ul className="space-y-3">
-              {citiesAndRegions.map((link, idx) => (
-                <li key={idx}>
-                  <a
-                    href={link.path}
-                    onClick={() => handleLinkClick(link.label, link.path)}
-                    className="text-gray-600 hover:text-[#D48D2A] transition-colors duration-200 text-sm hover:font-medium"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {renderLinks('cities', citiesAndRegions)}
           </div>
 
           {/* Countries Column */}
@@ -101,19 +131,7 @@ const PopularLinks = () => {
             <h3 className="text-lg font-bold text-gray-900 mb-4 ">
               Countries
             </h3>
-            <ul className="space-y-3">
-              {countries.map((link, idx) => (
-                <li key={idx}>
-                  <a
-                    href={link.path}
-                    onClick={() => handleLinkClick(link.label, link.path)}
-                    className="text-gray-600 hover:text-[#D48D2A] transition-colors duration-200 text-sm hover:font-medium"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {renderLinks('countries', countries)}
           </div>
 
           {/* Cars Column */}
@@ -121,19 +139,7 @@ const PopularLinks = () => {
             <h3 className="text-lg font-bold text-gray-900 mb-4 ">
               Cars
             </h3>
-            <ul className="space-y-3">
-              {allCars.map((link, idx) => (
-                <li key={idx}>
-                  <a
-                    href={link.path}
-                    onClick={() => handleLinkClick(link.label, link.path)}
-                    className="text-gray-600 hover:text-[#D48D2A] transition-colors duration-200 text-sm hover:font-medium"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {renderLinks('cars', allCars)}
           </div>
         </div>
       </div>
