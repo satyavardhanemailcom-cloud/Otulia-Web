@@ -137,7 +137,7 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
 
           <ListingSearch onSearch={setListingSearch} />
 
-          <div className="relative z-[100] mb-8">
+          <div className="relative z-40 mb-8">
             {isCar ? (
               <CarListingFilters
                 filters={activeFilters}

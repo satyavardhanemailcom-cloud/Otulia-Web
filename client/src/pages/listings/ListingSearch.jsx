@@ -45,7 +45,7 @@ const ListingSearch = ({ onSearch }) => {
   };
 
   return (
-    <form ref={containerRef} onSubmit={submit} className="relative z-[110] mx-auto mb-7 w-full max-w-[1200px]">
+    <form ref={containerRef} onSubmit={submit} className="relative z-40 mx-auto mb-7 w-full max-w-[1200px]">
       <div className="flex items-center rounded-full border border-gray-200 bg-white p-1.5 shadow-md">
         <div className="flex min-w-0 flex-[3.5] items-center gap-3 border-r border-gray-200 px-3 sm:px-6">
           <FiMapPin className="shrink-0 text-lg text-gray-500" />
