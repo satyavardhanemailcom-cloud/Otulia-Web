@@ -168,7 +168,7 @@ const ListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], filterPa
           ) : listings.length ? (
             <>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {listings.map((listing) => <AssetCard key={listing._id} item={listing} listingStyle={isCar ? 'marketplace' : 'default'} />)}
+                {listings.map((listing) => <AssetCard key={listing._id} item={listing} />)}
               </div>
               <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
             </>

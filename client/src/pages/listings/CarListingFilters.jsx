@@ -26,7 +26,7 @@ const CarListingFilters = ({ filters, onChange, filterOptions, modelOptions, yea
   const hasFilters = Object.values(filters).some(Boolean);
 
   return (
-    <section aria-label="Filter car listings" className="mb-8 border-y border-gray-200 py-3">
+    <section aria-label="Filter car listings" className="mb-8 border-b border-gray-200 py-3">
       <div className="flex min-w-0 items-center gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button type="button" onClick={() => onChange({})}
@@ -47,7 +47,6 @@ const CarListingFilters = ({ filters, onChange, filterOptions, modelOptions, yea
             </label>
           ))}
         </div>
-        <span aria-hidden="true" className="hidden h-8 shrink-0 border-l border-gray-300 sm:block" />
         <label className="relative inline-flex shrink-0">
           <span className="sr-only">Sort listings</span>
           <select value={filters.sort || ''} onChange={(event) => setFilter('sort', event.target.value)}
