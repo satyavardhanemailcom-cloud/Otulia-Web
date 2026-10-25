@@ -30,9 +30,10 @@ const SAMPLES = [
 ];
 
 // Builds sample listings in the same shape the API returns, using the page's place name.
-export const getPlaceholderListings = (placeName, isIsland = false) => SAMPLES.map((sample, index) => ({
+export const getPlaceholderListings = (placeName, isIsland = false) => SAMPLES.slice(0, 9).map((sample, index) => ({
   _id: `placeholder-${index}`,
   isPlaceholder: true,
+  category: 'estate',
   title: sample.title,
   description: sample.description || '',
   price: sample.price || 0,

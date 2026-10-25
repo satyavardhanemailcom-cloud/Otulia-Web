@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { FiCheck, FiChevronDown, FiSliders } from 'react-icons/fi';
+import { AMENITY_GROUPS } from './amenityGroups';
 
-// Each filter chip opens a small menu. `multi` filters keep a comma-separated list (e.g. amenities).
+// Each filter chip opens a small menu. Amenities has its own grouped menu (same as the category/estates page).
 const FILTERS = [
   { key: 'type', label: 'Type', options: ['House', 'Villa', 'Apartment', 'Penthouse', 'Townhouse', 'Estate', 'Chalet', 'Land', 'Castle', 'Chateau', 'Farm Ranch', 'Private Island'] },
   { key: 'priceRange', label: 'Price', options: ['$500K - $1M', '$1M - $2M', '$2M - $5M', '$5M - $10M', '$10M - $25M', '$25M+'] },
   { key: 'bedrooms', label: 'Beds', options: ['1+', '2+', '3+', '4+', '5+', '6+'] },
   { key: 'bathrooms', label: 'Baths', options: ['1+', '2+', '3+', '4+', '5+'] },
   { key: 'architecture', label: 'Style', options: ['Modern', 'Classic', 'Mediterranean', 'Colonial'] },
-  { key: 'amenities', label: 'Amenities', multi: true, options: ['Pool', 'Garden', 'Terrace', 'Sea View', 'Waterfront', 'Beachfront', 'Garage', 'Fireplace', 'Wine Cellar', 'Fitness Center / Gym', 'Tennis Court', 'Helipad'] },
 ];
 
 const EstateFilterBar = ({ filters, onChange, hideType = false }) => {
@@ -23,25 +23,32 @@ const EstateFilterBar = ({ filters, onChange, hideType = false }) => {
   }, []);
 
   const visibleFilters = FILTERS.filter((filter) => !(hideType && filter.key === 'type'));
-  const activeCount = visibleFilters.filter((filter) => filters[filter.key]).length + (filters.acquisition === 'rent' ? 1 : 0);
+  const selectedAmenities = filters.amenities ? filters.amenities.split(',') : [];
+  const activeCount = visibleFilters.filter((filter) => filters[filter.key]).length
+    + (selectedAmenities.length > 0 ? 1 : 0)
+    + (filters.acquisition === 'rent' ? 1 : 0);
 
   const selectOption = (filter, option) => {
-    if (filter.multi) {
-      const current = filters[filter.key] ? filters[filter.key].split(',') : [];
-      const next = current.includes(option) ? current.filter((item) => item !== option) : [...current, option];
-      onChange({ ...filters, [filter.key]: next.join(',') });
-      return;
-    }
     onChange({ ...filters, [filter.key]: filters[filter.key] === option ? '' : option });
     setOpenKey(null);
+  };
+
+  const toggleAmenity = (label) => {
+    const next = selectedAmenities.includes(label)
+      ? selectedAmenities.filter((item) => item !== label)
+      : [...selectedAmenities, label];
+    onChange({ ...filters, amenities: next.join(',') });
   };
 
   const chipLabel = (filter) => {
     const value = filters[filter.key];
     if (!value) return filter.label;
-    if (filter.multi) return `${filter.label} (${value.split(',').length})`;
     return filter.key === 'bedrooms' ? `${value} Beds` : filter.key === 'bathrooms' ? `${value} Baths` : value;
   };
+
+  const amenitiesLabel = selectedAmenities.length === 0 ? 'Amenities'
+    : selectedAmenities.length === 1 ? selectedAmenities[0]
+      : `Amenities (${selectedAmenities.length})`;
 
   const clearAll = () => onChange(hideType ? { type: filters.type, sort: filters.sort } : { sort: filters.sort });
 
@@ -68,7 +75,6 @@ const EstateFilterBar = ({ filters, onChange, hideType = false }) => {
       {visibleFilters.map((filter) => {
         const isActive = Boolean(filters[filter.key]);
         const isOpen = openKey === filter.key;
-        const selected = filters[filter.key] ? filters[filter.key].split(',') : [];
         return (
           <div key={filter.key} className="relative shrink-0">
             <button type="button" onClick={() => setOpenKey(isOpen ? null : filter.key)} aria-expanded={isOpen}
@@ -81,7 +87,7 @@ const EstateFilterBar = ({ filters, onChange, hideType = false }) => {
               <div className="absolute left-0 top-full mt-2 w-60 rounded-xl border border-gray-200 bg-white py-2 shadow-xl">
                 <ul className="max-h-72 overflow-y-auto">
                   {filter.options.map((option) => {
-                    const checked = selected.includes(option);
+                    const checked = filters[filter.key] === option;
                     return (
                       <li key={option}>
                         <button type="button" onClick={() => selectOption(filter, option)}
@@ -104,6 +110,53 @@ const EstateFilterBar = ({ filters, onChange, hideType = false }) => {
           </div>
         );
       })}
+
+      {/* Amenities – grouped menu with icons, same UI as the category/estates page */}
+      <div className="relative shrink-0">
+        <button type="button" onClick={() => setOpenKey(openKey === 'amenities' ? null : 'amenities')} aria-expanded={openKey === 'amenities'}
+          className={`flex h-9 items-center gap-1.5 rounded-full border px-4 text-sm transition ${selectedAmenities.length > 0 ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300 text-gray-800 hover:border-gray-900'}`}>
+          {amenitiesLabel}
+          <FiChevronDown className={`transition-transform ${openKey === 'amenities' ? 'rotate-180' : ''}`} />
+        </button>
+
+        {openKey === 'amenities' && (
+          <div className="absolute right-0 top-full z-20 mt-2 max-h-[480px] w-[520px] max-w-[calc(100vw-32px)] overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-2xl max-md:fixed max-md:inset-x-4 max-md:top-auto max-md:w-auto">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white px-5 pb-2 pt-4">
+              <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">Amenities</span>
+              {selectedAmenities.length > 0 && (
+                <button type="button" onClick={() => onChange({ ...filters, amenities: '' })} className="text-xs font-semibold text-[#9C824A] hover:underline">
+                  Clear all
+                </button>
+              )}
+            </div>
+            <div className="space-y-5 px-5 py-4">
+              {AMENITY_GROUPS.map((group) => (
+                <div key={group.group}>
+                  <div className="mb-3 text-sm font-semibold text-gray-900">{group.group}</div>
+                  <div className="flex flex-wrap gap-2">
+                    {group.items.map((item) => {
+                      const active = selectedAmenities.includes(item.label);
+                      return (
+                        <button key={item.label} type="button" onClick={() => toggleAmenity(item.label)}
+                          className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${active ? 'border-black bg-black text-white' : 'border-gray-300 bg-white text-gray-700 hover:border-black hover:text-black'}`}>
+                          <span className="h-4 w-4 flex-shrink-0">{item.icon}</span>
+                          {item.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="sticky bottom-0 flex justify-end border-t border-gray-100 bg-white px-5 py-3">
+              <button type="button" onClick={() => setOpenKey(null)}
+                className="rounded-lg bg-black px-6 py-2 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-gray-800">
+                Done
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {activeCount > 0 && (
         <button type="button" onClick={clearAll} className="shrink-0 px-2 text-sm font-medium text-gray-900 underline underline-offset-4">
