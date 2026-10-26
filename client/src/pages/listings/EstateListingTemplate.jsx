@@ -5,11 +5,10 @@ import Navbar from '../../components/Navbar';
 import SEO from '../../components/SEO';
 import Pagination from '../../components/Pagination';
 import EstateFilterBar from './EstateFilterBar';
-import EstateListingCard from './EstateListingCard';
+import AssetCard from '../../components/AssetCard';
 import { getPlaceholderListings } from './estatePlaceholders';
 
-// 1 wide featured card + 1 sell tile + 9 cards = 4 full rows of 3.
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 9;
 const SORT_OPTIONS = [
   { value: '', label: 'Newest' },
   { value: 'Oldest', label: 'Oldest' },
@@ -84,7 +83,6 @@ const EstateListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], fi
   const showPlaceholders = !loading && !error && listings.length === 0 && !hasFilters;
   const visibleListings = showPlaceholders ? getPlaceholderListings(placeName, isIsland) : listings;
   const count = showPlaceholders ? visibleListings.length : total;
-  const [featured, ...rest] = visibleListings;
 
   const handlePageChange = (nextPage) => {
     setPage(nextPage);
@@ -142,21 +140,12 @@ const EstateListingTemplate = ({ pageTitle, pageDescription, breadcrumb = [], fi
           ) : (
             <>
               <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <EstateListingCard item={featured} featured />
-
-                {/* Sell tile – fills the slot next to the featured card */}
-                <div className="flex flex-col justify-between bg-[#111] p-6 text-white">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/60">Otulia for sellers</p>
-                    <h2 className="canela mt-3 text-3xl font-normal leading-tight">{isIsland ? 'Selling a private island?' : `Selling a home in ${placeName}?`}</h2>
-                    <p className="mt-3 text-sm text-white/70">Reach qualified luxury buyers across 140+ countries.</p>
+                {visibleListings.map((item) => (
+                  // Placeholders are display-only, so they can't be clicked through to an asset page.
+                  <div key={item._id} className={item.isPlaceholder ? 'pointer-events-none' : ''}>
+                    <AssetCard item={item} />
                   </div>
-                  <Link to="/sellwithus" className="mt-6 self-start rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black hover:bg-gray-200">
-                    List your property
-                  </Link>
-                </div>
-
-                {rest.map((item) => <EstateListingCard key={item._id} item={item} />)}
+                ))}
               </div>
 
               {!showPlaceholders && (
