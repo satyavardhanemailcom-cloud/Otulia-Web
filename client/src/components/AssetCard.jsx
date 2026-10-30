@@ -5,6 +5,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { FiHeart, FiMapPin, FiPlay, FiTrash2 } from "react-icons/fi";
 import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 import { createAssetSlug } from "../utils/slugUtils";
+import { dealerUrl } from "../utils/dealerUrl";
 
 const AssetCard = ({ item, listingStyle = 'default' }) => {
   const navigate = useNavigate();
@@ -515,7 +516,7 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
               e.stopPropagation();
               const dealerEmail = item.agent?.email || item.ownerEmail;
               if (dealerEmail) {
-                navigate(`/dealer/${encodeURIComponent(dealerEmail)}`);
+                navigate(dealerUrl(item.agent?.company || item.agent?.name, dealerEmail));
               }
             }}
             className="mt-auto border-t border-[#eeeeee] flex items-center justify-between cursor-pointer group/dealer"

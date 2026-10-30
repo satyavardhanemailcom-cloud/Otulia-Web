@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiMapPin, FiGlobe, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { dealerUrl } from "../../utils/dealerUrl";
 
 const CompanyProfileSection = ({ agent }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -15,7 +16,7 @@ const CompanyProfileSection = ({ agent }) => {
 
   // Link to internal dealer profile if email is available, otherwise fallback to website
   const profileLink = agent.email
-    ? `/dealer/${agent.email}`
+    ? dealerUrl(agent.company, agent.email)
     : agent.website
       ? agent.website.startsWith("http")
         ? agent.website

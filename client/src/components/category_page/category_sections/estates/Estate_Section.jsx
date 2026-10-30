@@ -6,6 +6,7 @@ import SortDropdown from "../SortDropdown";
 import Estate_Hero from "./Estate_Hero";
 import Estate_Developers from "./Estate_Developers";
 import Pagination from "../../../Pagination";
+import { dealerUrl } from "../../../../utils/dealerUrl";
 
 const Estate_Section = () => {
   const [list, setlist] = useState([]);
@@ -143,8 +144,8 @@ const Estate_Section = () => {
     navigate(`?${searchParams.toString()}`, { replace: true });
   };
 
-  const handleDeveloperClick = (developerEmail) => {
-    navigate(`/dealer/${developerEmail}`);
+  const handleDeveloperClick = (developerName, developerEmail) => {
+    navigate(dealerUrl(developerName, developerEmail));
   };
 
 

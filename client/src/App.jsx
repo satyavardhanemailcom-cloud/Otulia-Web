@@ -311,7 +311,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/view-document" element={<DocumentViewer />} />
           <Route path="/content-management" element={<ContentManagement />} />
-          <Route path="/dealer/:email" element={<DealerProfile />} />
+          <Route path="/dealer/:identifier" element={<DealerProfile />} />
           <Route path="/sellwithus" element={<SellWithUs />} />
 
           {/* Policy Routes */}

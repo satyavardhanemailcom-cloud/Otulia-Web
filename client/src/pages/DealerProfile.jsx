@@ -25,7 +25,7 @@ import youtubeIcon from "../assets/icons/social/youtube.svg";
 import xIcon from "../assets/icons/social/x.svg";
 
 const DealerProfile = () => {
-  const { email } = useParams();
+  const { identifier } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +37,7 @@ const DealerProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`/api/auth/public-profile/${email}`);
+        const response = await fetch(`/api/auth/public-profile/${encodeURIComponent(identifier)}`);
         const result = await response.json();
 
         if (response.ok) {
@@ -57,7 +57,7 @@ const DealerProfile = () => {
       }
     };
     fetchProfile();
-  }, [email]);
+  }, [identifier]);
 
   if (loading)
     return (

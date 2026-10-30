@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { dealerUrl } from "../../../../utils/dealerUrl";
 
 const Estate_Developers = ({ onDeveloperClick }) => {
   const navigate = useNavigate();
@@ -53,9 +54,9 @@ const Estate_Developers = ({ onDeveloperClick }) => {
   const handleCardClick = (dev) => {
     const targetEmail = dev.email || `${dev.id || dev.name.toLowerCase().replace(/[^a-z0-9]/g, "")}@otulia.com`;
     if (onDeveloperClick) {
-      onDeveloperClick(targetEmail);
+      onDeveloperClick(dev.companyName || dev.fullName || dev.name, targetEmail);
     } else {
-      navigate(`/dealer/${targetEmail}`);
+      navigate(dealerUrl(dev.companyName || dev.fullName || dev.name, targetEmail));
     }
   };
 

@@ -939,12 +939,17 @@ router.post("/submit-verification", authMiddleware, uploadVerification.any(), as
 /**
  * GET PUBLIC PROFILE BY EMAIL
  */
-router.get("/public-profile/:email", async (req, res) => {
+router.get("/public-profile/:identifier", async (req, res) => {
   try {
-    const { email } = req.params;
-    let user = await User.findOne({ email }).select("-password -notifications -favorites -myListings -boughtHistory -rentedHistory -verificationDocuments");
-
-    const companySearchTerm = email.split('@')[0].replace(/[._-]/g, ' ');
+    const { identifier } = req.params;
+    let user = await User.findOne({ email: identifier }).select("-password -notifications -favorites -myListings -boughtHistory -rentedHistory -verificationDocuments");
+    const slugify = (value = "") => value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    if (!user) {
+      const candidates = await User.find({ "company.companyName": { $exists: true, $ne: "" } }).select("-password -notifications -favorites -myListings -boughtHistory -rentedHistory -verificationDocuments");
+      user = candidates.find((candidate) => slugify(candidate.company?.companyName) === slugify(identifier));
+    }
+    const email = user?.email || identifier;
+    const companySearchTerm = user?.company?.companyName || identifier.split('@')[0].replace(/[._-]/g, ' ');
 
     // Fetch all active listings for this user across all models
     const models = [CarAsset, BikeAsset, YachtAsset, EstateAsset, Listing];

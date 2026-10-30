@@ -9,6 +9,7 @@ import {
 import { FaWhatsapp } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import UserPlaceholder from '../assets/user.png';
+import { dealerUrl } from '../utils/dealerUrl';
 import VerificationModal from '../components/VerificationModal';
 import ImageCropModal from '../components/ImageCropModal';
 import SEO from '../components/SEO';
@@ -353,7 +354,7 @@ const Profile = () => {
             <div className="flex items-center gap-3">
               { (user?.plan === 'Premium Basic' || user?.plan === 'Business VIP') && (
                 <button 
-                  onClick={() => window.open(`/dealer/${user?.email}`, '_blank')}
+                  onClick={() => window.open(dealerUrl(user?.company?.companyName || user?.name, user?.email), '_blank')}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:text-black hover:border-black transition-all text-sm font-bold shadow-sm bg-white"
                 >
                   <FiExternalLink />
