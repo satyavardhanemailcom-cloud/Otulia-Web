@@ -184,9 +184,7 @@ const Hero = () => {
           </h1>
 
           <p className="text-white/90 montserrat text-sm md:text-xl max-w-2xl mb-10 md:mb-16 leading-relaxed">
-            Otulia is the global marketplace for luxury cars, real estate,
-            yachts and rare assets — curated for those who deal in the
-            considered.
+            We source and broker the world's most exceptional assets, from rare automobiles to prestigious estates, connecting discerning clients with opportunities beyond the ordinary.
           </p>
 
           {/* Underline Search Bar */}
