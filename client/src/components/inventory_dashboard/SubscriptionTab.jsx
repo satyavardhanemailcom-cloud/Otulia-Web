@@ -51,7 +51,7 @@ const SubscriptionTab = ({
                   <span className="text-[12px] font-bold text-gray-900 mt-1">
                     {(data?.inventory || []).length || 1} of{" "}
                     {user?.plan === "Business VIP"
-                      ? 50
+                      ? 150
                       : user?.plan === "Enterprise Elite"
                         ? "Unlimited"
                         : 25}
@@ -150,7 +150,7 @@ const SubscriptionTab = ({
               name: "Business VIP",
               price: "249",
               features: [
-                "50 Active Listings",
+                "150 Active Listings",
                 "Full Analytics Suite",
                 "Priority Phone Support",
                 "Featured Listing Badge",

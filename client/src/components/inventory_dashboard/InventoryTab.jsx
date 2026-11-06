@@ -131,7 +131,7 @@ const InventoryTab = ({
           onClick={() => {
             const limit =
               user?.plan === "Business VIP"
-                ? 50
+                ? 150
                 : user?.plan === "Premium Basic"
                   ? 25
                   : 5;
