@@ -28,7 +28,7 @@ const Header = ({
                         {activeTab === 'settings' ? 'Profile & Company Settings' : navItems.find(n => n.id === activeTab)?.label}
                         {activeTab === 'inventory' && (
                             <span className="text-[clamp(10px,1.4vh,18px)] font-medium text-gray-400 montserrat ml-1">
-                                ({data?.inventory?.length || 0}/{user?.plan === 'Business VIP' ? 50 : user?.plan === 'Premium Basic' ? 25 : 5} used)
+                                ({data?.inventory?.length || 0}/{user?.plan === 'Business VIP' ? 150 : user?.plan === 'Premium Basic' ? 25 : 5} used)
                             </span>
                         )}
                     </h2>

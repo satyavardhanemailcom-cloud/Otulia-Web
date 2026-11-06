@@ -157,7 +157,7 @@ const MyListings = () => {
     const limits = {
       Freemium: 5,
       "Premium Basic": 25,
-      "Business VIP": 50,
+      "Business VIP": 150,
     };
 
     const limit = limits[currentPlan] || 5;
@@ -183,7 +183,7 @@ const MyListings = () => {
 
   const getLimitText = () => {
     if (!user) return "";
-    const limits = { Freemium: 5, "Premium Basic": 25, "Business VIP": 50 };
+    const limits = { Freemium: 5, "Premium Basic": 25, "Business VIP": 150 };
     const limit = limits[user.plan] || 5;
     return `(${listings.length}/${limit} used)`;
   };
@@ -429,7 +429,7 @@ const MyListings = () => {
                   </div>
                   <h4 className="text-lg font-bold">Increased Limits</h4>
                   <p className="text-gray-400 text-sm leading-relaxed">
-                    List up to 50 assets with our Business VIP plan. Never worry
+                    List up to 150 assets with our Business VIP plan. Never worry
                     about reaching your capacity again.
                   </p>
                 </div>
