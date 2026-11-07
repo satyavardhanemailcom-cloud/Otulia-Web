@@ -52,6 +52,16 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
     else if (model.includes("yacht")) category = "yacht";
   }
 
+  // Car mileage for the card, e.g. "1240" -> "1,240mi". Hidden when missing or 0.
+  // Values that already carry a unit (e.g. "1,240 km") are shown as-is.
+  const formatMileage = (value) => {
+    if (value === undefined || value === null) return null;
+    const text = value.toString().trim();
+    const miles = parseFloat(text.replace(/,/g, ""));
+    if (!miles) return null;
+    return /^[\d,.\s]+$/.test(text) ? `${miles.toLocaleString()}mi` : text;
+  };
+
   // DETAILS EXTRACTION
   let specs_list = [];
   if (item.keySpecifications) {
@@ -64,7 +74,7 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
             ? specs.power
             : `${specs.power} HP`
           : null,
-        specs.year || item.specification?.yearOfConstruction,
+        formatMileage(item.specification?.mileage || specs.mileage),
       ].filter(Boolean);
     } else if (category === "bike") {
       specs_list = [
@@ -203,6 +213,11 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
             >
               <span className="opacity-80 font-light">|</span>
               <span>Directly from Developer</span>
+            </div>
+          )}
+          {item.tag && (
+            <div className="self-start rounded-md bg-white px-[1.7cqi] py-[1cqi] text-center text-[1.5cqi] font-bold uppercase tracking-[0.1em] text-[#1a1a1a] shadow-lg">
+              {item.tag}
             </div>
           )}
           {item.type === "Rent" && (

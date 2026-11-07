@@ -49,6 +49,16 @@ const blogPostSchema = new mongoose.Schema(
       buttonLabel: { type: String, trim: true, default: "" },
       url: { type: String, trim: true, default: "" },
     },
+
+    // Audit trail: which admin created / last edited the article (set by the server, not the form)
+    createdBy: {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      email: { type: String, trim: true },
+    },
+    updatedBy: {
+      id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      email: { type: String, trim: true },
+    },
   },
   { timestamps: true }
 );
