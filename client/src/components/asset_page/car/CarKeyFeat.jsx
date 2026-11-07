@@ -2,6 +2,18 @@ import React from "react";
 import powerIcon from "../../../assets/productpage/power.webp";
 import speedIcon from "../../../assets/productpage/speed.webp";
 import engineIcon from "../../../assets/productpage/engine.webp";
+import torqueIcon from "../../../assets/productpage/torque.svg";
+import accelerationIcon from "../../../assets/productpage/acceleration.svg";
+import mileageIcon from "../../../assets/productpage/mileage.svg";
+
+// "1240" -> "1,240 mi". Hidden when missing or 0. Values that already carry a unit are shown as-is.
+const formatMileage = (value) => {
+  if (value === undefined || value === null) return null;
+  const text = value.toString().trim();
+  const miles = parseFloat(text.replace(/,/g, ""));
+  if (!miles) return null;
+  return /^[\d,.\s]+$/.test(text) ? `${miles.toLocaleString()} mi` : text;
+};
 
 const CarKeyFeatures = ({ item }) => {
   const kSpecs = item?.keySpecifications || {};
@@ -19,6 +31,9 @@ const CarKeyFeatures = ({ item }) => {
       value: kSpecs.engineType || specs.engineType || specs.engine,
       icon: engineIcon,
     },
+    { label: "Torque", value: specs.torque?.toString().replace(/^\d{4,}/, (n) => Number(n).toLocaleString()), icon: torqueIcon },
+    { label: "0-100 km/h", value: specs.acceleration, icon: accelerationIcon },
+    { label: "Mileage", value: formatMileage(specs.mileage), icon: mileageIcon },
   ].filter((spec) => spec.value && spec.value !== "0" && spec.value !== "-");
 
   if (specItems.length === 0) return null;

@@ -72,6 +72,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
         countryOfFirstDelivery: '', currentCarLocation: '',
         soulOfTheCar: '', idealBuyer: '',
         latitude: '', longitude: '',
+        torque: '', acceleration: '', tag: '',
 
         // Yacht Specific
         yachtName: '', builder: '', length: '', beam: '', draft: '',
@@ -323,6 +324,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 longitude: spec.longitude || '',
                 soulOfTheCar: spec.soulOfTheCar || '',
                 idealBuyer: spec.idealBuyer || '',
+                torque: parseNumber((spec.torque || '').toString().replace(/,/g, '')),
+                acceleration: parseNumber(spec.acceleration || ''),
+                tag: editData.tag || '',
 
                 // Yacht Specifics
                 yachtName: editData.yachtName || (type === 'Yacht' ? editData.title : '') || '',
@@ -822,6 +826,9 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                     </div>
                                 </div>
                                 <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} required />
+                                {assetType === 'Car' && (
+                                    <SelectField label="Tag / Badge" name="tag" value={formData.tag} options={CAR_TAG_OPTIONS} onChange={handleInputChange} required={false} />
+                                )}
                                 
                                 {/* Listing Reference ID Field */}
                                 <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-[#FAFBFB] p-8 rounded-[2rem] border border-gray-200 flex flex-col gap-6 mt-2">
@@ -944,6 +951,8 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         <InputField label="Horsepower" name="horsepower" value={formData.horsepower} placeholder="e.g., 789" onChange={handleInputChange} required={false} />
                                         <InputField label="Top Speed" name="topSpeed" value={formData.topSpeed} placeholder="e.g., 211" onChange={handleInputChange} required={false} />
                                         <InputField label="Engine Type" name="engineType" value={formData.engineType} placeholder="e.g., V12" onChange={handleInputChange} required={false} />
+                                        <InputField label="Torque (Nm)" name="torque" type="number" value={formData.torque} placeholder="e.g., 1000" onChange={handleInputChange} required={false} />
+                                        <InputField label="0-100 km/h (sec)" name="acceleration" value={formData.acceleration} placeholder="e.g., 3.2" onChange={handleInputChange} required={false} />
                                         <InputField label="Mileage" name="mileage" type="number" value={formData.mileage} placeholder="1500" onChange={handleInputChange} required={false} />
                                         <SelectField label="Fuel Type" name="fuelType" value={formData.fuelType} options={['Gasoline', 'Diesel', 'Hybrid', 'Electric']} onChange={handleInputChange} required={false} />
                                         <SelectField label="Transmission" name="transmission" value={formData.transmission} options={['Automatic', 'Manual', 'PDK', 'F1']} onChange={handleInputChange} required={false} />
@@ -1772,6 +1781,8 @@ const FilterStyleAutocomplete = ({ name, value = '', options = [], placeholder, 
         </div>
     );
 };
+
+const CAR_TAG_OPTIONS = ['Exclusive', 'Rare', 'Limited Edition', 'Track Spec', 'Trending', 'Featured'];
 
 const SelectField = ({ label, name, value, options, onChange, required = false }) => (
     <div>
