@@ -469,6 +469,7 @@ router.post('/create', authMiddleware, upload.fields([
             updateData.variant = req.body.variant;
             updateData.highlights = req.body.highlights ? JSON.parse(req.body.highlights) : [];
             updateData.videoUrl = req.body.videoUrl;
+            updateData.tag = req.body.tag || '';
 
             updateData.keySpecifications = {
                 power: addUnit(req.body.horsepower, 'hp'),
@@ -487,6 +488,8 @@ router.post('/create', authMiddleware, upload.fields([
                 configuration: req.body.configuration,
                 topSpeed: addUnit(req.body.topSpeed, 'mph'),
                 engineType: req.body.engineType,
+                torque: addUnit(req.body.torque, 'Nm'),
+                acceleration: addUnit(req.body.acceleration, 's'),
                 steering: req.body.steering,
                 transmission: req.body.transmission,
                 drive: req.body.driveType,
@@ -945,6 +948,9 @@ router.put('/:id', authMiddleware, upload.fields([
                 keySpec.topSpeed = ts;
             }
             if (req.body.engineType) { spec.engineType = req.body.engineType; keySpec.engineType = req.body.engineType; }
+            if (req.body.torque) spec.torque = addUnit(req.body.torque, 'Nm');
+            if (req.body.acceleration) spec.acceleration = addUnit(req.body.acceleration, 's');
+            if (req.body.tag !== undefined) listing.tag = req.body.tag;
             if (req.body.steering) spec.steering = req.body.steering;
             if (req.body.transmission) spec.transmission = req.body.transmission;
             if (req.body.driveType) spec.drive = req.body.driveType;

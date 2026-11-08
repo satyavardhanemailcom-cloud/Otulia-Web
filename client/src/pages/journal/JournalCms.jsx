@@ -7,7 +7,7 @@ import { CmsArticleView } from "../../components/journal/cms/CmsArticle";
 // Rendered as the "Journal CMS" tab inside /admin (admin users only)
 
 // Set to false only for quick local testing without an admin account.
-const CMS_REQUIRE_LOGIN = false;
+const CMS_REQUIRE_LOGIN = true;
 
 const CATEGORIES = ["Cars", "Real Estate", "Yachts", "Watches", "Guides"];
 

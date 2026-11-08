@@ -17,6 +17,7 @@ const carAssetSchema = new mongoose.Schema(
     variant: { type: String },
     highlights: [{ type: String }],
     videoUrl: { type: String },
+    tag: { type: String, default: '' }, // Card badge: Exclusive, Rare, Limited Edition, Track Spec, Trending, Featured
 
     keySpecifications: {
       power: String,
@@ -35,6 +36,8 @@ const carAssetSchema = new mongoose.Schema(
       cylinderCapacity: String,
       topSpeed: String,
       engineType: String,
+      torque: String, // e.g. "1000 Nm"
+      acceleration: String, // 0-100 km/h, e.g. "3.2 s"
       co2Emission: String,
       consumption: String,
       steering: String,

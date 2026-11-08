@@ -2,6 +2,10 @@ import React, { useState, useRef } from 'react';
 import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
+// Longest edge of the exported image. Full-size photos exported as lossless PNG were far
+// larger than Cloudinary's 10 MB upload limit, so ranking image uploads were rejected.
+const MAX_OUTPUT_SIDE = 2560;
+
 const ImageCropModal = ({ src, onCropComplete, onClose, isUploading }) => {
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState();
@@ -46,33 +50,35 @@ const ImageCropModal = ({ src, onCropComplete, onClose, isUploading }) => {
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
     const ctx = canvas.getContext('2d');
-    const pixelRatio = window.devicePixelRatio;
 
-    // Use actual pixel dimensions for high quality
-    canvas.width = Math.floor(crop.width * scaleX * pixelRatio);
-    canvas.height = Math.floor(crop.height * scaleY * pixelRatio);
+    // Crop size in the original image's pixels, scaled down if it is larger than MAX_OUTPUT_SIDE
+    const sourceWidth = crop.width * scaleX;
+    const sourceHeight = crop.height * scaleY;
+    const outputScale = Math.min(1, MAX_OUTPUT_SIDE / Math.max(sourceWidth, sourceHeight));
 
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    canvas.width = Math.round(sourceWidth * outputScale);
+    canvas.height = Math.round(sourceHeight * outputScale);
     ctx.imageSmoothingQuality = 'high';
 
     ctx.drawImage(
       image,
       crop.x * scaleX,
       crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
+      sourceWidth,
+      sourceHeight,
       0,
       0,
-      crop.width * scaleX,
-      crop.height * scaleY
+      canvas.width,
+      canvas.height
     );
 
+    // WebP keeps transparency (logos) and is a fraction of the PNG size
     canvas.toBlob(
       (blob) => {
         onCropComplete(blob);
       },
-      'image/png',
-      1
+      'image/webp',
+      0.9
     );
   };
 

@@ -2,6 +2,18 @@ const express = require("express");
 const router = express.Router();
 const BlogPost = require("../models/BlogPost.model");
 const { upload } = require("../config/cloudinary");
+const authMiddleware = require("../middleware/auth.middleware");
+
+// Only logged-in users with role "admin" may use the CMS routes below.
+const requireAdmin = (req, res, next) => {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ error: "ACCESS_DENIED_ADMIN_ONLY" });
+  }
+  next();
+};
+
+// Who made a change, stored on the article for later review.
+const actor = (req) => ({ id: req.user._id, email: req.user.email });
 
 // Only these fields can be written from the CMS form
 const pickFields = (body = {}) => {
@@ -51,7 +63,9 @@ router.get("/post/:slug", async (req, res) => {
   }
 });
 
-// ---------- CMS (no login check for now — add auth before deploying) ----------
+// ---------- CMS (admins only) ----------
+// Every /admin/... route (list, read, create, edit, delete, upload) requires an admin login.
+router.use("/admin", authMiddleware, requireAdmin);
 
 router.get("/admin/all", async (req, res) => {
   try {
@@ -77,7 +91,11 @@ router.get("/admin/:id", async (req, res) => {
 
 router.post("/admin", async (req, res) => {
   try {
-    const post = await BlogPost.create(pickFields(req.body));
+    const post = await BlogPost.create({
+      ...pickFields(req.body),
+      createdBy: actor(req),
+      updatedBy: actor(req),
+    });
     res.status(201).json(post);
   } catch (err) {
     handleError(res, err);
@@ -86,7 +104,7 @@ router.post("/admin", async (req, res) => {
 
 router.put("/admin/:id", async (req, res) => {
   try {
-    const post = await BlogPost.findByIdAndUpdate(req.params.id, pickFields(req.body), {
+    const post = await BlogPost.findByIdAndUpdate(req.params.id, { ...pickFields(req.body), updatedBy: actor(req) }, {
       returnDocument: "after",
       runValidators: true,
     });

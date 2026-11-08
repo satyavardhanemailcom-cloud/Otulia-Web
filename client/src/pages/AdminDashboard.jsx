@@ -19,7 +19,7 @@ import CouponModal from '../components/admin/CouponModal';
 import JournalCms from './journal/JournalCms';
 
 const AdminDashboard = () => {
-    const { token, user } = useAuth();
+    const { token, user, loading: authLoading } = useAuth();
     const { showSnackbar } = useSnackbar();
     const navigate = useNavigate();
     const location = useLocation();
@@ -178,6 +178,12 @@ const AdminDashboard = () => {
         }
     }, [activeTab]);
 
+    // Admins only: once the session has loaded, send everyone else to the homepage
+    const isAdmin = user?.role === 'admin';
+    useEffect(() => {
+        if (!authLoading && !isAdmin) navigate('/', { replace: true });
+    }, [authLoading, isAdmin, navigate]);
+
     const fetchData = async () => {
         try {
             const headers = { 'Authorization': `Bearer ${token}` };
@@ -242,7 +248,7 @@ const AdminDashboard = () => {
         }
     };
 
-    if (loading) return (
+    if (authLoading || !isAdmin || loading) return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
             <SEO title="Admin Dashboard" description="Otulia System Administration" noindex />
             <div className="w-12 h-12 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
