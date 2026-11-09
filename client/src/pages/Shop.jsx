@@ -104,6 +104,10 @@ const Shop = () => {
         endpoint = category ? category.endpoint : 'combined';
       } else {
         params.append('q', query);
+        if (activeCategory !== 'All') {
+          const searchCategory = categories.find(c => c.name === activeCategory)?.clientName;
+          if (searchCategory) params.append('searchCategory', searchCategory.toLowerCase());
+        }
       }
 
       if (endpoint === 'combined') {

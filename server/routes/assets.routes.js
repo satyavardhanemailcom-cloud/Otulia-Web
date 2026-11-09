@@ -7,14 +7,75 @@ const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
 const Listing = require("../models/Listing.model");
 const User = require("../models/User.model");
+const MiniSearch = require("minisearch");
 const { incrementPopularity } = require("../utils/popularityUpdater");
 const carFilterOptions = require("../../client/src/json/car_filter_options.json");
 
 const axios = require("axios");
 const router = express.Router();
+const searchModels = [CarAsset, EstateAsset, BikeAsset, YachtAsset, Listing];
+const SEARCH_INDEX_TTL_MS = 60 * 1000;
+let searchIndexCache = null;
+let searchIndexRefresh = null;
 const catalogCache = new Map();
 const CATALOG_API = "https://fleetcatalog.disturbingbyte.pt/v1";
 const CATALOG_CACHE_TTL_MS = 60 * 60 * 1000;
+
+const searchableText = (value) => String(value || "")
+  .replace(/([a-z])([A-Z])/g, "$1 $2")
+  .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2");
+
+const getSearchIndex = async () => {
+  if (searchIndexCache && searchIndexCache.expiresAt > Date.now()) return searchIndexCache;
+  if (searchIndexRefresh) return searchIndexRefresh;
+
+  searchIndexRefresh = (async () => {
+    const groups = await Promise.all(searchModels.map((Model) => Model.find({ status: "Active" }).lean()));
+    const assets = groups.flatMap((items, index) => items.map((asset) => ({
+      ...asset,
+      _searchModel: searchModels[index].modelName,
+    })));
+    const index = new MiniSearch({
+      fields: ["title", "brand", "model", "builder", "category", "location", "keywords", "description", "propertyType", "architecture", "city"],
+      storeFields: ["_searchModel"],
+      tokenize: (text) => searchableText(text).toLocaleLowerCase().match(/[\p{L}\p{N}]+/gu) || [],
+      searchOptions: { combineWith: "AND", prefix: true, fuzzy: 0.15 },
+      boost: { title: 8, brand: 7, model: 7, builder: 6, category: 4, keywords: 3, propertyType: 3, location: 2, city: 2, architecture: 2, description: 1 },
+    });
+    const documents = assets.map((asset) => {
+      const model = asset.specification?.model || asset.specification?.brand || "";
+      return {
+        id: `${asset._searchModel}:${asset._id}`,
+        _searchModel: asset._searchModel,
+        title: searchableText(asset.title),
+        brand: searchableText(asset.brand || asset.specification?.brand || asset.specification?.brandBuilder),
+        model: searchableText(model),
+        builder: searchableText(asset.builder),
+        category: searchableText(asset.category),
+        location: searchableText(asset.location || asset.specification?.city || asset.specification?.country),
+        keywords: searchableText([...(asset.keywords || []), ...(asset.highlights || [])].join(" ")),
+        description: searchableText(asset.description),
+        propertyType: searchableText(asset.keySpecifications?.propertyType || asset.specification?.propertyType),
+        architecture: searchableText(asset.specification?.architectureStyle),
+        city: searchableText(asset.specification?.city),
+      };
+    });
+    index.addAll(documents);
+    const cache = {
+      index,
+      assets: new Map(assets.map((asset) => [`${asset._searchModel}:${asset._id}`, asset])),
+      expiresAt: Date.now() + SEARCH_INDEX_TTL_MS,
+    };
+    searchIndexCache = cache;
+    return cache;
+  })();
+
+  try {
+    return await searchIndexRefresh;
+  } finally {
+    searchIndexRefresh = null;
+  }
+};
 
 const escapeRegex = (value) => String(value || "").replace(/[|\\{}()[\]^$+*?.]/g, "\\$&");
 const mergeCanonicalValues = (...groups) => {
@@ -1094,6 +1155,65 @@ router.post("/:type/:id/like", authMiddleware, async (req, res) => {
 router.get("/combined", async (req, res) => {
   try {
     const { q, page = 1, limit = 12, type, minPrice, maxPrice, location, acquisition, brand, model, category, propertyType, bedrooms, bathrooms, amenities, architecture, sort } = req.query;
+
+    if (typeof q === "string" && q.trim()) {
+      const searchText = searchableText(q).trim();
+      const safePage = Math.max(1, Number.parseInt(page, 10) || 1);
+      const safeLimit = Math.min(100, Math.max(1, Number.parseInt(limit, 10) || 12));
+      const { index, assets } = await getSearchIndex();
+      const matches = index.search(searchText, { combineWith: "AND", prefix: true, fuzzy: 0.15 });
+      const excluded = String(req.query.excludeCategories || "").toLowerCase().split(",").filter(Boolean);
+      const requestedCategory = String(req.query.searchCategory || "").toLowerCase();
+      const filtered = matches
+        .map((match) => ({ asset: assets.get(match.id), score: match.score }))
+        .filter(({ asset }) => {
+          if (!asset || asset.status !== "Active") return false;
+          const assetCategory = String(asset.category || "").toLowerCase();
+          if (excluded.some((value) => assetCategory.includes(value))) return false;
+          if (requestedCategory && asset._searchModel.toLowerCase() !== `${requestedCategory}asset`) return false;
+          if (acquisition === "buy" && !["buy", "rent/buy"].includes(asset.acquisition)) return false;
+          if (acquisition === "rent" && !["rent", "rent/buy"].includes(asset.acquisition)) return false;
+          if (type && asset.type !== type) return false;
+          if (location && !String(asset.location || "").toLowerCase().includes(String(location).toLowerCase())) return false;
+          if (minPrice && Number(asset.price) < Number(minPrice)) return false;
+          if (maxPrice && Number(asset.price) > Number(maxPrice)) return false;
+          if (category && category !== "Any" && !assetCategory.includes(String(category).replace(/Asset|s/gi, "").toLowerCase())) return false;
+          if (brand && !String(asset.brand || asset.specification?.brand || asset.specification?.brandBuilder || "").toLowerCase().includes(String(brand).toLowerCase())) return false;
+          if (model && !String(asset.specification?.model || "").toLowerCase().includes(String(model).toLowerCase())) return false;
+          const property = asset.keySpecifications?.propertyType || asset.specification?.propertyType || "";
+          if (propertyType && String(property).toLowerCase() !== String(propertyType).toLowerCase()) return false;
+          const bedroomsCount = Number(asset.specification?.bedrooms ?? asset.keySpecifications?.bedrooms);
+          if (bedrooms && bedrooms !== "Any" && (bedrooms.endsWith("+") ? bedroomsCount < Number.parseInt(bedrooms, 10) : bedroomsCount !== Number(bedrooms))) return false;
+          const bathroomsCount = Number(asset.specification?.bathrooms ?? asset.keySpecifications?.bathrooms);
+          if (bathrooms && bathrooms !== "Any" && (bathrooms.endsWith("+") ? bathroomsCount < Number.parseInt(bathrooms, 10) : bathroomsCount !== Number(bathrooms))) return false;
+          if (amenities && amenities !== "Any" && !(asset.amenities || []).some((value) => String(value).toLowerCase().includes(String(amenities).toLowerCase()))) return false;
+          if (architecture && architecture !== "Any" && String(asset.specification?.architectureStyle || "").toLowerCase() !== String(architecture).toLowerCase()) return false;
+          return true;
+        });
+
+      if (sort === "Low to High") filtered.sort((a, b) => Number(a.asset.price) - Number(b.asset.price));
+      else if (sort === "High to Low") filtered.sort((a, b) => Number(b.asset.price) - Number(a.asset.price));
+      else if (sort === "Oldest") filtered.sort((a, b) => new Date(a.asset.createdAt) - new Date(b.asset.createdAt));
+      else if (sort === "Newest") filtered.sort((a, b) => b.score - a.score);
+      else filtered.sort((a, b) => b.score - a.score);
+
+      const start = (safePage - 1) * safeLimit;
+      const data = filtered.slice(start, start + safeLimit).map(({ asset }) => {
+        const result = { ...asset, agent: asset.agent ? { ...asset.agent } : asset.agent };
+        delete result._searchModel;
+        return result;
+      });
+      await syncAgentInfo(data);
+      return res.json({
+        data,
+        pagination: {
+          total: filtered.length,
+          page: safePage,
+          limit: safeLimit,
+          totalPages: Math.ceil(filtered.length / safeLimit),
+        },
+      });
+    }
 
     const andClauses = [{ status: 'Active' }];
 
