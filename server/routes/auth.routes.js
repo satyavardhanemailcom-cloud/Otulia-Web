@@ -536,7 +536,7 @@ const profilePicStorage = new CloudinaryStorage({
       folder: folders.profile,
       public_id: `profile_pic_${Date.now()}`,
       resource_type: 'auto',
-      allowed_formats: ['jpg', 'png', 'jpeg'],
+      allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
     };
   },
 });
@@ -591,7 +591,7 @@ const companyLogoStorage = new CloudinaryStorage({
       folder: folders.company,
       public_id: `company_logo_${Date.now()}`,
       resource_type: 'auto',
-      allowed_formats: ['jpg', 'png', 'jpeg'],
+      allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
     };
   },
 });

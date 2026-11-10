@@ -544,7 +544,8 @@ const Inventory = () => {
       fieldName = "coverPhoto";
     }
 
-    formData.append(fieldName, blob, `cropped_${Date.now()}.png`);
+    const extension = blob.type === "image/webp" ? "webp" : "png";
+    formData.append(fieldName, blob, `cropped_${Date.now()}.${extension}`);
 
     try {
       const response = await fetch(endpoint, {
