@@ -1,4 +1,5 @@
 import React from 'react';
+import ThemeToggle from '../navbar/ThemeToggle';
 import { FiCalendar, FiChevronDown, FiBell, FiTrash2, FiUsers, FiUser, FiShield, FiCreditCard, FiSettings, FiLogOut } from 'react-icons/fi';
 
 const Header = ({ 
@@ -244,6 +245,10 @@ const Header = ({
                                 >
                                     <FiSettings className="text-[clamp(16px,2.2vh,24px)]" /> Settings
                                 </button>
+                                <ThemeToggle
+                                    variant="menu"
+                                    className="w-full text-left px-4 py-2.5 text-[clamp(12px,1.6vh,18px)] font-medium text-gray-600 inter hover:bg-gray-50 hover:text-[#D48D2A] flex items-center gap-2 transition-colors cursor-pointer"
+                                />
                             </div>
                             <div className="border-t border-gray-50 py-1">
                                 <button

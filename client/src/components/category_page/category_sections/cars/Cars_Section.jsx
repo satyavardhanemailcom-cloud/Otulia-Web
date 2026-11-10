@@ -239,7 +239,7 @@ const Cars_Section = () => {
                     src={item.logo}
                     alt={item.name}
                     onClick={() => handleBrandClick(item.name)}
-                    className="h-10 md:h-20 w-auto object-contain cursor-pointer mix-blend-multiply"
+                    className="h-10 md:h-20 w-auto object-contain cursor-pointer mix-blend-multiply dark:mix-blend-normal dark:bg-white dark:rounded-xl dark:p-2"
                   />
                 </div>
               ))}

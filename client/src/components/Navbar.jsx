@@ -3,6 +3,7 @@ import { Link, useLocation, NavLink } from "react-router-dom";
 import Cart from "./navbar/Cart";
 import Search from "./navbar/Search";
 import LoginButton from "./navbar/LoginButton";
+import ThemeToggle from "./navbar/ThemeToggle";
 import ProfileDropdown from "./navbar/Profile_dropdown";
 import NavbarMobile from "./Navbar_mobile";
 import { useAuth } from "../contexts/AuthContext";
@@ -113,6 +114,9 @@ const Navbar = ({
 
         {/* 3. RIGHT ACTIONS - Right Column */}
         <div className="flex-1 flex items-center justify-end gap-[clamp(8px,1vw,24px)]">
+          {/* Logged-in users get the toggle inside the profile menu */}
+          {!loading && !isAuthenticated && <ThemeToggle isDark={isDarkText} />}
+
           <NavLink
             to="/sellwithus"
             className={`hidden lg:block px-[clamp(12px,1.5vw,24px)] py-[clamp(6px,1vh,12px)] rounded-full border text-[clamp(9px,1.1vh,13px)] tracking-[0.2em] font-medium montserrat transition-all duration-500 whitespace-nowrap backdrop-blur-md shadow-lg active:scale-95 ${

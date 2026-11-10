@@ -129,6 +129,14 @@
     -->
     <!-- Server-rendered SEO fallback stays in the HTML for crawlers but is never painted; React replaces #root on mount. -->
     <style>[data-seo-fallback] { display: none; }</style>
+    <!-- Apply saved dark/light theme before first paint (ranking pages keep their own dark design). -->
+    <script>
+      try {
+        if (localStorage.getItem("theme") === "dark" && !location.pathname.startsWith("/ranking")) {
+          document.documentElement.classList.add("dark");
+        }
+      } catch (e) {}
+    </script>
   </head>
 
   <body>
