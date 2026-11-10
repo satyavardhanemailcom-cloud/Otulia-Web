@@ -108,14 +108,14 @@ const OverviewTab = ({ stats, analyticsData }) => {
                 </div>
                 <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
                     <h3 className="text-lg font-bold text-gray-900 mb-8 self-start canela">Platform Wallet</h3>
-                    <div className="bg-gray-900 p-6 rounded-[2rem] mb-6 shadow-xl shadow-gray-200">
-                        <div className="w-32 h-32 bg-white rounded-xl flex items-center justify-center p-2">
+                    <div className="bg-gray-900 p-6 rounded-[2rem] mb-6 shadow-xl shadow-gray-200 dark:bg-[#242428] dark:shadow-black/40">
+                        <div className="w-32 h-32 bg-white dark:!bg-white rounded-xl flex items-center justify-center p-2">
                             {/* QR Placeholder */}
                             <div className="w-full h-full border-4 border-black border-dashed opacity-20 bg-[url('https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=OtuliaPlatform')] bg-cover"></div>
                         </div>
                     </div>
                     <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-4">Scan to receive payments</p>
-                    <button className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all shadow-lg hover:shadow-xl">
+                    <button className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-black transition-all shadow-lg hover:shadow-xl dark:bg-white dark:text-[#0e0e0f] dark:hover:bg-gray-200">
                         Download QR Code
                     </button>
                 </div>

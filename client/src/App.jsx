@@ -155,6 +155,21 @@ function App() {
     location.pathname.startsWith(path),
   );
 
+  // Dark/light theme: follow the saved choice on every page except rankings,
+  // which already have their own dark design.
+  React.useEffect(() => {
+    let saved = null;
+    try {
+      saved = localStorage.getItem("theme");
+    } catch {
+      // ignore
+    }
+    document.documentElement.classList.toggle(
+      "dark",
+      saved === "dark" && !location.pathname.startsWith("/ranking"),
+    );
+  }, [location.pathname]);
+
   const [showSplash, setShowSplash] = React.useState(true);
   const audioRef = React.useRef(null);
   const hasStartedRef = React.useRef(false);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import LoginButton from '../navbar/LoginButton';
+import ThemeToggle from '../navbar/ThemeToggle';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 import UserURL from '../../assets/user.png';
@@ -75,6 +76,10 @@ const Category_Navbar_Mobile = ({ navLinks }) => {
                     <FiShoppingCart className="text-lg" />
                     <span>Cart</span>
                   </Link>
+                  <ThemeToggle
+                    variant="menu"
+                    className="flex items-center gap-3 w-full p-3 rounded-lg hover:bg-gray-100 text-left cursor-pointer"
+                  />
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">

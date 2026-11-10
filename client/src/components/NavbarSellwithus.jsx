@@ -3,6 +3,7 @@ import { Link, useLocation, NavLink } from "react-router-dom";
 import Cart from "./navbar/Cart";
 import Search from "./navbar/Search";
 import LoginButton from "./navbar/LoginButton";
+import ThemeToggle from "./navbar/ThemeToggle";
 import ProfileDropdown from "./navbar/Profile_dropdown";
 import { useAuth } from "../contexts/AuthContext";
 import NavbarSellwithus_mobile from "./NavbarSellwithus_mobile";
@@ -125,6 +126,8 @@ const Navbar = ({
             JOIN WAITLIST
             <FaArrowRightLong />
           </NavLink> */}
+
+          <ThemeToggle isDark={isDarkText} />
 
           {/* 4. HAMBURGER (Visible on mobile and tablet) */}
           <button

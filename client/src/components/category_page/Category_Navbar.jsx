@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import Profile_dropdown from '../navbar/Profile_dropdown';
 import Cart from '../navbar/Cart';
 import LoginButton from '../navbar/LoginButton'; 
+import ThemeToggle from '../navbar/ThemeToggle';
 import Category_Navbar_Mobile from './Category_Navbar_Mobile';
 import { IoMdMenu } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
@@ -95,6 +96,8 @@ const Category_Navbar = () => {
 
                 {/* Right Section: Auth & Cart */}
                 <div className='hidden lg:flex flex-1 items-center justify-end gap-6'>
+                    {/* Logged-in users get the toggle inside the profile menu */}
+                    {!loading && !isAuthenticated && <ThemeToggle isDark={isScrolled} />}
                     {loading ? (
                         <div className="w-8 h-8 bg-white/20 rounded-full animate-pulse"></div>
                     ) : (
@@ -111,7 +114,8 @@ const Category_Navbar = () => {
                     )}
                 </div>
 
-                <div className='lg:hidden flex items-center'>
+                <div className='lg:hidden flex items-center gap-4'>
+                    {!loading && !isAuthenticated && <ThemeToggle isDark={isScrolled} />}
                     <button onClick={toggleMenu} className={`text-2xl ${textColor}`}>
                         <IoMdMenu />
                     </button>

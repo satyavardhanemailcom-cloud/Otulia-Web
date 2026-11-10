@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiGrid, FiSearch, FiBell, FiShield } from 'react-icons/fi';
+import ThemeToggle from '../navbar/ThemeToggle';
 import { useSnackbar } from '../../contexts/SnackbarContext';
 
 const AdminNavbar = ({
@@ -38,6 +39,7 @@ const AdminNavbar = ({
                     />
                 </div>
                 <div className="w-px h-8 bg-gray-100 mx-2 hidden sm:block"></div>
+                <ThemeToggle className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-all focus:outline-none cursor-pointer" />
                 <div className="relative">
                     <button 
                         onClick={() => setIsNotificationDropdownOpen(!isNotificationDropdownOpen)}

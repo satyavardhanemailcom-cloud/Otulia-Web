@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import ThemeToggle from "./ThemeToggle";
 import UserURL from "../../assets/user.png";
 import {
   FiUser,
@@ -18,6 +19,7 @@ const ProfileDropdown = ({ isDark }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -149,6 +151,14 @@ const ProfileDropdown = ({ isDark }) => {
                   </span>
                 </div>
               </Link>
+            )}
+
+            {/* Ranking pages keep their own dark design */}
+            {!location.pathname.startsWith("/ranking") && (
+              <ThemeToggle
+                variant="menu"
+                className="flex items-center gap-3 w-full px-5 py-3 text-[13px] text-gray-600 hover:bg-gray-50 transition-colors uppercase font-normal text-left cursor-pointer"
+              />
             )}
           </div>
 

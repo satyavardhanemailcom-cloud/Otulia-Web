@@ -26,7 +26,7 @@ const BrandCarousel = () => {
                 {brands.map((brand, idx) => (
                     <div 
                         key={idx} 
-                        className={`h-28 md:h-40 flex items-center justify-center p-6 md:p-8 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer bg-white
+                        className={`h-28 md:h-40 flex items-center justify-center p-6 md:p-8 grayscale opacity-40 hover:grayscale-0 dark:hover:grayscale hover:opacity-100 transition-all duration-500 cursor-pointer bg-white
                             border-gray-100
                             ${(idx + 1) % 2 !== 0 ? 'border-r' : ''} 
                             ${idx < 4 ? 'border-b md:border-b-0' : ''}
@@ -37,7 +37,7 @@ const BrandCarousel = () => {
                             src={brand.logo} 
                             alt={brand.name} 
                             loading="lazy"
-                            className="max-w-full max-h-full object-contain"
+                            className="max-w-full max-h-full object-contain mix-blend-multiply"
                         />
                     </div>
                 ))}

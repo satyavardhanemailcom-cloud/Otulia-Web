@@ -177,12 +177,11 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group relative flex flex-col bg-white ${listingStyle === 'marketplace' ? 'rounded-xl shadow-sm transition-shadow hover:shadow-lg' : ''}`}
+      className={`group relative flex flex-col bg-white border border-black/12 ${listingStyle === 'marketplace' ? 'rounded-xl shadow-sm transition-shadow hover:shadow-lg' : ''}`}
       style={{
         width: "100%",
         maxWidth: "595px",
         borderRadius: listingStyle === 'marketplace' ? "12px" : "1px",
-        border: "1px solid rgba(0, 0, 0, 0.12)",
         containerType: "inline-size",
       }}
     >
@@ -263,7 +262,7 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
           }}
         >
           <FiHeart
-            className={`${isLiked ? "fill-red-500 stroke-red-500" : "text-[#666]"}`}
+            className={`${isLiked ? "fill-red-500 stroke-red-500" : "text-[#666] dark:text-white"}`}
             style={{ width: "2.7cqi", height: "2.7cqi" /* w-4 h-4 (16px) */ }}
           />
         </button>
@@ -326,14 +325,13 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
               {/* TITLE */}
               <div>
                 <h4
-                  className="truncate translate-y-px pb-1"
+                  className="truncate translate-y-px pb-1 text-[#2A2A2A]"
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
                     fontSize: "3cqi",
                     lineHeight: "100%",
                     letterSpacing: "0%",
-                    color: "#2A2A2A",
                   }}
                 >
                   {item.title}
@@ -491,13 +489,12 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
               {/* TITLE */}
               <div>
                 <h4
-                  className="truncate translate-y-px"
+                  className="truncate translate-y-px text-[#2A2A2A]"
                   style={{
                     fontFamily: "'Kaisei Decol', serif",
                     fontWeight: 500,
                     fontSize: "12px",
                     lineHeight: "1.15",
-                    color: "#2A2A2A",
                     paddingBottom: 2,
                   }}
                 >
@@ -565,7 +562,7 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
 
               {/* Verified Dealer Badge */}
               <span
-                className="inline-flex items-center rounded-full font-medium bg-[#F3F4F6] text-[#71717A] tracking-tight shrink-0 select-none"
+                className="inline-flex items-center rounded-full font-medium bg-[#F3F4F6] text-[#71717A] dark:text-white tracking-tight shrink-0 select-none"
                 style={{
                   fontSize: "1.68cqi",
                   padding: "0.35cqi 1.4cqi",
@@ -640,14 +637,14 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
               style={{ gap: "1.7cqi" /* gap-[10px] (10px) */ }}
             >
               <span
-                className="font-normal text-[#9a9a9a] montserrat truncate"
+                className="font-normal text-[#9a9a9a] dark:text-[#c8c6c1] montserrat truncate"
                 style={{
                   fontSize: "1.68cqi" /* text-[10px] (10px) */,
                   maxWidth: "20cqi" /* max-w-[120px] */,
                 }}
               >
                 Listed by{" "}
-                <span className="text-[#5a5a5a] font-normal">
+                <span className="text-[#5a5a5a] dark:text-white font-normal">
                   {item.agent?.name?.split(" ")[0] || "Marshall"}
                 </span>
               </span>

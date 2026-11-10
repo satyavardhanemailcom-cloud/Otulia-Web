@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import ThemeToggle from "../navbar/ThemeToggle";
 
 const LOGO_SRC = "/logos/logo_inverted.png";
 
@@ -40,6 +41,7 @@ export default function PrimaryNavbar() {
 
           {/* Right — Advertise link + mobile hamburger */}
           <div className="flex items-center gap-6">
+            <ThemeToggle isDark={true} />
             <a
               href="/pricing"
               className="hidden md:block text-xs font-medium tracking-widest text-gray-600 hover:text-gray-900 transition-colors uppercase"
