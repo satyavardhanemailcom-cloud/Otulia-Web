@@ -6,12 +6,12 @@ import torqueIcon from "../../../assets/productpage/torque.svg";
 import accelerationIcon from "../../../assets/productpage/acceleration.svg";
 import mileageIcon from "../../../assets/productpage/mileage.svg";
 
-// "1240" -> "1,240 mi". Hidden when missing or 0. Values that already carry a unit are shown as-is.
+// "1240" -> "1,240 mi". Zero-mileage cars are new, so keep 0 visible.
 const formatMileage = (value) => {
   if (value === undefined || value === null) return null;
   const text = value.toString().trim();
   const miles = parseFloat(text.replace(/,/g, ""));
-  if (!miles) return null;
+  if (Number.isNaN(miles)) return null;
   return /^[\d,.\s]+$/.test(text) ? `${miles.toLocaleString()} mi` : text;
 };
 

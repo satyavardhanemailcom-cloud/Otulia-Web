@@ -309,6 +309,9 @@ router.post('/create', authMiddleware, upload.fields([
 
         const dbPrice = priceOnRequest ? 0 : Number(sanitizedPrice);
 
+        const isSoldSelection = req.body.type === 'Sold' && ['Car', 'Estate'].includes(category);
+        const listingType = isSoldSelection ? 'Sale' : (req.body.type || 'Sale');
+
         if (!location) location = 'Unspecified';
         if (!description) description = 'No luxury description provided';
 
@@ -344,10 +347,10 @@ router.post('/create', authMiddleware, upload.fields([
             description: description || 'No description provided',
             images: [],
             documents: [],
-            status: req.body.isPublic === 'true' || req.body.isPublic === true ? 'Active' : 'Draft',
+            status: isSoldSelection ? 'Sold' : (req.body.isPublic === 'true' || req.body.isPublic === true ? 'Active' : 'Draft'),
             directlyFromDeveloper: req.body.directlyFromDeveloper === 'true' || req.body.directlyFromDeveloper === true,
-            type: req.body.type || 'Sale',
-            acquisition: (req.body.type === 'Rent' ? 'rent' : 'buy'),
+            type: listingType,
+            acquisition: (listingType === 'Rent' ? 'rent' : 'buy'),
             priceHistory: req.body.priceHistory ? JSON.parse(req.body.priceHistory) : [],
             priceHistoryOptions: req.body.priceHistoryOptions ? JSON.parse(req.body.priceHistoryOptions) : {
                 graphType: 'Bar Graph',
@@ -484,6 +487,7 @@ router.post('/create', authMiddleware, upload.fields([
                 series: req.body.series,
                 mileage: req.body.mileage,
                 power: addUnit(req.body.horsepower, 'hp'),
+                engine: req.body.engine,
                 cylinderCapacity: req.body.cylinderCapacity,
                 configuration: req.body.configuration,
                 topSpeed: addUnit(req.body.topSpeed, 'mph'),
@@ -880,12 +884,15 @@ router.put('/:id', authMiddleware, upload.fields([
             }
             listing.listingReference = reference;
         }
-        if (type) {
-            listing.type = type;
-            listing.acquisition = (type === 'Rent' ? 'rent' : 'buy');
+        const isSoldSelection = type === 'Sold' && ['CarAsset', 'EstateAsset'].includes(modelName);
+        const listingType = type === 'Sold' ? 'Sale' : type;
+        if (listingType) {
+            listing.type = listingType;
+            listing.acquisition = (listingType === 'Rent' ? 'rent' : 'buy');
         }
         if (videoUrl !== undefined) listing.videoUrl = videoUrl;
-        if (isPublic !== undefined) listing.status = (isPublic === 'true' || isPublic === true) ? 'Active' : 'Draft';
+        if (isSoldSelection) listing.status = 'Sold';
+        else if (isPublic !== undefined) listing.status = (isPublic === 'true' || isPublic === true) ? 'Active' : 'Draft';
 
         if (req.body.priceHistory) {
             listing.priceHistory = JSON.parse(req.body.priceHistory);
@@ -935,6 +942,7 @@ router.put('/:id', authMiddleware, upload.fields([
             if (req.body.bodyType) spec.body = req.body.bodyType;
             if (req.body.series) spec.series = req.body.series;
             if (req.body.mileage) { spec.mileage = req.body.mileage; }
+            if (req.body.engine !== undefined) spec.engine = req.body.engine;
             if (req.body.horsepower) {
                 const p = addUnit(req.body.horsepower, 'hp');
                 spec.power = p;

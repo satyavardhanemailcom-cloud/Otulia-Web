@@ -265,11 +265,13 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                 // Common
                 price: editData.price !== undefined ? editData.price : '',
                 isPriceOnRequest: Boolean(editData.isPriceOnRequest),
-                type: editData.type || 'Sale',
+                type: ['Car', 'Estate'].includes(type) && editData.status === 'Sold'
+                    ? 'Sold'
+                    : editData.type || 'Sale',
                 location: editData.location || spec.carLocation || spec.yachtLocation || spec.city || spec.address || '',
                 description: editData.description || '',
                 videoUrl: editData.videoUrl || '',
-                isPublic: editData.status === 'Active' || editData.status === 'Live',
+                isPublic: ['Active', 'Live', 'Sold'].includes(editData.status),
                 listingReference: editData.listingReference || '',
 
                 // Fixed Highlights Keys
@@ -825,7 +827,14 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <SelectField label="Listing Type" name="type" value={formData.type} options={['Sale', 'Rent']} onChange={handleInputChange} required />
+                                <SelectField
+                                    label="Listing Type"
+                                    name="type"
+                                    value={formData.type}
+                                    options={assetType === 'Car' || assetType === 'Estate' ? ['Sale', 'Rent', 'Sold'] : ['Sale', 'Rent']}
+                                    onChange={handleInputChange}
+                                    required
+                                />
                                 {assetType === 'Car' && (
                                     <SelectField label="Tag / Badge" name="tag" value={formData.tag} options={CAR_TAG_OPTIONS} onChange={handleInputChange} required={false} />
                                 )}

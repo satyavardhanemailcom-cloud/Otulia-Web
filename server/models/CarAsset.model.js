@@ -33,6 +33,7 @@ const carAssetSchema = new mongoose.Schema(
       series: String,
       mileage: String,
       power: String,
+      engine: String,
       cylinderCapacity: String,
       topSpeed: String,
       engineType: String,
