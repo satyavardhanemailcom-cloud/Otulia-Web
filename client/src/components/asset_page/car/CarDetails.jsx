@@ -246,7 +246,7 @@ Reference ID: #${refId}
                 <img
                   src={brand_logo}
                   alt="Brand"
-                  className="h-8 md:h-10 w-auto object-contain"
+                  className={`${String(item?.brand || "").toLowerCase().includes("aston martin") ? "h-4 md:h-5" : "h-8 md:h-10"} w-auto object-contain`}
                 />
               )}
               {type === "Rent" && (
