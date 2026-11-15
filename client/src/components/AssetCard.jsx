@@ -214,6 +214,11 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
               <span>Directly from Developer</span>
             </div>
           )}
+          {item.status === "Sold" && (
+            <div className="self-start rounded-md bg-red-700 px-[1.7cqi] py-[1cqi] text-center text-[1.5cqi] font-bold uppercase tracking-[0.1em] text-white shadow-lg">
+              Sold
+            </div>
+          )}
           {item.tag && (
             <div className="self-start rounded-md bg-white px-[1.7cqi] py-[1cqi] text-center text-[1.5cqi] font-bold uppercase tracking-[0.1em] text-[#1a1a1a] shadow-lg">
               {item.tag}

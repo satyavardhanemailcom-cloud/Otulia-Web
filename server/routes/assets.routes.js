@@ -30,7 +30,9 @@ const getSearchIndex = async () => {
   if (searchIndexRefresh) return searchIndexRefresh;
 
   searchIndexRefresh = (async () => {
-    const groups = await Promise.all(searchModels.map((Model) => Model.find({ status: "Active" }).lean()));
+    const groups = await Promise.all(searchModels.map((Model) => Model.find(
+      Model === CarAsset ? { status: { $in: ["Active", "Sold"] } } : { status: "Active" },
+    ).lean()));
     const assets = groups.flatMap((items, index) => items.map((asset) => ({
       ...asset,
       _searchModel: searchModels[index].modelName,
@@ -423,7 +425,7 @@ router.get("/cars", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, category, country, sort, acquisition, fuelType, transmission, exteriorColor } = req.query;
 
-    let query = { status: 'Active' };
+    let query = { status: { $in: ['Active', 'Sold'] } };
     
     // Acquisition remains a strict mode (Buy/Rent)
     if (acquisition) {
@@ -848,7 +850,7 @@ router.get("/yachts", async (req, res) => {
  */
 router.get("/all/cars", async (req, res) => {
   try {
-    const data = await CarAsset.find({ status: 'Active' }).sort({ createdAt: -1 }).lean();
+    const data = await CarAsset.find({ status: { $in: ['Active', 'Sold'] } }).sort({ createdAt: -1 }).lean();
     await syncAgentInfo(data);
     res.json(data);
   } catch (err) {
@@ -1167,7 +1169,8 @@ router.get("/combined", async (req, res) => {
       const filtered = matches
         .map((match) => ({ asset: assets.get(match.id), score: match.score }))
         .filter(({ asset }) => {
-          if (!asset || asset.status !== "Active") return false;
+          const publiclyVisible = asset?.status === "Active" || (asset?._searchModel === "CarAsset" && asset.status === "Sold");
+          if (!publiclyVisible) return false;
           const assetCategory = String(asset.category || "").toLowerCase();
           if (excluded.some((value) => assetCategory.includes(value))) return false;
           if (requestedCategory && asset._searchModel.toLowerCase() !== `${requestedCategory}asset`) return false;
@@ -1304,9 +1307,15 @@ router.get("/combined", async (req, res) => {
     if (sort === 'Newest') sortOptions = { createdAt: -1 };
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
+    const queryForModel = (q, Model) => {
+        if (Model !== CarAsset) return q;
+        const clauses = (q.$and || []).filter((clause) => !Object.prototype.hasOwnProperty.call(clause, 'status'));
+        return { $and: [...clauses, { status: { $in: ['Active', 'Sold'] } }] };
+    };
+
     const fetchResults = async (q) => {
         const [car, estate, bike, yacht, other] = await Promise.all([
-            CarAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
+            CarAsset.find(queryForModel(q, CarAsset)).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
             EstateAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
             BikeAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
             YachtAsset.find(q).sort(sortOptions).skip((page - 1) * limit).limit(Number(limit)),
@@ -1317,7 +1326,7 @@ router.get("/combined", async (req, res) => {
 
     const countResults = async (q) => {
         const [car, estate, bike, yacht, other] = await Promise.all([
-            CarAsset.countDocuments(q),
+            CarAsset.countDocuments(queryForModel(q, CarAsset)),
             EstateAsset.countDocuments(q),
             BikeAsset.countDocuments(q),
             YachtAsset.countDocuments(q),
