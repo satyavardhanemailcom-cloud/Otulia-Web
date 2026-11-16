@@ -82,6 +82,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
         // Real Estate Specific
         directlyFromDeveloper: false,
+        has3PercentPriceDeduction: false,
         propertyName: '', propertyType: '', country: '', city: '', address: '',
         builtUpArea: '', builtUpAreaUnit: 'Sqft', landArea: '', landAreaUnit: 'Sqft', bedrooms: '', bathrooms: '', floors: '',
         garageCapacity: '',
@@ -347,6 +348,7 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
 
                 // Real Estate Specifics
                 directlyFromDeveloper: Boolean(editData.directlyFromDeveloper ?? editData.isDirectFromDeveloper ?? false),
+                has3PercentPriceDeduction: Boolean(editData.has3PercentPriceDeduction ?? editData.directlyFromDeveloper ?? editData.isDirectFromDeveloper ?? false),
                 propertyName: editData.propertyName || (type === 'Estate' ? editData.title : '') || '',
                 propertyType: spec.propertyType || keySpec.propertyType || '',
                 builtUpArea: buaParsed.value,
@@ -895,31 +897,41 @@ const AddAssetModal = ({ isOpen, onClose, onCreated, editData = null }) => {
                                 </div>
 
                                 {assetType === 'Estate' && (
-                                    <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-[#FAFBFB] p-6 sm:p-7 rounded-[1.5rem] border border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
-                                        <div className="flex items-start gap-3.5">
-                                            <div className="p-2.5 bg-amber-50 border border-amber-200/60 rounded-xl text-[#D48D2A] shrink-0 mt-0.5">
-                                                <FiTag className="text-lg" />
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <h5 className="text-sm font-bold text-gray-900 tracking-tight">Directly from Developer & 3% Price Deduction</h5>
-                                                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-amber-100/80 text-[#B58252] border border-amber-200/80 rounded-md">Estate Feature</span>
+                                    <div className="col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                        {[
+                                            {
+                                                name: 'directlyFromDeveloper',
+                                                title: 'Directly from Developer',
+                                                description: 'Display the Directly from Developer badge on the estate listing.',
+                                            },
+                                            {
+                                                name: 'has3PercentPriceDeduction',
+                                                title: '3% Price Deduction',
+                                                description: 'Show the -3% with Otulia price and deduction badge.',
+                                            },
+                                        ].map((feature) => (
+                                            <div key={feature.name} className="bg-[#FAFBFB] p-6 sm:p-7 rounded-[1.5rem] border border-gray-200 flex items-center justify-between gap-4">
+                                                <div className="flex items-start gap-3.5">
+                                                    <div className="p-2.5 bg-amber-50 border border-amber-200/60 rounded-xl text-[#D48D2A] shrink-0 mt-0.5">
+                                                        <FiTag className="text-lg" />
+                                                    </div>
+                                                    <div>
+                                                        <h5 className="text-sm font-bold text-gray-900 tracking-tight">{feature.title}</h5>
+                                                        <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">{feature.description}</p>
+                                                    </div>
                                                 </div>
-                                                <p className="text-xs text-gray-500 mt-1.5 leading-relaxed max-w-2xl">
-                                                    Enable to display the <span className="font-semibold text-gray-700">"Directly from Developer"</span> badge and <span className="font-semibold text-gray-700">"3% Price Deduction" (-3% with Otulia)</span> tags on the estate card and property details page.
-                                                </p>
+                                                <label className="relative inline-flex items-center cursor-pointer shrink-0 select-none">
+                                                    <input
+                                                        type="checkbox"
+                                                        name={feature.name}
+                                                        checked={Boolean(formData[feature.name])}
+                                                        onChange={handleInputChange}
+                                                        className="sr-only peer"
+                                                    />
+                                                    <div className="w-12 h-6.5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5.5 after:w-5.5 after:transition-all peer-checked:bg-[#D48D2A] transition-colors"></div>
+                                                </label>
                                             </div>
-                                        </div>
-                                        <label className="relative inline-flex items-center cursor-pointer shrink-0 select-none">
-                                            <input 
-                                                type="checkbox" 
-                                                name="directlyFromDeveloper" 
-                                                checked={Boolean(formData.directlyFromDeveloper)} 
-                                                onChange={handleInputChange} 
-                                                className="sr-only peer" 
-                                            />
-                                            <div className="w-12 h-6.5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5.5 after:w-5.5 after:transition-all peer-checked:bg-[#D48D2A] transition-colors"></div>
-                                        </label>
+                                        ))}
                                     </div>
                                 )}
 

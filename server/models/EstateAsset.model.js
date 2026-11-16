@@ -82,6 +82,7 @@ const estateAssetSchema = new mongoose.Schema(
 
     isTrending: { type: Boolean, default: false, index: true },
     directlyFromDeveloper: { type: Boolean, default: false },
+    has3PercentPriceDeduction: { type: Boolean },
 
     popularity: { type: Number, default: 0, index: true },
 

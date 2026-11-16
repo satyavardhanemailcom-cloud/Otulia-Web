@@ -51,6 +51,9 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
     else if (model.includes("bike")) category = "bike";
     else if (model.includes("yacht")) category = "yacht";
   }
+  const has3PercentPriceDeduction = Boolean(
+    item.has3PercentPriceDeduction ?? item.directlyFromDeveloper ?? item.isDirectFromDeveloper ?? item.isDirectDeveloper
+  );
 
   // Car mileage for the card, e.g. "1240" -> "1,240mi". Hidden when missing or 0.
   // Values that already carry a unit (e.g. "1,240 km") are shown as-is.
@@ -440,7 +443,7 @@ const AssetCard = ({ item, listingStyle = 'default' }) => {
                   )}
                 </h3>
 
-                {category === "estate" && Boolean(item.directlyFromDeveloper || item.isDirectFromDeveloper || item.isDirectDeveloper) && (
+                {category === "estate" && has3PercentPriceDeduction && (
                   <span
                     className="text-[#047857] font-semibold inline-flex items-center shrink-0"
                     style={{

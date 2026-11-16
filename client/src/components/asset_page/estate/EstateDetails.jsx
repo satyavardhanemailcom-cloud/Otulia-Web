@@ -46,11 +46,12 @@ const EstateDetails = ({ item, modelName = "EstateAsset" }) => {
   const isDirectFromDeveloper = Boolean(
     item?.directlyFromDeveloper || item?.isDirectDeveloper || item?.isDirectFromDeveloper
   );
+  const has3PercentPriceDeduction = Boolean(item?.has3PercentPriceDeduction ?? isDirectFromDeveloper);
   const isPriceOnDemand = item?.isPriceOnRequest || !price || price <= 0;
   const originalPrice = isPriceOnDemand ? 0 : Math.round(price);
   const discountedPrice = isPriceOnDemand
     ? 0
-    : isDirectFromDeveloper
+    : has3PercentPriceDeduction
     ? Math.round(price * 0.97)
     : originalPrice;
 
@@ -191,8 +192,8 @@ Reference ID: #${refId}
         tempId: Date.now() + Math.random().toString(),
         title,
         image: images.length > 0 ? images[0] : null,
-        price: isDirectFromDeveloper ? (discountedPrice || price) : (originalPrice || price),
-        totalPrice: isDirectFromDeveloper ? (discountedPrice || price) : (originalPrice || price),
+        price: has3PercentPriceDeduction ? (discountedPrice || price) : (originalPrice || price),
+        totalPrice: has3PercentPriceDeduction ? (discountedPrice || price) : (originalPrice || price),
         type: "Sale",
       });
     }
@@ -387,7 +388,7 @@ Reference ID: #${refId}
                 >
                   Price on Demand
                 </h2>
-              ) : isDirectFromDeveloper ? (
+              ) : has3PercentPriceDeduction ? (
                 <div>
                   {/* Original Strikethrough Price */}
                   <div
@@ -429,7 +430,7 @@ Reference ID: #${refId}
                 </div>
               )}
 
-              {!isPriceOnDemand && isDirectFromDeveloper && (
+              {!isPriceOnDemand && has3PercentPriceDeduction && (
                 <div className="text-xs text-gray-500 font-normal mt-2.5 flex items-center gap-1.5">
                   <FiInfo className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                   <span>
