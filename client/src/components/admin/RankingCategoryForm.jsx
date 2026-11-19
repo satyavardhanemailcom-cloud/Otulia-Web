@@ -444,10 +444,6 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 alert("Short description is required.");
                 return;
             }
-            if (!formData.detailedDescription.trim()) {
-                alert("Detailed description is required.");
-                return;
-            }
             if (!formData.categoryImage) {
                 alert("Category cover image is required.");
                 return;
@@ -476,10 +472,6 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
             }
             if (!formData.shortDescription.trim()) {
                 alert("Short description is required.");
-                return;
-            }
-            if (!formData.detailedDescription.trim()) {
-                alert("Detailed description is required.");
                 return;
             }
             if (!formData.categoryImage) {
@@ -873,7 +865,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                 </div>
                                 <div>
                                     <div className="flex justify-between items-center mb-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Detailed Description *</label>
+                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Detailed Description (Optional)</label>
                                         <span className="text-[9px] font-bold text-gray-500">{formData.detailedDescription.length}/1000</span>
                                     </div>
                                     <textarea 

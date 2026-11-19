@@ -560,9 +560,9 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
             featuredCategory, categoryColor, status, nominees
         } = req.body;
 
-        // Validation - all details are mandatory as requested by user
-        if (!title || !slug || !type || !targetType || !shortDescription || !detailedDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
-            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All category details (Title, Slug, Scope, Industry Type, Descriptions, Cover and Banner Images, and Voting Period) are mandatory." });
+        // Detailed description is optional; core category details remain required.
+        if (!title || !slug || !type || !targetType || !shortDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
+            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All required category details (Title, Slug, Scope, Industry Type, Short Description, Cover and Banner Images, and Voting Period) must be provided." });
         }
 
         // Check uniqueness
@@ -580,7 +580,7 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
             type,
             targetType,
             shortDescription,
-            detailedDescription,
+            detailedDescription: detailedDescription || '',
             categoryImage,
             bannerImage,
             icon,
@@ -665,9 +665,9 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
             featuredCategory, categoryColor, status, nominees
         } = req.body;
 
-        // Validation - all details are mandatory
-        if (!title || !slug || !type || !targetType || !shortDescription || !detailedDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
-            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All category details (Title, Slug, Scope, Industry Type, Descriptions, Cover and Banner Images, and Voting Period) are mandatory." });
+        // Detailed description is optional; core category details remain required.
+        if (!title || !slug || !type || !targetType || !shortDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
+            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All required category details (Title, Slug, Scope, Industry Type, Short Description, Cover and Banner Images, and Voting Period) must be provided." });
         }
 
         const category = await RankingCategory.findById(req.params.id);
@@ -685,7 +685,7 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
         category.type = type;
         category.targetType = targetType;
         category.shortDescription = shortDescription;
-        category.detailedDescription = detailedDescription;
+        category.detailedDescription = detailedDescription || '';
         category.categoryImage = categoryImage;
         category.bannerImage = bannerImage;
         category.icon = icon;
