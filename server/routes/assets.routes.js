@@ -421,6 +421,56 @@ const syncAgentInfo = async (assets) => {
  * CAR ASSETS
  * /api/assets/cars
  */
+router.get("/compare/cars/search", async (req, res) => {
+  try {
+    const search = String(req.query.q || "").trim();
+    if (search.length < 2) return res.json({ data: [] });
+
+    const terms = search.split(/\s+/).filter(Boolean).slice(0, 8);
+    const data = await CarAsset.find({
+      status: { $in: ["Active", "Sold"] },
+      $and: terms.map((term) => {
+        const pattern = new RegExp(escapeRegex(term), "i");
+        return {
+          $or: [
+            { title: pattern },
+            { brand: pattern },
+            { "specification.model": pattern },
+            { variant: pattern },
+            { "specification.variant": pattern },
+            { "specification.yearOfConstruction": pattern },
+          ],
+        };
+      }),
+    })
+      .sort({ popularity: -1, createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    res.json({ data });
+  } catch (error) {
+    console.error("Car comparison search error:", error);
+    res.status(500).json({ message: "Failed to search cars for comparison" });
+  }
+});
+
+router.get("/compare/cars/:id", async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid car ID" });
+    }
+    const car = await CarAsset.findOne({
+      _id: req.params.id,
+      status: { $in: ["Active", "Sold"] },
+    }).lean();
+    if (!car) return res.status(404).json({ message: "Car not found" });
+    return res.json(car);
+  } catch (error) {
+    console.error("Car comparison load error:", error);
+    return res.status(500).json({ message: "Failed to load car for comparison" });
+  }
+});
+
 router.get("/cars", async (req, res) => {
   try {
     const { search = "", page = 1, limit = 1000, type, minPrice, maxPrice, location, brand, builder, model, category, country, sort, acquisition, fuelType, transmission, exteriorColor } = req.query;

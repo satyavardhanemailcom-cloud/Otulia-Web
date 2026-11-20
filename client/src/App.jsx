@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 // Lazy imports for other pages
 const CartPage = lazy(() => import("./pages/CartPage"));
 const Shop = lazy(() => import("./pages/Shop"));
+const CompareCars = lazy(() => import("./pages/CompareCars"));
 const Rent = lazy(() => import("./pages/Rent"));
 const Community = lazy(() => import("./pages/Community"));
 const Seller = lazy(() => import("./pages/Seller"));
@@ -268,6 +269,7 @@ function App() {
           <Route path="/" element={<Home />} />
 
           <Route path="/shop" element={<Shop />} />
+          <Route path="/compare/cars" element={<CompareCars />} />
           <Route path="/community" element={<Community />} />
           <Route path="/rent" element={<Rent />} />
           <Route path="/seller" element={<Seller />} />
