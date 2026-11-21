@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { CmsArticleView } from "../../components/journal/cms/CmsArticle";
+import { parseVideo } from "../../components/journal/cms/JournalVideo";
 
 // Simple Journal CMS: list posts, create / edit / preview / publish / delete.
 // Rendered as the "Journal CMS" tab inside /admin (admin users only)
@@ -18,6 +19,8 @@ const emptySection = () => ({
   quoteAttribution: "",
   image: "",
   imageCaption: "",
+  video: "",
+  videoCaption: "",
 });
 
 const emptyPost = () => ({
@@ -31,6 +34,7 @@ const emptyPost = () => ({
   author: "Otulia Editorial Team",
   readTime: "",
   publishedAt: new Date().toISOString().slice(0, 10),
+  commentsEnabled: true,
   sections: [emptySection()],
   faqs: [],
   specs: [],
@@ -118,6 +122,60 @@ function ImageInput({ label, value, onChange, token }) {
         <img src={value} alt="" className="mt-2 h-24 w-auto object-cover" />
       )}
     </div>
+  );
+}
+
+// On/off switch used for per-post settings (e.g. comments)
+function Toggle({ label, description, checked, onChange }) {
+  return (
+    <div className="flex items-start justify-between gap-6 border border-gray-100 bg-[#FAFAF8] px-4 py-3">
+      <div>
+        <span className="block text-sm font-medium text-gray-900">{label}</span>
+        {description && (
+          <span className="mt-0.5 block text-[11px] text-gray-500">{description}</span>
+        )}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={() => onChange(!checked)}
+        className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors ${
+          checked ? "bg-[#1C1A17]" : "bg-gray-300"
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+            checked ? "translate-x-5" : "translate-x-0"
+          }`}
+        />
+      </button>
+    </div>
+  );
+}
+
+// Video embed field with a validity hint
+function VideoInput({ value, onChange }) {
+  const parsed = parseVideo(value);
+  return (
+    <Field
+      label="Embedded video (optional)"
+      hint={
+        value && !parsed
+          ? "Not recognised — paste an https YouTube / Vimeo link, an <iframe> embed code, or a direct .mp4 URL."
+          : value
+            ? `Will embed: ${parsed.src}`
+            : "YouTube / Vimeo link, <iframe> embed code, or a direct .mp4 URL. Shown after this section."
+      }
+    >
+      <input
+        className={`${inputCls} ${value && !parsed ? "border-red-300" : ""}`}
+        placeholder="https://www.youtube.com/watch?v=…"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </Field>
   );
 }
 
@@ -405,6 +463,9 @@ export default function JournalCms() {
                       {p.status}
                     </span>
                     · {p.category}
+                    {p.commentsEnabled === false && (
+                      <span title="Comments off">· No comments</span>
+                    )}
                     {p.status === "published" && (
                       <Link
                         to={`/journal/${p.slug}`}
@@ -521,6 +582,12 @@ export default function JournalCms() {
                   value={post.heroImage}
                   onChange={(v) => set("heroImage", v)}
                   token={token}
+                />
+                <Toggle
+                  label="Allow comments"
+                  description="Readers can comment at the bottom of this article. Turning this off hides the comment section (existing comments are kept)."
+                  checked={post.commentsEnabled !== false}
+                  onChange={(v) => set("commentsEnabled", v)}
                 />
               </section>
 
@@ -642,6 +709,21 @@ export default function JournalCms() {
                         }
                       />
                     </Field>
+                    <VideoInput
+                      value={section.video || ""}
+                      onChange={(v) => updateSection(i, "video", v)}
+                    />
+                    {section.video && (
+                      <Field label="Video caption">
+                        <input
+                          className={inputCls}
+                          value={section.videoCaption || ""}
+                          onChange={(e) =>
+                            updateSection(i, "videoCaption", e.target.value)
+                          }
+                        />
+                      </Field>
+                    )}
                   </div>
                 ))}
               </section>
