@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { journalArticles } from "../../data/journalArticles";
 import SEO from "../../components/SEO";
 import CmsArticle from "../../components/journal/cms/CmsArticle";
+import JournalArticleFooter from "../../components/journal/JournalArticleFooter";
 
 function JournalArticlePage() {
   const { slug } = useParams();
@@ -27,6 +28,7 @@ function JournalArticlePage() {
         ]}
       />
       <ArticleContent />
+      <JournalArticleFooter slug={slug} />
     </>
   );
 }

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import SEO from "../../SEO";
 import NotFound from "../../../pages/NotFound";
+import JournalVideo from "./JournalVideo";
+import JournalArticleFooter from "../JournalArticleFooter";
 
 // Renders a CMS post using the same editorial design as the hand-written
 // stories in components/journal/Stories (cream/ink/oxblood/brass).
@@ -241,6 +243,13 @@ export function CmsArticleView({ post }) {
                     )}
                   </figure>
                 )}
+                {section.video && (
+                  <JournalVideo
+                    value={section.video}
+                    caption={section.videoCaption}
+                    title={section.heading || post.title}
+                  />
+                )}
               </section>
             ))}
 
@@ -346,6 +355,11 @@ export default function CmsArticle({ slug }) {
         ]}
       />
       <CmsArticleView post={post} />
+      <JournalArticleFooter
+        slug={post.slug}
+        category={post.category}
+        commentsEnabled={post.commentsEnabled !== false}
+      />
     </>
   );
 }
