@@ -9,6 +9,7 @@ const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
 const Coupon = require("../models/Coupon.model");
 const RankingCategory = require("../models/RankingCategory.model");
+const FeaturedCarsConfig = require("../models/FeaturedCarsConfig.model");
 const AssetNominee = require("../models/AssetNominee.model");
 const DealerNominee = require("../models/DealerNominee.model");
 const CarNominee = require("../models/CarNominee.model");
@@ -57,6 +58,51 @@ const adminCheck = async (req, res, next) => {
         res.status(500).json({ error: "ADMIN_CHECK_FAILED" });
     }
 };
+
+router.get("/featured-cars", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const config = await FeaturedCarsConfig.findOne({ key: "cars-category" }).lean();
+        const carIds = config?.carIds || [];
+        const cars = carIds.length
+            ? await CarAsset.find({ _id: { $in: carIds }, status: { $in: ["Active", "Sold"] } }).lean()
+            : [];
+        const carsById = new Map(cars.map((car) => [String(car._id), car]));
+        res.json({ cars: carIds.map((id) => carsById.get(String(id))).filter(Boolean) });
+    } catch (error) {
+        console.error("Admin featured cars load error:", error);
+        res.status(500).json({ error: "FEATURED_CARS_LOAD_FAILED" });
+    }
+});
+
+router.put("/featured-cars", authMiddleware, adminCheck, async (req, res) => {
+    try {
+        const carIds = req.body.carIds;
+        if (!Array.isArray(carIds) || carIds.length > 9) {
+            return res.status(400).json({ error: "INVALID_FEATURED_CARS", message: "Choose up to 9 featured cars." });
+        }
+        const normalizedIds = carIds.map(String);
+        if (new Set(normalizedIds).size !== normalizedIds.length || normalizedIds.some((id) => !/^[a-f\d]{24}$/i.test(id))) {
+            return res.status(400).json({ error: "INVALID_FEATURED_CARS", message: "Featured car selections must be unique valid listings." });
+        }
+        const availableCars = normalizedIds.length
+            ? await CarAsset.find({ _id: { $in: normalizedIds }, status: { $in: ["Active", "Sold"] } }).select("_id").lean()
+            : [];
+        if (availableCars.length !== normalizedIds.length) {
+            return res.status(400).json({ error: "INVALID_FEATURED_CARS", message: "Only active or sold car listings can be featured." });
+        }
+        const config = await FeaturedCarsConfig.findOneAndUpdate(
+            { key: "cars-category" },
+            { $set: { carIds: normalizedIds } },
+            { upsert: true, new: true, setDefaultsOnInsert: true },
+        ).lean();
+        const cars = await CarAsset.find({ _id: { $in: config.carIds }, status: { $in: ["Active", "Sold"] } }).lean();
+        const carsById = new Map(cars.map((car) => [String(car._id), car]));
+        res.json({ cars: config.carIds.map((id) => carsById.get(String(id))).filter(Boolean) });
+    } catch (error) {
+        console.error("Admin featured cars save error:", error);
+        res.status(500).json({ error: "FEATURED_CARS_SAVE_FAILED" });
+    }
+});
 
 /**
  * GET DASHBOARD STATS

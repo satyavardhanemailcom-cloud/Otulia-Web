@@ -17,6 +17,7 @@ import SettingsTab from '../components/admin/SettingsTab';
 import DocumentViewerModal from '../components/admin/DocumentViewerModal';
 import CouponModal from '../components/admin/CouponModal';
 import JournalCms from './journal/JournalCms';
+import FeaturedCarsTab from '../components/admin/FeaturedCarsTab';
 
 const AdminDashboard = () => {
     const { token, user, loading: authLoading } = useAuth();
@@ -320,6 +321,8 @@ const AdminDashboard = () => {
                     )}
 
                     {activeTab === 'journal' && <JournalCms />}
+
+                    {activeTab === 'featured-cars' && <FeaturedCarsTab />}
 
                     {activeTab === 'settings' && (
                         <SettingsTab 

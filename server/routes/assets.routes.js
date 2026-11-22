@@ -2,6 +2,7 @@ const authMiddleware = require("../middleware/auth.middleware");
 const mongoose = require("mongoose");
 const express = require("express");
 const CarAsset = require("../models/CarAsset.model");
+const FeaturedCarsConfig = require("../models/FeaturedCarsConfig.model");
 const EstateAsset = require("../models/EstateAsset.model");
 const BikeAsset = require("../models/BikeAsset.model");
 const YachtAsset = require("../models/YachtAsset.model");
@@ -547,12 +548,32 @@ router.get("/cars", async (req, res) => {
     if (sort === 'Newest') sortOptions = { createdAt: -1 };
     if (sort === 'Oldest') sortOptions = { createdAt: 1 };
 
-    const total = await CarAsset.countDocuments(query);
-    const data = await CarAsset.find(query)
-      .skip((page - 1) * limit)
-      .limit(Number(limit))
-      .sort(sortOptions)
-      .lean();
+    const pageNumber = Math.max(1, Number(page) || 1);
+    const pageLimit = Math.max(1, Number(limit) || 9);
+    const [total, featuredConfig] = await Promise.all([
+      CarAsset.countDocuments(query),
+      FeaturedCarsConfig.findOne({ key: "cars-category" }).select("carIds").lean(),
+    ]);
+    const featuredIds = featuredConfig?.carIds || [];
+    const matchingFeaturedCars = featuredIds.length
+      ? await CarAsset.find({
+        ...query,
+        _id: { $in: featuredIds },
+      }).lean()
+      : [];
+    const featuredById = new Map(matchingFeaturedCars.map((car) => [String(car._id), car]));
+    const featuredCars = pageNumber === 1
+      ? featuredIds.map((id) => featuredById.get(String(id))).filter(Boolean).slice(0, pageLimit)
+      : [];
+
+    const remainingQuery = { ...query };
+    if (featuredIds.length) remainingQuery._id = { $nin: featuredIds };
+    const remainingOffset = pageNumber === 1 ? 0 : Math.max(0, (pageNumber - 1) * pageLimit - matchingFeaturedCars.length);
+    const remainingLimit = pageNumber === 1 ? Math.max(0, pageLimit - featuredCars.length) : pageLimit;
+    const remainingCars = remainingLimit
+      ? await CarAsset.find(remainingQuery).skip(remainingOffset).limit(remainingLimit).sort(sortOptions).lean()
+      : [];
+    const data = [...featuredCars, ...remainingCars];
 
     await syncAgentInfo(data);
 
