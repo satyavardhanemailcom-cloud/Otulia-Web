@@ -560,9 +560,9 @@ router.post("/ranking-categories", authMiddleware, adminCheck, async (req, res) 
             featuredCategory, categoryColor, status, nominees
         } = req.body;
 
-        // Detailed description is optional; core category details remain required.
-        if (!title || !slug || !type || !targetType || !shortDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
-            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All required category details (Title, Slug, Scope, Industry Type, Short Description, Cover and Banner Images, and Voting Period) must be provided." });
+        // Descriptions are optional; core category details remain required.
+        if (!title || !slug || !type || !targetType || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
+            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All required category details (Title, Slug, Scope, Industry Type, Cover and Banner Images, and Voting Period) must be provided." });
         }
 
         // Check uniqueness
@@ -665,9 +665,9 @@ router.put("/ranking-categories/:id", authMiddleware, adminCheck, async (req, re
             featuredCategory, categoryColor, status, nominees
         } = req.body;
 
-        // Detailed description is optional; core category details remain required.
-        if (!title || !slug || !type || !targetType || !shortDescription || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
-            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All required category details (Title, Slug, Scope, Industry Type, Short Description, Cover and Banner Images, and Voting Period) must be provided." });
+        // Descriptions are optional; core category details remain required.
+        if (!title || !slug || !type || !targetType || !categoryImage || !bannerImage || !votingPeriodStart || !votingPeriodEnd) {
+            return res.status(400).json({ error: "ALL_FIELDS_REQUIRED", message: "All required category details (Title, Slug, Scope, Industry Type, Cover and Banner Images, and Voting Period) must be provided." });
         }
 
         const category = await RankingCategory.findById(req.params.id);
