@@ -1,9 +1,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { FiCheck, FiPlus, FiSearch, FiX } from "react-icons/fi";
+import { FiCheck, FiCopy, FiDownload, FiPlus, FiSearch, FiSend, FiShare2, FiX } from "react-icons/fi";
+import jsPDF from "jspdf";
 import Navbar from "../components/Navbar";
 import SEO from "../components/SEO";
 import carIcon from "../assets/icons/car_icon.png";
+import whatsappIcon from "../assets/icons/social/whatsapp.svg";
+import facebookIcon from "../assets/icons/social/facebook.svg";
+import instagramIcon from "../assets/icons/social/instagram.svg";
+import linkedInIcon from "../assets/icons/social/linkedin.svg";
+import xIcon from "../assets/icons/social/x.svg";
 
 const cleanValue = (value) => value === null || value === undefined || value === "" || value === "-";
 
@@ -75,6 +81,107 @@ const formatValue = (value) => {
   if (Array.isArray(value)) return value.filter(Boolean).join(", ") || "—";
   return String(value);
 };
+
+const getCarName = (car) => [car.brand || "Luxury car", car.title || [car.specification?.model, car.specification?.variant].filter(Boolean).join(" ")].filter(Boolean).join(" ");
+
+function createComparisonPdf(cars, comparisonUrl) {
+  const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const pageWidth = 297;
+  const pageHeight = 210;
+  const margin = 14;
+  const tableWidth = pageWidth - margin * 2;
+  const labelWidth = 46;
+  const carWidth = (tableWidth - labelWidth) / cars.length;
+  let y = 0;
+
+  const drawTableHeader = () => {
+    const carLines = cars.map((car) => pdf.splitTextToSize(getCarName(car), carWidth - 8));
+    const headerHeight = Math.max(17, ...carLines.map((lines) => 7 + lines.length * 4));
+    pdf.setFillColor(246, 243, 237);
+    pdf.rect(margin, y, tableWidth, headerHeight, "F");
+    pdf.setDrawColor(224, 218, 207);
+    pdf.rect(margin, y, labelWidth, headerHeight);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(7);
+    pdf.setTextColor(132, 119, 98);
+    pdf.text("SPECIFICATIONS", margin + 4, y + 7);
+    carLines.forEach((lines, index) => {
+      const x = margin + labelWidth + carWidth * index;
+      pdf.rect(x, y, carWidth, headerHeight);
+      pdf.setTextColor(151, 111, 54);
+      pdf.text(lines.slice(0, Math.floor((headerHeight - 5) / 4)), x + carWidth / 2, y + 6, { align: "center" });
+    });
+    y += headerHeight;
+  };
+
+  const startPage = (includeUrl = false) => {
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(15);
+    pdf.setTextColor(25, 24, 22);
+    pdf.text("Otulia · Car comparison", margin, 14);
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(8);
+    pdf.setTextColor(122, 116, 106);
+    pdf.text(`Generated ${new Date().toLocaleString()}`, margin, 20);
+    y = 27;
+    if (includeUrl) {
+      pdf.setFontSize(7);
+      const urlLines = pdf.splitTextToSize(`Open this comparison: ${comparisonUrl}`, tableWidth);
+      pdf.text(urlLines, margin, y);
+      y += urlLines.length * 3.5 + 3;
+    }
+    drawTableHeader();
+  };
+
+  startPage(true);
+  carSpecs.forEach((section) => {
+    if (y + 12 > pageHeight - margin) {
+      pdf.addPage();
+      startPage();
+    }
+    pdf.setFillColor(235, 229, 218);
+    pdf.rect(margin, y, tableWidth, 8, "F");
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(7);
+    pdf.setTextColor(112, 88, 54);
+    pdf.text(section.title.toUpperCase(), margin + 4, y + 5.5);
+    y += 8;
+
+    section.rows.forEach((row) => {
+      const cells = [row.label, ...cars.map((car) => formatValue(row.get(car)))];
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7.5);
+      const lines = cells.map((cell, index) => pdf.splitTextToSize(cell, (index === 0 ? labelWidth : carWidth) - 8));
+      const rowHeight = Math.max(8, ...lines.map((cellLines) => cellLines.length * 3.8 + 4));
+      if (y + rowHeight > pageHeight - margin) {
+        pdf.addPage();
+        startPage();
+      }
+      let x = margin;
+      cells.forEach((cell, index) => {
+        const width = index === 0 ? labelWidth : carWidth;
+        pdf.setDrawColor(232, 228, 220);
+        pdf.rect(x, y, width, rowHeight);
+        pdf.setTextColor(index === 0 ? 110 : 42, index === 0 ? 105 : 40, index === 0 ? 96 : 36);
+        pdf.text(lines[index], x + 4, y + 4.5);
+        x += width;
+      });
+      y += rowHeight;
+    });
+  });
+
+  const totalPages = pdf.getNumberOfPages();
+  for (let page = 1; page <= totalPages; page += 1) {
+    pdf.setPage(page);
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7);
+    pdf.setTextColor(145, 139, 129);
+    pdf.text(`Otulia · Page ${page} of ${totalPages}`, pageWidth - margin, pageHeight - 6, { align: "right" });
+  }
+
+  const safeNames = cars.map((car) => (car.title || car.brand || "car").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")).join("-vs-");
+  return { blob: pdf.output("blob"), fileName: `otulia-comparison-${safeNames || "cars"}.pdf` };
+}
 
 function CarSearch({ excludedIds, onSelect }) {
   const [query, setQuery] = useState("");
@@ -233,7 +340,14 @@ export default function CompareCars() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [cars, setCars] = useState([null, null]);
   const [loadingSharedCars, setLoadingSharedCars] = useState(true);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareNotice, setShareNotice] = useState("");
+  const [shareBusy, setShareBusy] = useState(false);
   const selectedIds = cars.filter(Boolean).map((car) => String(car._id));
+  const selectedCars = cars.filter(Boolean);
+  const comparisonUrl = window.location.href;
+  const comparisonTitle = selectedCars.map(getCarName).join(" vs ") || "Otulia car comparison";
+  const shareText = `Compare ${comparisonTitle} on Otulia: ${comparisonUrl}`;
 
   useEffect(() => {
     let active = true;
@@ -269,6 +383,98 @@ export default function CompareCars() {
     }, { replace: true });
   };
 
+  const downloadComparisonPdf = () => {
+    const { blob, fileName } = createComparisonPdf(selectedCars, comparisonUrl);
+    const downloadUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = downloadUrl;
+    anchor.download = fileName;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+    return { blob, fileName };
+  };
+
+  const handleDownloadPdf = () => {
+    try {
+      downloadComparisonPdf();
+      setShareNotice("Your detailed comparison PDF has been downloaded.");
+    } catch {
+      setShareNotice("Could not create the comparison PDF. Please try again.");
+    }
+  };
+
+  const handleSharePdf = async () => {
+    setShareBusy(true);
+    setShareNotice("");
+    try {
+      const { blob, fileName } = createComparisonPdf(selectedCars, comparisonUrl);
+      if (navigator.share && window.File) {
+        const file = new File([blob], fileName, { type: "application/pdf" });
+        if (navigator.canShare?.({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file], title: "Otulia car comparison", text: shareText });
+            setShareNotice("Choose WhatsApp, Telegram, or another app in your share sheet to send the PDF.");
+            return;
+          } catch (error) {
+            if (error?.name === "AbortError") return;
+          }
+        }
+      }
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+      setShareNotice("Your PDF was downloaded. Attach it to a message, or use a social share option below to send the comparison link.");
+    } catch {
+      setShareNotice("Could not create the comparison PDF. Please try again.");
+    } finally {
+      setShareBusy(false);
+    }
+  };
+
+  const handleCopyComparison = async () => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      setShareNotice("Comparison details and link copied.");
+    } catch {
+      setShareNotice("Copy was blocked by the browser. You can copy the comparison link from the address bar.");
+    }
+  };
+
+  const socialShareOptions = [
+    { name: "WhatsApp", icon: whatsappIcon, url: `https://wa.me/?text=${encodeURIComponent(shareText)}` },
+    { name: "Telegram", Icon: FiSend, url: `https://t.me/share/url?url=${encodeURIComponent(comparisonUrl)}&text=${encodeURIComponent(`Compare ${comparisonTitle} on Otulia`)}` },
+    { name: "Facebook", icon: facebookIcon, url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(comparisonUrl)}` },
+    { name: "Instagram DM", icon: instagramIcon, url: "https://www.instagram.com/direct/new/", copyFirst: true },
+    { name: "LinkedIn", icon: linkedInIcon, url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(comparisonUrl)}` },
+    { name: "X", icon: xIcon, url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Compare ${comparisonTitle} on Otulia`)}&url=${encodeURIComponent(comparisonUrl)}` },
+  ];
+
+  const openSocialShare = async (option) => {
+    const tab = window.open(option.url, "_blank");
+    if (!tab) {
+      setShareNotice("Your browser blocked the new tab. Allow pop-ups for Otulia, then choose the app again.");
+      return;
+    }
+    tab.opener = null;
+    if (option.copyFirst) {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        setShareNotice("Comparison details copied. Paste them into your Instagram DM.");
+      } catch {
+        setShareNotice("Instagram does not accept prefilled links here. Copy the comparison link from the address bar and paste it into your DM.");
+      }
+    } else {
+      setShareNotice(`Opening ${option.name}. The comparison link will be included; attach the downloaded PDF if you want to send the report file.`);
+    }
+  };
+
   const carSlots = cars.map((car, index) => (
     car ? (
       <SelectedCar key={`selected-${index}`} car={car} slot={index} onRemove={() => setCar(index, null)} onChange={() => setCar(index, null)} />
@@ -298,9 +504,19 @@ export default function CompareCars() {
               <h1 className="font-serif text-4xl leading-tight tracking-tight sm:text-5xl lg:text-6xl">Two cars. Every detail.</h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-[#77736d] sm:text-base">Compare the specifications that matter, side by side. Start with two cars, then add up to two more to see how each one stands.</p>
             </div>
-            <div className="flex shrink-0 items-center gap-2 text-xs text-[#77736d]">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#ddd5c7] text-[#9a7441]"><FiCheck /></span>
-              <span>Up to date listing details</span>
+            <div className="flex shrink-0 flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => { setShareNotice(""); setShareOpen(true); }}
+                disabled={selectedCars.length < 2}
+                className="inline-flex items-center gap-2 rounded-full border border-[#ded7ca] bg-white px-4 py-2.5 text-xs font-semibold text-[#4e4941] shadow-sm transition hover:border-[#a77e42] hover:text-[#8a642f] disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <FiShare2 aria-hidden="true" /> Share Comparison
+              </button>
+              <div className="flex items-center gap-2 text-xs text-[#77736d]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#ddd5c7] text-[#9a7441]"><FiCheck /></span>
+                <span>Up to date listing details</span>
+              </div>
             </div>
           </div>
         </div>
@@ -323,6 +539,46 @@ export default function CompareCars() {
         )}
         <SpecsTable cars={cars} />
       </div>
+      {shareOpen && (
+        <div className="fixed inset-0 z-[1300] flex items-end justify-center bg-black/50 p-2 backdrop-blur-sm sm:items-center sm:p-4" onMouseDown={(event) => event.target === event.currentTarget && setShareOpen(false)}>
+          <section role="dialog" aria-modal="true" aria-labelledby="comparison-share-title" className="w-full max-w-lg rounded-2xl bg-white p-5 text-[#171717] shadow-2xl sm:p-6">
+            <header className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a37a43]">Otulia · Car comparison</p>
+                <h2 id="comparison-share-title" className="mt-1 font-serif text-2xl">Share this comparison</h2>
+              </div>
+              <button type="button" onClick={() => setShareOpen(false)} className="rounded-full p-2 text-gray-500 transition hover:bg-gray-100" aria-label="Close share dialog"><FiX size={20} /></button>
+            </header>
+            <p className="mt-3 line-clamp-2 text-sm text-[#77736d]">{comparisonTitle}</p>
+
+            <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <button type="button" onClick={() => void handleSharePdf()} disabled={shareBusy} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#171717] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#38342e] disabled:opacity-60">
+                <FiShare2 aria-hidden="true" /> {shareBusy ? "Preparing PDF…" : "Share PDF"}
+              </button>
+              <button type="button" onClick={handleDownloadPdf} className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#ded7ca] px-4 py-3 text-sm font-semibold text-[#4e4941] transition hover:bg-[#f8f6f1]">
+                <FiDownload aria-hidden="true" /> Download PDF
+              </button>
+            </div>
+            <p className="mt-2 text-xs leading-5 text-[#8a857c]">Share PDF opens your device’s share sheet when available. In browsers without file sharing, the PDF downloads so you can attach it to a message.</p>
+
+            <div className="mt-5 border-t border-[#eeeae3] pt-4">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.15em] text-[#8a857c]">Share the comparison link</p>
+              <div className="grid grid-cols-3 gap-2">
+                {socialShareOptions.map((option) => (
+                  <button key={option.name} type="button" onClick={() => void openSocialShare(option)} className="flex items-center justify-center gap-2 rounded-lg border border-[#eeeae3] px-2 py-2.5 text-xs font-medium text-[#514c44] transition hover:border-[#cbb58f] hover:bg-[#faf8f4]">
+                    {option.icon ? <img src={option.icon} alt="" className="h-4 w-4 object-contain" /> : <option.Icon aria-hidden="true" className="h-4 w-4" />}
+                    <span>{option.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button type="button" onClick={() => void handleCopyComparison()} className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-[#8a642f] transition hover:bg-[#f8f6f1]">
+              <FiCopy aria-hidden="true" /> Copy comparison details and link
+            </button>
+            {shareNotice && <p role="status" className="mt-3 rounded-lg bg-[#f8f6f1] px-3 py-2.5 text-xs leading-5 text-[#6f685c]">{shareNotice}</p>}
+          </section>
+        </div>
+      )}
     </main>
   );
 }
