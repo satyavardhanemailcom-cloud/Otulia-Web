@@ -228,7 +228,7 @@ function CarSearch({ excludedIds, onSelect }) {
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search make, model or year"
+          placeholder="Enter or paste the NJM IDs or the name of the car for comparing."
           aria-label="Search cars to compare"
           className="w-full bg-transparent text-sm text-[#171717] outline-none placeholder:text-[#99958e]"
         />
@@ -493,15 +493,15 @@ export default function CompareCars() {
   ));
 
   return (
-    <main className="min-h-screen bg-[#f8f7f4] pb-20 pt-24 text-[#171717]">
+    <main className="min-h-screen bg-[#f8f7f4] pb-20 text-[#171717]">
       <SEO title="Compare Luxury Cars" description="Compare specifications of two luxury cars side by side on Otulia." />
       <Navbar hideSearch />
-      <section className="border-b border-[#e9e5de] bg-white px-4 py-12 sm:px-6 sm:py-16">
+      <section className="border-b border-[#e9e5de] bg-white px-4 pb-12 sm:px-6 sm:pb-16" style={{ paddingTop: "calc(clamp(50px, 8vh, 80px) + 16px)" }}>
         <div className="mx-auto max-w-7xl">
           <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-[#a37a43]">Otulia · Car comparison</p>
           <div className="mt-4 flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div className="max-w-3xl">
-              <h1 className="font-serif text-4xl leading-tight tracking-tight sm:text-5xl lg:text-6xl">Two cars. Every detail.</h1>
+              <h1 className="font-serif text-4xl leading-tight tracking-tight sm:text-5xl lg:text-6xl">Compare cars. Every detail.</h1>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-[#77736d] sm:text-base">Compare the specifications that matter, side by side. Start with two cars, then add up to two more to see how each one stands.</p>
             </div>
             <div className="flex shrink-0 flex-wrap items-center gap-3">

@@ -435,6 +435,7 @@ router.get("/compare/cars/search", async (req, res) => {
         return {
           $or: [
             { title: pattern },
+            { listingReference: pattern },
             { brand: pattern },
             { "specification.model": pattern },
             { variant: pattern },
