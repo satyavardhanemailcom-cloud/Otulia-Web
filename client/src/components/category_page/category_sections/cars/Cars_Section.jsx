@@ -275,10 +275,30 @@ const Cars_Section = () => {
                   Browse our exclusive collection of luxury vehicles.
                 </p>
               </div>
-              <SortDropdown
-                onSortChange={handleSortChange}
-                currentSort={currentSort}
-              />
+              <div className="flex items-center gap-3 self-start md:self-auto">
+                <button
+                  type="button"
+                  onClick={() => navigate("/compare/cars")}
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2.5 text-xs font-medium text-gray-800 shadow-sm transition-colors hover:border-gray-400"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    className="h-4 w-4"
+                  >
+                    <rect x="8" y="8" width="12" height="12" rx="2" />
+                    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                  </svg>
+                  Compare Vehicles
+                </button>
+                <SortDropdown
+                  onSortChange={handleSortChange}
+                  currentSort={currentSort}
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">

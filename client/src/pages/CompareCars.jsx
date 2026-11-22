@@ -193,10 +193,11 @@ function SpecsTable({ cars }) {
         <div className="mx-auto mt-4 h-px w-16 bg-[#c4a16b]" />
       </div>
       {sections.length ? (
-        <div className="overflow-hidden rounded-2xl border border-[#e8e4dc] bg-white shadow-[0_14px_42px_rgba(30,24,15,0.04)]">
+        <div className="overflow-x-auto rounded-2xl border border-[#e8e4dc] bg-white shadow-[0_14px_42px_rgba(30,24,15,0.04)]">
+          <div className={cars.length > 2 ? "min-w-[1000px]" : "min-w-[760px]"}>
           {sections.map((section) => (
             <div key={section.title}>
-              <div className="grid grid-cols-[minmax(115px,0.72fr)_repeat(2,minmax(0,1fr))] items-center gap-3 border-b border-[#e9e5de] bg-[#f8f6f1] px-4 py-3 sm:gap-6 sm:px-7">
+              <div className="grid items-center gap-3 border-b border-[#e9e5de] bg-[#f8f6f1] px-4 py-3 sm:gap-6 sm:px-7" style={{ gridTemplateColumns: `minmax(115px,0.72fr) repeat(${cars.length},minmax(0,1fr))` }}>
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#8b8377]">{section.title}</p>
                 {cars.map((car, index) => (
                   <p key={index} className="truncate text-center text-[9px] font-bold uppercase tracking-[0.16em] text-[#9a7441]">{car ? car.brand || "Selected car" : `Car ${index + 1}`}</p>
@@ -204,9 +205,10 @@ function SpecsTable({ cars }) {
               </div>
               {section.rows.map((row) => {
                 const values = cars.map((car) => car ? formatValue(row.get(car)) : "Add a car");
-                const different = cars[0] && cars[1] && values[0] !== values[1] && values[0] !== "—" && values[1] !== "—";
+                const distinctValues = new Set(values.filter((value, index) => cars[index] && value !== "—"));
+                const different = distinctValues.size > 1;
                 return (
-                  <div key={row.label} className="grid grid-cols-[minmax(115px,0.72fr)_repeat(2,minmax(0,1fr))] items-center gap-3 border-b border-[#efede8] px-4 py-4 last:border-b-0 sm:gap-6 sm:px-7">
+                  <div key={row.label} className="grid items-center gap-3 border-b border-[#efede8] px-4 py-4 last:border-b-0 sm:gap-6 sm:px-7" style={{ gridTemplateColumns: `minmax(115px,0.72fr) repeat(${cars.length},minmax(0,1fr))` }}>
                     <p className="text-xs font-medium text-[#77736d] sm:text-sm">{row.label}</p>
                     {values.map((value, index) => (
                       <p key={index} className={`break-words text-center text-xs sm:text-sm ${different ? "font-semibold text-[#8e682f]" : "text-[#282622]"}`}>{value}</p>
@@ -216,6 +218,7 @@ function SpecsTable({ cars }) {
               })}
             </div>
           ))}
+          </div>
         </div>
       ) : (
         <div className="rounded-2xl border border-dashed border-[#ddd6c9] bg-white px-6 py-10 text-center text-sm text-[#8d877d]">
@@ -234,7 +237,7 @@ export default function CompareCars() {
 
   useEffect(() => {
     let active = true;
-    const ids = [searchParams.get("car1"), searchParams.get("car2")];
+    const ids = [1, 2, 3, 4].map((index) => searchParams.get(`car${index}`));
     Promise.all(ids.map(async (id) => {
       if (!id) return null;
       try {
@@ -244,7 +247,11 @@ export default function CompareCars() {
         return null;
       }
     })).then((loaded) => {
-      if (active) setCars(loaded[0] && String(loaded[0]._id) === String(loaded[1]?._id) ? [loaded[0], null] : loaded);
+      if (active) {
+        const uniqueCars = loaded.map((car, index) => car && loaded.slice(0, index).some((previous) => String(previous?._id) === String(car._id)) ? null : car);
+        const lastSelectedIndex = uniqueCars.reduce((last, car, index) => car ? index : last, -1);
+        setCars(uniqueCars.slice(0, Math.max(2, lastSelectedIndex + 1)));
+      }
     }).finally(() => { if (active) setLoadingSharedCars(false); });
     return () => { active = false; };
   }, []);
@@ -255,7 +262,7 @@ export default function CompareCars() {
     setCars(next);
     setSearchParams((current) => {
       const params = new URLSearchParams(current);
-      const key = index === 0 ? "car1" : "car2";
+      const key = `car${index + 1}`;
       if (car) params.set(key, car._id);
       else params.delete(key);
       return params;
@@ -271,7 +278,7 @@ export default function CompareCars() {
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#efe9de] text-xs font-semibold text-[#947345]">0{index + 1}</span>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#a37a43]">Car {index + 1}</p>
-            <p className="mt-0.5 text-sm text-[#6d685f]">Choose a vehicle to compare</p>
+      <p className="mt-0.5 text-sm text-[#6d685f]">{index < 2 ? "Choose a vehicle to compare" : "Add another vehicle (optional)"}</p>
           </div>
         </div>
         <CarSearch excludedIds={selectedIds} onSelect={(car) => setCar(index, car)} />
@@ -289,7 +296,7 @@ export default function CompareCars() {
           <div className="mt-4 flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div className="max-w-3xl">
               <h1 className="font-serif text-4xl leading-tight tracking-tight sm:text-5xl lg:text-6xl">Two cars. Every detail.</h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-[#77736d] sm:text-base">Compare the specifications that matter, side by side. Search our collection and add two cars to see where each one stands.</p>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-[#77736d] sm:text-base">Compare the specifications that matter, side by side. Start with two cars, then add up to two more to see how each one stands.</p>
             </div>
             <div className="flex shrink-0 items-center gap-2 text-xs text-[#77736d]">
               <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#ddd5c7] text-[#9a7441]"><FiCheck /></span>
@@ -302,6 +309,18 @@ export default function CompareCars() {
       <div className="mx-auto max-w-7xl px-4 pt-9 sm:px-6 sm:pt-12">
         {loadingSharedCars && <div className="mb-4 h-1 w-full animate-pulse rounded bg-[#e9e3d8]" />}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">{carSlots}</div>
+        {cars.length < 4 && (
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => setCars((current) => current.length < 4 ? [...current, null] : current)}
+              className="inline-flex items-center gap-2 rounded-full border border-[#cbb58f] px-5 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#765b32] transition hover:bg-[#f1ece2]"
+            >
+              <FiPlus aria-hidden="true" /> Add another vehicle
+            </button>
+            <span className="text-xs text-[#908b82]">Up to 4 vehicles</span>
+          </div>
+        )}
         <SpecsTable cars={cars} />
       </div>
     </main>
