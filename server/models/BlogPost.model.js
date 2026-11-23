@@ -10,6 +10,9 @@ const sectionSchema = new mongoose.Schema(
     quoteAttribution: { type: String, trim: true, default: "" },
     image: { type: String, trim: true, default: "" },
     imageCaption: { type: String, trim: true, default: "" },
+    // Optional embedded video (YouTube / Vimeo URL, iframe embed code, or direct .mp4)
+    video: { type: String, trim: true, default: "" },
+    videoCaption: { type: String, trim: true, default: "" },
   },
   { _id: false }
 );
@@ -34,6 +37,7 @@ const blogPostSchema = new mongoose.Schema(
     author: { type: String, trim: true, default: "Otulia Editorial Team" },
     readTime: { type: String, trim: true, default: "" }, // minutes, e.g. "8"
     publishedAt: { type: Date, default: Date.now },
+    commentsEnabled: { type: Boolean, default: true },
 
     sections: { type: [sectionSchema], default: [] },
     faqs: {

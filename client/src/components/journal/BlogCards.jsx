@@ -15,7 +15,8 @@ import terry from "/src/assets/journal/blog_twelve/hero_image.webp";
 import zendaya from "/src/assets/journal/blog_thirteen/hero.webp";
 import porsche from "/src/assets/journal/blog_fourteen/hero.webp";
 
-const blogPosts = [
+// Exported so article pages can reuse the same cards for "Related stories".
+export const blogPosts = [
   {
     id: 1,
     tag: "Ownership Guides",
@@ -199,7 +200,7 @@ function ClockIcon() {
   );
 }
 
-function BlogCard({ post }) {
+export function BlogCard({ post }) {
   const CardWrapper = post.link ? Link : "div";
   const wrapperProps = post.link ? { to: post.link } : {};
 
