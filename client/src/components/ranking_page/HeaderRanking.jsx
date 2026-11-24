@@ -47,6 +47,8 @@ function RankingHeader({ data }) {
     "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1600&auto=format&fit=crop";
   const coverImg =
     data.bannerImage || data.coverImage || data.categoryImage || fallbackBanner;
+  const shareImage =
+    data.categoryImage || data.coverImage || data.bannerImage || fallbackBanner;
   const isContentCreator = ["content creator", "content creators"].includes(
     String(data.type || "").trim().toLowerCase(),
   );
@@ -77,16 +79,6 @@ function RankingHeader({ data }) {
           alt={data.titleMain || "Category Banner"}
           className="w-full h-auto block lg:absolute lg:inset-0 lg:h-full lg:object-cover object-center"
         />
-
-        <button
-          type="button"
-          onClick={() => setIsShareOpen(true)}
-          aria-label="Share this ranking"
-          className="absolute right-3 top-3 z-20 inline-flex h-10 items-center gap-2 rounded-full border border-white/25 bg-black/70 px-4 text-sm font-medium text-white shadow-lg backdrop-blur transition hover:bg-black/90 sm:right-4 sm:top-4"
-        >
-          <IoShareSocialOutline className="h-5 w-5" />
-          <span>Share</span>
-        </button>
 
         {/* Gradient Overlay for Text Contrast */}
         {/* 
@@ -159,11 +151,22 @@ function RankingHeader({ data }) {
         </div> 
         */}
       </div>}
+      <div className="flex justify-end pb-3">
+        <button
+          type="button"
+          onClick={() => setIsShareOpen(true)}
+          aria-label="Share this ranking"
+          className="inline-flex h-10 items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900 px-4 text-sm font-medium text-white shadow transition hover:border-[#D6A125] hover:text-[#D6A125]"
+        >
+          <IoShareSocialOutline className="h-5 w-5" />
+          <span>Share</span>
+        </button>
+      </div>
       {isShareOpen && (
         <ShareListingModal
           asset={{ title: data.titleMain || main, description: data.description }}
           assetType="Ranking"
-          image={coverImg}
+          image={shareImage}
           shareDescription={data.description}
           showPrice={false}
           onClose={() => setIsShareOpen(false)}
