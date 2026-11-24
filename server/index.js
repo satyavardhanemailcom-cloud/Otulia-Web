@@ -386,15 +386,20 @@ app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
       return res.status(404).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex, nofollow\"><title>Ranking not found | Otulia</title></head><body><main><h1>Ranking not found</h1><a href=\"/ranking\">Browse Otulia rankings</a></main></body></html>");
     }
 
-    const categoryPath = category.type.toLowerCase().replace(/\s+/g, "").replace(/contentcreator/i, "contentcreators");
-    const canonical = `https://otulia.com/ranking/${categoryPath}/${encodeURIComponent(category.slug)}`;
-    if (categoryParam.toLowerCase() !== categoryPath) return res.redirect(301, canonical);
+    const categoryType = String(category.type || "");
+    const categorySlug = String(category.slug || slug);
+    const categoryPath = categoryType.toLowerCase().replace(/\s+/g, "").replace(/contentcreator/i, "contentcreators");
+    const canonical = `https://otulia.com/ranking/${categoryPath}/${encodeURIComponent(categorySlug)}`;
+    if (categoryParam.toLowerCase() !== categoryPath) {
+      return res.redirect(301, `/ranking/${categoryPath}/${encodeURIComponent(categorySlug)}`);
+    }
 
     const nominees = category.targetType === "Assets" ? category.assetNominees : category.dealerNominees;
-    const rankedNominees = [...(nominees || [])]
+    const rankedNominees = [...(Array.isArray(nominees) ? nominees : [])]
+      .filter(Boolean)
       .sort((a, b) => ((b.votes || 0) + (b.fakeVotes || 0)) - ((a.votes || 0) + (a.fakeVotes || 0)))
       .map((nominee, index) => ({
-        name: nominee.name,
+        name: String(nominee.name || "Nominee"),
         image: nominee.image || nominee.profilePic || nominee.avatar || "",
         description: nominee.description || nominee.detail || "",
         brand: nominee.brand || "",
@@ -404,8 +409,9 @@ app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
         rank: index + 1,
       }));
 
-    const title = `${category.title} | Otulia Rankings`;
-    const description = String(category.shortDescription || category.detailedDescription || `Explore Otulia's ${category.title.toLowerCase()} and see how they rank.`)
+    const categoryTitle = String(category.title || "Otulia Ranking");
+    const title = `${categoryTitle} | Otulia Rankings`;
+    const description = String(category.shortDescription || category.detailedDescription || `Explore Otulia's ${categoryTitle.toLowerCase()} and see how they rank.`)
       .replace(/\s+/g, " ").trim().slice(0, 300);
     const socialImage = publicUrl(category.bannerImage || category.categoryImage || rankedNominees.find((nominee) => nominee.image)?.image) || "https://otulia.com/images/exclusive_club_bg.jpg";
     const indexPath = path.join(distPath, "index.html");
@@ -419,11 +425,11 @@ app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
       'property="og:description"': description,
       'property="og:url"': canonical,
       'property="og:image"': socialImage,
-      'property="og:image:alt"': category.title,
+      'property="og:image:alt"': categoryTitle,
       'name="twitter:title"': title,
       'name="twitter:description"': description,
       'name="twitter:image"': socialImage,
-      'name="twitter:image:alt"': category.title,
+      'name="twitter:image:alt"': categoryTitle,
     };
     for (const [selector, value] of Object.entries(rankingMeta)) {
       const pattern = new RegExp(`<meta\\s+(?:data-static-head\\s+)?${selector}\\s+content="[^"]*"\\s*\\/>`, "i");
@@ -447,7 +453,7 @@ app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
         : "";
       return `<article><h2>${nominee.rank}. ${htmlEscape(displayName)}</h2>${image}${nominee.description ? `<p>${htmlEscape(nominee.description)}</p>` : ""}${details ? `<ul>${details}</ul>` : ""}${link}</article>`;
     }).join("");
-    const renderedContent = `<main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(category.title)}</h1><p>${htmlEscape(description)}</p>${entries || "<p>No ranked entries are currently available.</p>"}<p><a href="/ranking">Browse all Otulia rankings</a></p></main>`;
+    const renderedContent = `<main style="font-family:Arial,sans-serif;max-width:900px;margin:32px auto;padding:0 20px"><h1>${htmlEscape(categoryTitle)}</h1><p>${htmlEscape(description)}</p>${entries || "<p>No ranked entries are currently available.</p>"}<p><a href="/ranking">Browse all Otulia rankings</a></p></main>`;
     html = html.replace(/<noscript>[\s\S]*?<\/noscript>/i, "");
     html = html.replace('<div id="root"></div>', `<div id="root"><div data-seo-fallback>${renderedContent}</div></div>`);
 
@@ -455,7 +461,7 @@ app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
       const itemList = {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        name: category.title,
+        name: categoryTitle,
         description,
         url: canonical,
         numberOfItems: rankedNominees.length,
@@ -476,6 +482,11 @@ app.get(/^\/ranking\/([^/]+)\/([^/]+)\/?$/i, async (req, res) => {
     return res.type("html").send(html);
   } catch (error) {
     console.error("Ranking SEO HTML error:", error);
+    const spaIndexPath = path.join(distPath, "index.html");
+    if (fs.existsSync(spaIndexPath)) {
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+      return res.status(200).sendFile(spaIndexPath);
+    }
     return res.status(503).type("html").send("<!doctype html><html><head><meta charset=\"utf-8\"><meta name=\"robots\" content=\"noindex\"><title>Ranking temporarily unavailable | Otulia</title></head><body><h1>Ranking temporarily unavailable</h1></body></html>");
   }
 });

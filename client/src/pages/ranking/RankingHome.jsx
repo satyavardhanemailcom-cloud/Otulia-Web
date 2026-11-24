@@ -368,6 +368,7 @@ function RankingHome() {
       breadcrumbs: ["Home", "Rankings", catDisplayName, activeCategory.title],
       titleMain: activeCategory.title,
       titleHighlight: "",
+      type: activeCategory.type,
       description:
         activeCategory.detailedDescription ||
         activeCategory.shortDescription ||
@@ -541,7 +542,7 @@ function RankingHome() {
           (isEstate
             ? "An ultra-luxurious premier real estate asset representing exceptional architecture and privacy."
             : isContentCreator
-              ? "A globally acclaimed digital creator pushing creative frontiers with dedicated audiences."
+              ? ""
               : "A masterwork of automotive engineering, combining sheer track performance with bespoke luxury."),
         image:
           nominee.image ||

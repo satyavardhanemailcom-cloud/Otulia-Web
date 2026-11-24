@@ -551,6 +551,8 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
   };
 
   const getCreatorProfilePic = (car) => {
+    const profileImageAtCardSize = (url) =>
+      optimizeCloudinaryUrl(url, 800).replace(/([,/])w_\d+(?=[,/])/g, "$1w_800");
     const candidate =
       car.profilePic ||
       car.profilePicture ||
@@ -559,21 +561,21 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       car.profileImage ||
       car.keyDetails?.profilePic ||
       car.keyDetails?.profilePicture;
-    if (candidate) return optimizeCloudinaryUrl(candidate, 200);
+    if (candidate) return profileImageAtCardSize(candidate);
 
     if (car.image && car.image !== car.banner) {
-      return optimizeCloudinaryUrl(car.image, 200);
+      return profileImageAtCardSize(car.image);
     }
 
     const nameKey = (car.name || "").toLowerCase().trim();
     if (nameKey.includes("supercar blondie")) {
-      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_200/v1790358097/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Supercar_Blondie/lt5ge9vmoqfzlqqnamlv.png";
+      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790358097/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Supercar_Blondie/lt5ge9vmoqfzlqqnamlv.png";
     }
     if (nameKey.includes("gmk")) {
-      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_200/v1790358384/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/GMK/s4rnnoev1ccopglm1qxn.png";
+      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790358384/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/GMK/s4rnnoev1ccopglm1qxn.png";
     }
     if (nameKey.includes("mr.benz") || nameKey.includes("mrbenz")) {
-      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_200/v1790358609/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Mr.Benz/lhvctn2uwol4pbn09v9a.png";
+      return "https://res.cloudinary.com/dxsuhm8qv/image/upload/f_auto,q_auto,w_800/v1790358609/cmscategory/Top_Luxury_Car_Content_Creators_of_2026/Mr.Benz/lhvctn2uwol4pbn09v9a.png";
     }
 
     if (car.name === "MrBeast") {
@@ -597,7 +599,7 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
       if (handle) return `https://unavatar.io/twitter/${handle}`;
     }
 
-    return optimizeCloudinaryUrl(car.image, 200) || null;
+    return profileImageAtCardSize(car.image) || null;
   };
 
   const VERIFIED_CREATOR_STATS = {
@@ -1509,7 +1511,6 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         if (car.isContentCreator) {
           const stats = getCreatorStats(car);
           const profilePicUrl = getCreatorProfilePic(car);
-          const bannerImageUrl = getCreatorBannerImage(car);
 
           return (
             <div
@@ -1518,73 +1519,45 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               className="flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
               {/* IMAGES (Appears on the left) */}
-              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[242px] md:h-[310px] my-auto bg-zinc-950 rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[242px] md:h-[310px] my-auto bg-zinc-950 rounded-none md:rounded-[12px] border-0 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 <img
-                  src={bannerImageUrl}
+                  src={profilePicUrl}
                   alt={car.name}
                   loading="eager"
                   decoding="async"
-                  className="w-full h-full object-cover transition-opacity duration-300"
-                  onError={(e) => {
-                    const fallback =
-                      "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1200&auto=format&fit=crop";
-                    if (e.target.src !== fallback) {
-                      e.target.src = fallback;
-                    }
-                  }}
+                  className="absolute left-1/2 top-1/2 h-[242px] w-[242px] -translate-x-1/2 -translate-y-1/2 rounded-full object-cover transition-opacity duration-300 md:h-[310px] md:w-[310px]"
                 />
 
-                {/* Rank Ribbon */}
-                <div className="absolute left-4 top-0">
+              </div>
+
+              {/* CONTENT BOX (Appears on the right) */}
+              <div className="relative flex flex-col md:flex-row flex-1 w-full max-w-full rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 bg-black text-white overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300 h-auto md:h-[310px]">
+                {/* Rank ribbon hangs from the content panel's top edge */}
+                <div className="absolute left-4 top-0 z-10">
                   <div
-                    className="flex w-[36px] flex-col items-center py-2 text-black rounded-b-[4px]"
+                    className="flex w-[42px] flex-col items-center rounded-b-[4px] py-2.5 text-black"
                     style={{ backgroundColor: car.rankColor }}
                   >
                     <FaTrophy
-                      className="text-[12px]"
+                      className="text-[15px]"
                       style={{ color: car.rank === 1 ? "#000" : "#fff" }}
                     />
                     <span
-                      className="mt-0.5 text-[15px] font-bold leading-none"
+                      className="mt-1 text-[18px] font-bold leading-none"
                       style={{ color: car.rank === 1 ? "#000" : "#fff" }}
                     >
                       {car.rank}
                     </span>
                   </div>
                   <div
-                    className="mx-auto h-0 w-0 border-l-[18px] border-r-[18px] border-t-[8px] border-l-transparent border-r-transparent"
+                    className="mx-auto h-0 w-0 border-l-[21px] border-r-[21px] border-t-[8px] border-l-transparent border-r-transparent"
                     style={{ borderTopColor: car.rankColor }}
                   />
                 </div>
-              </div>
-
-              {/* CONTENT BOX (Appears on the right) */}
-              <div className="flex flex-col md:flex-row flex-1 w-full max-w-full rounded-none md:rounded-[12px] border-0 md:border md:border-zinc-800 bg-black text-white overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300 h-auto md:h-[310px]">
                 {/* CONTENT (80% width ratio) */}
                 <div className="flex flex-[4] w-full md:w-[75%] lg:w-[80%] flex-col px-4 sm:px-6 py-4 bg-black justify-between h-auto md:h-[310px]">
                   {/* Header */}
-                  <div className="flex items-center gap-3 sm:gap-3.5">
-                    <div className="w-[68px] h-[66px] sm:w-[82px] sm:h-[79px] rounded-full border border-zinc-800 bg-[#141416] flex items-center justify-center text-white font-bold text-base sm:text-lg shrink-0 select-none overflow-hidden relative">
-                      {profilePicUrl ? (
-                        <img
-                          src={profilePicUrl}
-                          alt={car.name}
-                          className="w-full h-full object-cover rounded-full"
-                          onError={(e) => {
-                            e.target.style.display = "none";
-                            if (e.target.nextSibling) {
-                              e.target.nextSibling.style.display = "flex";
-                            }
-                          }}
-                        />
-                      ) : null}
-                      <div
-                        className="w-full h-full rounded-full items-center justify-center text-white font-bold text-base sm:text-lg select-none"
-                        style={{ display: profilePicUrl ? "none" : "flex" }}
-                      >
-                        {getInitials(car.name)}
-                      </div>
-                    </div>
+                  <div className="flex items-center pl-12">
                     <div className="flex flex-col justify-center h-[66px] sm:h-[79px]">
                       <h2 className="text-[26px] sm:text-[34px] lg:text-[42px] font-extrabold tracking-tight text-white leading-none">
                         {car.name}
@@ -1621,9 +1594,11 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
                   </div>
 
                   {/* Description */}
-                  <p className="mt-2 text-[12.5px] sm:text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-2 sm:line-clamp-3">
-                    {car.description}
-                  </p>
+                  {car.description?.trim() && (
+                    <p className="mt-2 text-[12.5px] sm:text-[13.5px] leading-relaxed text-zinc-400 font-normal line-clamp-2 sm:line-clamp-3">
+                      {car.description}
+                    </p>
+                  )}
 
                   {/* Divider */}
                   <div className="my-2 border-t border-zinc-800/80" />

@@ -47,6 +47,9 @@ function RankingHeader({ data }) {
     "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?q=80&w=1600&auto=format&fit=crop";
   const coverImg =
     data.bannerImage || data.coverImage || data.categoryImage || fallbackBanner;
+  const isContentCreator = ["content creator", "content creators"].includes(
+    String(data.type || "").trim().toLowerCase(),
+  );
 
   return (
     <section className="bg-transparent pt-2 pb-6 font-sans">
@@ -67,7 +70,7 @@ function RankingHeader({ data }) {
       )}
 
       {/* Main Cover Banner Box */}
-      <div className="relative w-full rounded-xl sm:rounded-2xl overflow-hidden border border-zinc-800/80 shadow-2xl lg:min-h-[416px] lg:h-[416px] flex items-center bg-black">
+      {!isContentCreator && <div className="relative w-full rounded-xl sm:rounded-2xl overflow-hidden border border-zinc-800/80 shadow-2xl lg:min-h-[416px] lg:h-[416px] flex items-center bg-black">
         {/* Banner Cover Image */}
         <img
           src={coverImg}
@@ -155,7 +158,7 @@ function RankingHeader({ data }) {
           </div>
         </div> 
         */}
-      </div>
+      </div>}
       {isShareOpen && (
         <ShareListingModal
           asset={{ title: data.titleMain || main, description: data.description }}
