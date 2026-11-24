@@ -444,7 +444,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 alert("Category cover image is required.");
                 return;
             }
-            if (!formData.bannerImage) {
+            if (formData.type !== 'Content Creator' && !formData.bannerImage) {
                 alert("Banner image is required.");
                 return;
             }
@@ -470,7 +470,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                 alert("Category cover image is required.");
                 return;
             }
-            if (!formData.bannerImage) {
+            if (formData.type !== 'Content Creator' && !formData.bannerImage) {
                 alert("Banner image is required.");
                 return;
             }
@@ -907,6 +907,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                         </div>
 
                         {/* Banner Image */}
+                        {formData.type !== 'Content Creator' && (
                         <div className="bg-[#101622] rounded-[2rem] p-6 border border-[#1B243B] space-y-4">
                             <h3 className="text-[10px] font-black text-white uppercase tracking-wider border-b border-[#1C253B] pb-2">Banner Image *</h3>
                             <div className="h-24 rounded-xl overflow-hidden bg-gray-900 border border-[#222E4A] relative group flex items-center justify-center">
@@ -936,6 +937,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                 <FiImage /> Choose Banner
                             </button>
                         </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -1181,6 +1183,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                         </button>
                                     </div>
                                     {/* Banner Upload */}
+                                    {formData.type !== 'Content Creator' && (
                                     <div className="space-y-3">
                                         <label className="block text-[13px] text-[#A1A1AA] font-medium">Banner Image</label>
                                         <div className="h-32 rounded-xl overflow-hidden bg-[#0D0D0E] border border-[#222E4A] relative group flex items-center justify-center">
@@ -1218,6 +1221,7 @@ const RankingCategoryForm = ({ initialData, onSubmit, onCancel }) => {
                                             Change Banner
                                         </button>
                                     </div>
+                                    )}
                                 </div>
                             ) : (
                                 <div className="space-y-3">

@@ -430,8 +430,8 @@ function resolveCreatorFollowers(n) {
 
     const keyDetails = n.keyDetails || {};
     let yt = (verified && verified.youtube) || n.youtubeFollowers || keyDetails.youtubeFollowers || "";
-    let ig = (verified && verified.instagram) || n.instagramFollowers || keyDetails.instagramFollowers || "";
-    let tw = (verified && verified.twitter) || n.twitterFollowers || keyDetails.twitterFollowers || n.xFollowers || keyDetails.xFollowers || "";
+    let ig = n.instagramFollowers || keyDetails.instagramFollowers || (verified && verified.instagram) || "";
+    let tw = n.twitterFollowers || keyDetails.twitterFollowers || n.xFollowers || keyDetails.xFollowers || (verified && verified.twitter) || "";
     let tk = (verified && verified.tiktok) || n.tiktokFollowers || keyDetails.tiktokFollowers || "";
 
     const primarySub = keyDetails.subscribers || n.subscribers || "";

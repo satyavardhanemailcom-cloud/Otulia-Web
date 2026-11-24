@@ -747,7 +747,21 @@ const ContentManagement = () => {
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         setEditingNomineeInlineIndex(idx);
-                                                        setEditNomineeInlineData(JSON.parse(JSON.stringify(nominee)));
+                                                        const nomineeData = JSON.parse(JSON.stringify(nominee));
+                                                        const keyDetails = nomineeData.keyDetails || {};
+                                                        nomineeData.instagramFollowers =
+                                                            nomineeData.instagramFollowers ||
+                                                            keyDetails.instagramFollowers ||
+                                                            keyDetails.instaFollowers ||
+                                                            nomineeData.instaFollowers ||
+                                                            '';
+                                                        nomineeData.twitterFollowers =
+                                                            nomineeData.twitterFollowers ||
+                                                            keyDetails.twitterFollowers ||
+                                                            keyDetails.xFollowers ||
+                                                            nomineeData.xFollowers ||
+                                                            '';
+                                                        setEditNomineeInlineData(nomineeData);
                                                     }}
                                                     className="px-2.5 py-1.5 bg-[#1C253B] hover:bg-[#253252] border border-[#2B395B] text-gray-300 hover:text-white rounded-lg text-[9px] font-bold uppercase tracking-wider transition-colors"
                                                 >
@@ -939,6 +953,7 @@ const ContentManagement = () => {
                                         </div>
 
                                         {/* Banner Image */}
+                                        {viewingCategory.type !== 'Content Creator' && (
                                         <div className="space-y-3">
                                             <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Banner Image</label>
                                             <div className="flex items-center gap-4">
@@ -990,6 +1005,7 @@ const ContentManagement = () => {
                                                 </button>
                                             </div>
                                         </div>
+                                        )}
                                     </div>
                                 ) : (
                                     <div className="space-y-3">

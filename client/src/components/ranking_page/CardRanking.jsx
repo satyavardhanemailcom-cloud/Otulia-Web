@@ -1101,6 +1101,11 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
         twUrl.includes(k),
     );
     const verified = matchKey ? VERIFIED_CREATOR_STATS[matchKey] : null;
+    const firstSavedCount = (...values) =>
+      values.find((value) => {
+        const normalized = String(value ?? "").trim().toLowerCase();
+        return normalized && !["—", "-", "n/a", "nil"].includes(normalized);
+      }) || "";
 
     // 1. YouTube Subscribers (live real-time fetch -> verified values -> DB field -> primary sub)
     let ytSubs =
@@ -1118,10 +1123,9 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
     // 2. Instagram Followers (live real-time fetch -> verified values -> DB field -> fallback scale)
     let igFollowers =
-      live.instagram ||
-      (verified ? verified.instagram : "") ||
-      car.instagramFollowers ||
-      keyDetails.instagramFollowers;
+      firstSavedCount(car.instagramFollowers, keyDetails.instagramFollowers) ||
+      firstSavedCount(live.instagram) ||
+      firstSavedCount(verified?.instagram);
 
     if (!igFollowers && car.instagram) {
       if (primarySub && primarySub !== "0") {
@@ -1142,12 +1146,14 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
 
     // 3. Twitter Followers (live real-time fetch -> verified values -> DB field -> fallback scale)
     let twFollowers =
-      live.twitter ||
-      (verified ? verified.twitter : "") ||
-      car.twitterFollowers ||
-      keyDetails.twitterFollowers ||
-      car.xFollowers ||
-      keyDetails.xFollowers;
+      firstSavedCount(
+        car.twitterFollowers,
+        keyDetails.twitterFollowers,
+        car.xFollowers,
+        keyDetails.xFollowers,
+      ) ||
+      firstSavedCount(live.twitter) ||
+      firstSavedCount(verified?.twitter);
 
     if (!twFollowers && (car.twitter || car.x)) {
       if (primarySub && primarySub !== "0") {
