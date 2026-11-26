@@ -247,8 +247,6 @@ const Cars_Section = () => {
           </div>
         </section>
 
-        <div className="w-[92%] md:w-[70%] h-px bg-gray-300 border-0 justify-self-center"></div>
-
         <section className="w-full px-3 md:px-6 py-12 bg-white">
           <FilterBar
             onFilter={handleFilter}

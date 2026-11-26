@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiChevronDown } from "react-icons/fi";
 import { useSnackbar } from "../contexts/SnackbarContext";
 import appStoreBadge from "../assets/App_Buttons/app_store.webp";
@@ -7,6 +7,22 @@ import playStoreBadge from "../assets/App_Buttons/play_store.webp";
 
 const Footer = () => {
   const { showSnackbar } = useSnackbar();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // In-app hash links (e.g. "/#Category"): go to the page without a reload,
+  // then scroll to the section once it has rendered.
+  const goToHash = (target) => {
+    const [path, hash] = target.split("#");
+    const scroll = () =>
+      document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+    if (location.pathname === (path || "/")) {
+      scroll();
+    } else {
+      navigate(path || "/");
+      setTimeout(scroll, 100);
+    }
+  };
   const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [selectedCurrency, setSelectedCurrency] = useState("INR");
   const [selectedUnit, setSelectedUnit] = useState("sqft");
@@ -103,8 +119,8 @@ const Footer = () => {
             {discover.map((item) => (
               // <li key={item.id}><a href={`${item.navigate}`} className="text-sm text-gray-400 hover:text-white">{item.name}</a></li>
               <li key={item.id}>
-                <a
-                  href={`${item.navigate}`}
+                <Link
+                  to={item.navigate}
                   onClick={(e) => {
                     if (
                       item.navigate.includes("yachts") ||
@@ -112,12 +128,15 @@ const Footer = () => {
                     ) {
                       e.preventDefault();
                       showSnackbar("COMING SOON");
+                    } else if (item.navigate.includes("#")) {
+                      e.preventDefault();
+                      goToHash(item.navigate);
                     }
                   }}
                   className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   {item.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -131,12 +150,12 @@ const Footer = () => {
           <ul className="flex flex-col gap-3">
             {company.map((item) => (
               <li key={item.id}>
-                <a
-                  href={`${item.navigate}`}
+                <Link
+                  to={item.navigate}
                   className="text-sm text-gray-400 hover:text-white transition-colors duration-200"
                 >
                   {item.page}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -299,13 +318,13 @@ const Footer = () => {
           { name: "Returns & Refunds", path: "/returns" },
           { name: "Cookie Policy", path: "/cookie-policy" },
         ].map((item) => (
-          <a
+          <Link
             key={item.name}
-            href={item.path}
+            to={item.path}
             className="text-sm text-gray-400 hover:text-white transition-colors duration-200 text-center"
           >
             {item.name}
-          </a>
+          </Link>
         ))}
       </div>
 
