@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import useLatestPosts, {
   formatPostDate as formatDate,
 } from "../journal/cms/useLatestPosts";
@@ -100,9 +101,8 @@ const BlogSection = () => {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12">
           {/* Left: Featured (latest) Post */}
-          <a
-            href={mainPost.link}
-            target="_blank"
+          <Link
+            to={mainPost.link}
             className="group cursor-pointer flex flex-col"
           >
             <div className="overflow-hidden aspect-[16/9] mb-6">
@@ -123,15 +123,14 @@ const BlogSection = () => {
                 {mainPost.excerpt}
               </p>
             )}
-          </a>
+          </Link>
 
           {/* Right: Next 3 Posts */}
           <div className="flex flex-col gap-6 md:gap-10">
             {sidePosts.map((post) => (
-              <a
+              <Link
                 key={post.link}
-                href={post.link}
-                target="_blank"
+                to={post.link}
                 className="flex gap-4 md:gap-6 group cursor-pointer"
               >
                 <div className="w-32 h-24 md:w-48 md:h-32 flex-shrink-0 overflow-hidden">
@@ -154,7 +153,7 @@ const BlogSection = () => {
                     </p>
                   )}
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const PopularLinks = () => {
   const [databaseBrands, setDatabaseBrands] = useState([]);
@@ -77,13 +78,13 @@ const PopularLinks = () => {
         <ul className="space-y-3">
           {visibleLinks.map((link) => (
             <li key={link.path}>
-              <a
-                href={link.path}
+              <Link
+                to={link.path}
                 onClick={() => handleLinkClick(link.label, link.path)}
                 className="text-gray-600 hover:text-[#D48D2A] transition-colors duration-200 text-sm hover:font-medium"
               >
                 {link.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

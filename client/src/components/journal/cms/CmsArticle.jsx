@@ -169,7 +169,7 @@ export function CmsArticleView({ post }) {
         </h1>
 
         {post.excerpt && (
-          <p className="mt-5 max-w-[680px] font-serif-body text-[17px] leading-relaxed text-[#4A463F] md:text-[18px]">
+          <p className="mt-5 font-serif-body text-[17px] leading-relaxed text-[#4A463F] md:text-[18px]">
             {post.excerpt}
           </p>
         )}
@@ -220,6 +220,16 @@ export function CmsArticleView({ post }) {
             {sections.map((section) => (
               <section key={section.id} id={section.id} className="mb-12 scroll-mt-28">
                 {section.heading && <SectionHeading>{section.heading}</SectionHeading>}
+                {section.image && (
+                  <figure className="pt-5">
+                    <img src={section.image} alt={section.imageCaption || section.heading || ""} />
+                    {section.imageCaption && (
+                      <figcaption className="mt-2 font-sans text-[12px] text-[#4A463F]">
+                        {section.imageCaption}
+                      </figcaption>
+                    )}
+                  </figure>
+                )}
                 {paragraphs(section.body).map((p, i) => (
                   <p
                     key={i}
@@ -232,16 +242,6 @@ export function CmsArticleView({ post }) {
                   <PullQuote attribution={section.quoteAttribution}>
                     {section.quote}
                   </PullQuote>
-                )}
-                {section.image && (
-                  <figure className="pt-5">
-                    <img src={section.image} alt={section.imageCaption || section.heading || ""} />
-                    {section.imageCaption && (
-                      <figcaption className="mt-2 font-sans text-[12px] text-[#4A463F]">
-                        {section.imageCaption}
-                      </figcaption>
-                    )}
-                  </figure>
                 )}
                 {section.video && (
                   <JournalVideo

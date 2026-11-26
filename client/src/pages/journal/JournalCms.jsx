@@ -661,6 +661,21 @@ export default function JournalCms() {
                         }
                       />
                     </Field>
+                    <ImageInput
+                      label="Image (optional)"
+                      value={section.image}
+                      onChange={(v) => updateSection(i, "image", v)}
+                      token={token}
+                    />
+                    <Field label="Image caption">
+                      <input
+                        className={inputCls}
+                        value={section.imageCaption}
+                        onChange={(e) =>
+                          updateSection(i, "imageCaption", e.target.value)
+                        }
+                      />
+                    </Field>
                     <Field
                       label="Body"
                       hint="Separate paragraphs with a blank line."
@@ -694,21 +709,6 @@ export default function JournalCms() {
                         />
                       </Field>
                     </div>
-                    <ImageInput
-                      label="Image after this section (optional)"
-                      value={section.image}
-                      onChange={(v) => updateSection(i, "image", v)}
-                      token={token}
-                    />
-                    <Field label="Image caption">
-                      <input
-                        className={inputCls}
-                        value={section.imageCaption}
-                        onChange={(e) =>
-                          updateSection(i, "imageCaption", e.target.value)
-                        }
-                      />
-                    </Field>
                     <VideoInput
                       value={section.video || ""}
                       onChange={(v) => updateSection(i, "video", v)}
