@@ -1195,9 +1195,10 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
   };
 
   const carList = Array.isArray(cars) ? cars : data ? [data] : [];
+  const isContentCreatorList = carList.some((car) => car?.isContentCreator);
 
   return (
-    <div className="space-y-4">
+    <div className={isContentCreatorList ? "space-y-6" : "space-y-4"}>
       {carList.map((car) => {
         if (car.isEstate) {
           const formatLocation = (loc) => {
@@ -1525,13 +1526,13 @@ function RankingCard({ cars, data, onVote, isVoting, votesRemaining = 3 }) {
               className="flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-4 w-full max-w-[1592px] mx-auto h-auto md:h-[310px] rounded-[12px] md:rounded-none border border-zinc-800 md:border-0 bg-black md:bg-transparent overflow-hidden md:overflow-visible shadow-sm hover:shadow-md transition duration-300"
             >
               {/* IMAGES (Appears on the left) */}
-              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[242px] md:h-[310px] my-auto bg-zinc-950 rounded-none md:rounded-[12px] border-0 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
+              <div className="relative shrink-0 w-full md:w-[320px] lg:w-[430px] h-[200px] md:h-[310px] my-auto bg-zinc-950 rounded-none md:rounded-[12px] border-0 overflow-hidden shadow-none md:shadow-sm md:hover:shadow-md transition duration-300">
                 <img
                   src={profilePicUrl}
                   alt={car.name}
                   loading="eager"
                   decoding="async"
-                  className="absolute left-1/2 top-1/2 h-[242px] w-[242px] -translate-x-1/2 -translate-y-1/2 rounded-full object-cover transition-opacity duration-300 md:h-[310px] md:w-[310px]"
+                  className="absolute left-1/2 top-1/2 h-[160px] w-[160px] -translate-x-1/2 -translate-y-1/2 rounded-full object-cover transition-opacity duration-300 md:h-[210px] md:w-[210px]"
                 />
 
               </div>
